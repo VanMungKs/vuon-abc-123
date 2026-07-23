@@ -1,0 +1,1424 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Vườn ABC 123 - Bé học số và chữ cái</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        min-height: 100%;
+        margin: 0;
+      }
+
+      body {
+        font-family:
+          ui-rounded, "Nunito", "Comic Sans MS", system-ui, -apple-system,
+          BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: #24324a;
+        background:
+          radial-gradient(circle at 12% 14%, rgba(255, 213, 90, 0.55), transparent 18rem),
+          radial-gradient(circle at 88% 10%, rgba(119, 221, 205, 0.5), transparent 18rem),
+          linear-gradient(135deg, #fff7dc 0%, #e8fbff 52%, #fff0f6 100%);
+      }
+
+      button,
+      input {
+        font: inherit;
+      }
+
+      button {
+        cursor: pointer;
+      }
+
+      .app {
+        width: min(1100px, calc(100% - 28px));
+        min-height: 100vh;
+        margin: 0 auto;
+        padding: 22px 0 34px;
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 14px;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+
+      h1 {
+        margin-bottom: 6px;
+        font-size: clamp(2.2rem, 7vw, 5.4rem);
+        line-height: 0.95;
+      }
+
+      h2 {
+        font-size: clamp(1.7rem, 4vw, 3.2rem);
+        line-height: 1.05;
+      }
+
+      .eyebrow {
+        margin-bottom: 6px;
+        color: #42627e;
+        font-size: 0.82rem;
+        font-weight: 900;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .scorebox {
+        display: grid;
+        place-items: center;
+        min-width: 150px;
+        padding: 12px 16px;
+        border: 2px solid rgba(36, 50, 74, 0.12);
+        border-radius: 24px;
+        background: rgba(255, 255, 255, 0.72);
+        box-shadow: 0 14px 30px rgba(52, 87, 112, 0.14);
+        font-weight: 900;
+      }
+
+      .top-actions {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 10px;
+      }
+
+      .sound-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 48px;
+        padding: 0 14px;
+        border: 2px solid rgba(36, 50, 74, 0.12);
+        border-radius: 18px;
+        color: #24324a;
+        background: rgba(255, 255, 255, 0.82);
+        box-shadow: 0 14px 30px rgba(52, 87, 112, 0.12);
+        font-weight: 900;
+      }
+
+      .score {
+        color: #f15c45;
+        font-size: 2.25rem;
+      }
+
+      .screen {
+        overflow: hidden;
+        min-height: 650px;
+        border: 2px solid rgba(36, 50, 74, 0.12);
+        border-radius: 32px;
+        background: rgba(255, 255, 255, 0.72);
+        box-shadow: 0 24px 70px rgba(52, 87, 112, 0.16);
+      }
+
+      .home {
+        display: grid;
+        grid-template-columns: minmax(300px, 1fr) minmax(300px, 0.9fr);
+        align-items: center;
+        gap: 24px;
+        padding: clamp(22px, 4vw, 54px);
+      }
+
+      .garden {
+        position: relative;
+        min-height: 430px;
+      }
+
+      .sun {
+        position: absolute;
+        left: 8%;
+        top: 4%;
+        width: 118px;
+        height: 118px;
+        border-radius: 50%;
+        background: #ffd65a;
+        box-shadow: 0 0 0 18px rgba(255, 214, 90, 0.28);
+        animation: float 3s ease-in-out infinite;
+      }
+
+      .rainbow {
+        position: absolute;
+        right: 2%;
+        top: 42px;
+        width: min(340px, 82%);
+        height: 180px;
+        border: 26px solid #f15c45;
+        border-bottom: 0;
+        border-radius: 180px 180px 0 0;
+      }
+
+      .rainbow::before,
+      .rainbow::after {
+        position: absolute;
+        border-bottom: 0;
+        border-radius: 160px 160px 0 0;
+        content: "";
+      }
+
+      .rainbow::before {
+        inset: 18px;
+        border: 22px solid #ffc14d;
+        border-bottom: 0;
+      }
+
+      .rainbow::after {
+        inset: 52px;
+        border: 20px solid #67d6c9;
+        border-bottom: 0;
+      }
+
+      .mascot {
+        position: absolute;
+        left: 52%;
+        bottom: 0;
+        width: 240px;
+        height: 270px;
+        transform: translateX(-50%);
+        animation: bounce 1.8s ease-in-out infinite;
+      }
+
+      .mascot::before {
+        position: absolute;
+        left: 50%;
+        top: 20px;
+        width: 150px;
+        height: 150px;
+        border: 6px solid #24324a;
+        border-radius: 46% 46% 52% 52%;
+        background: #ffcf9d;
+        transform: translateX(-50%);
+        content: "";
+      }
+
+      .mascot::after {
+        position: absolute;
+        left: 50%;
+        bottom: 0;
+        width: 190px;
+        height: 130px;
+        border: 6px solid #24324a;
+        border-radius: 46px 46px 60px 60px;
+        background: #7dd7cf;
+        transform: translateX(-50%);
+        content: "ABC";
+        display: grid;
+        place-items: center;
+        color: #24324a;
+        font-size: 2rem;
+        font-weight: 900;
+      }
+
+      .eyes {
+        position: absolute;
+        left: 94px;
+        top: 82px;
+        z-index: 1;
+        display: flex;
+        gap: 38px;
+      }
+
+      .eyes span {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: #24324a;
+      }
+
+      .mode-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+        margin: 24px 0;
+      }
+
+      .mode-btn,
+      .primary,
+      .choice,
+      .small-btn {
+        border: 0;
+        font-weight: 900;
+        transition:
+          transform 160ms ease,
+          box-shadow 160ms ease,
+          filter 160ms ease;
+      }
+
+      .mode-btn {
+        min-height: 126px;
+        padding: 18px;
+        border-radius: 26px;
+        color: #24324a;
+        background: #ffffff;
+        box-shadow: 0 16px 30px rgba(52, 87, 112, 0.15);
+      }
+
+      .mode-btn span {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 2.4rem;
+      }
+
+      .primary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 56px;
+        padding: 0 26px;
+        border-radius: 20px;
+        color: #ffffff;
+        background: linear-gradient(135deg, #f15c45, #ffb238);
+        box-shadow: 0 16px 30px rgba(241, 92, 69, 0.24);
+      }
+
+      .primary:disabled,
+      .small-btn:disabled {
+        cursor: default;
+        opacity: 0.58;
+      }
+
+      .small-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 44px;
+        padding: 0 16px;
+        border: 2px solid rgba(36, 50, 74, 0.14);
+        border-radius: 16px;
+        color: #24324a;
+        background: rgba(255, 255, 255, 0.82);
+      }
+
+      .button-icon {
+        font-size: 1.45rem;
+        line-height: 1;
+      }
+
+      .mode-btn:hover,
+      .primary:hover,
+      .choice:hover,
+      .small-btn:hover,
+      .tile:hover {
+        transform: translateY(-2px);
+        filter: saturate(1.04);
+      }
+
+      .game {
+        padding: clamp(18px, 3vw, 34px);
+      }
+
+      .game-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 14px;
+        margin-bottom: 18px;
+      }
+
+      .prompt-card {
+        display: grid;
+        gap: 16px;
+        width: min(860px, 100%);
+        margin: 0 auto;
+        padding: clamp(18px, 4vw, 38px);
+        border-radius: 30px;
+        background: rgba(255, 255, 255, 0.66);
+      }
+
+      .big-symbol {
+        display: grid;
+        place-items: center;
+        min-height: 180px;
+        border: 6px solid rgba(36, 50, 74, 0.1);
+        border-radius: 32px;
+        color: #ffffff;
+        background: linear-gradient(135deg, #466789, #67d6c9);
+        font-size: clamp(5rem, 18vw, 10rem);
+        font-weight: 900;
+        text-shadow: 0 8px 0 rgba(36, 50, 74, 0.12);
+      }
+
+      .objects {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 12px;
+        min-height: 160px;
+        align-items: center;
+      }
+
+      .object {
+        display: grid;
+        place-items: center;
+        width: 82px;
+        height: 82px;
+        border-radius: 26px;
+        background: #ffd65a;
+        font-size: 2.8rem;
+        box-shadow: 0 14px 20px rgba(52, 87, 112, 0.13);
+        animation: pop 600ms ease both;
+      }
+
+      .choices {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .choice {
+        min-height: 104px;
+        padding: 12px;
+        border-radius: 26px;
+        color: #24324a;
+        background: #ffffff;
+        box-shadow: 0 16px 28px rgba(52, 87, 112, 0.14);
+        font-size: clamp(1.8rem, 6vw, 3.2rem);
+      }
+
+      .choice.is-correct {
+        color: #ffffff;
+        background: #24a86a;
+        box-shadow: 0 18px 34px rgba(36, 168, 106, 0.32);
+        animation: answer-pop 460ms ease both;
+      }
+
+      .choice.is-wrong {
+        color: #ffffff;
+        background: #f15c45;
+        box-shadow: 0 18px 34px rgba(241, 92, 69, 0.3);
+        animation: answer-shake 420ms ease both;
+      }
+
+      .choice:disabled {
+        cursor: default;
+      }
+
+      .pair-board,
+      .trace-board {
+        display: grid;
+        gap: 12px;
+        width: min(720px, 100%);
+        margin: 0 auto;
+      }
+
+      .pair-board {
+        grid-template-columns: repeat(4, minmax(68px, 1fr));
+      }
+
+      .tile {
+        position: relative;
+        display: grid;
+        place-items: center;
+        min-height: 100px;
+        border: 3px solid rgba(36, 50, 74, 0.14);
+        border-radius: 24px;
+        color: #24324a;
+        background: rgba(255, 255, 255, 0.86);
+        box-shadow: 0 14px 24px rgba(52, 87, 112, 0.13);
+        font-size: 2.5rem;
+        font-weight: 900;
+      }
+
+      .tile.is-selected {
+        color: #ffffff;
+        border-color: rgba(255, 255, 255, 0.96);
+        background: var(--pair-color, #466789);
+        box-shadow:
+          0 18px 34px var(--pair-shadow, rgba(70, 103, 137, 0.28)),
+          inset 0 0 0 5px rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px) scale(1.03);
+      }
+
+      .tile.is-found {
+        color: #ffffff;
+        border-color: rgba(255, 255, 255, 0.96);
+        background: var(--pair-color, #7dd7cf);
+        box-shadow:
+          0 18px 34px var(--pair-shadow, rgba(125, 215, 207, 0.28)),
+          inset 0 0 0 5px rgba(255, 255, 255, 0.22);
+      }
+
+      .tile.is-found::after {
+        position: absolute;
+        right: 10px;
+        top: 8px;
+        display: grid;
+        place-items: center;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        color: #24324a;
+        background: rgba(255, 255, 255, 0.9);
+        font-size: 1rem;
+        content: "✓";
+      }
+
+      .trace-line {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(44px, 1fr));
+        gap: 10px;
+      }
+
+      .dot {
+        display: grid;
+        place-items: center;
+        min-height: 72px;
+        border: 2px dashed rgba(36, 50, 74, 0.22);
+        border-radius: 22px;
+        background: rgba(255, 255, 255, 0.72);
+        font-size: 1.6rem;
+        font-weight: 900;
+      }
+
+      .dot:disabled {
+        cursor: default;
+        opacity: 1;
+      }
+
+      .dot.is-active {
+        color: #ffffff;
+        background: #f15c45;
+        border-style: solid;
+      }
+
+      .trace-symbol {
+        position: relative;
+        display: grid;
+        place-items: center;
+        min-height: 220px;
+        overflow: hidden;
+        border: 6px solid rgba(36, 50, 74, 0.1);
+        border-radius: 32px;
+        background: linear-gradient(135deg, #466789, #67d6c9);
+        font-size: clamp(6rem, 20vw, 12rem);
+        font-weight: 900;
+      }
+
+      .trace-base,
+      .trace-fill {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+      }
+
+      .trace-base {
+        color: rgba(255, 255, 255, 0.24);
+        -webkit-text-stroke: 5px rgba(255, 255, 255, 0.78);
+      }
+
+      .trace-fill {
+        color: #ffd65a;
+        clip-path: inset(0 calc(100% - var(--trace-progress, 0%)) 0 0);
+        text-shadow: 0 8px 0 rgba(36, 50, 74, 0.14);
+        transition: clip-path 260ms ease;
+      }
+
+      .trace-progress {
+        height: 14px;
+        overflow: hidden;
+        border-radius: 999px;
+        background: rgba(36, 50, 74, 0.12);
+      }
+
+      .trace-progress span {
+        display: block;
+        width: var(--trace-progress, 0%);
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, #f15c45, #ffd65a, #67d6c9);
+        transition: width 260ms ease;
+      }
+
+      .feedback {
+        min-height: 42px;
+        color: #42627e;
+        font-size: 1.2rem;
+        font-weight: 900;
+        text-align: center;
+      }
+
+      .bonus-card {
+        display: grid;
+        gap: 12px;
+        margin-top: 18px;
+        padding: 16px;
+        border: 3px solid rgba(241, 92, 69, 0.18);
+        border-radius: 24px;
+        background: rgba(255, 246, 203, 0.9);
+      }
+
+      .bonus-card strong {
+        font-size: 1.15rem;
+      }
+
+      .bonus-stats {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+      }
+
+      .bonus-pill {
+        display: inline-grid;
+        place-items: center;
+        min-height: 44px;
+        padding: 0 14px;
+        border-radius: 999px;
+        color: #24324a;
+        background: rgba(255, 255, 255, 0.84);
+        font-weight: 900;
+      }
+
+      .bonus-scene {
+        position: relative;
+        min-height: 380px;
+        overflow: hidden;
+        border: 6px solid rgba(36, 50, 74, 0.1);
+        border-radius: 32px;
+        background:
+          linear-gradient(0deg, rgba(125, 215, 207, 0.38) 0 22%, transparent 22%),
+          radial-gradient(circle at 18% 18%, rgba(255, 255, 255, 0.72), transparent 8rem),
+          linear-gradient(180deg, #dff8ff, #fff2bf);
+      }
+
+      .bonus-target {
+        position: absolute;
+        left: -90px;
+        top: var(--target-top, 40%);
+        display: grid;
+        place-items: center;
+        width: 76px;
+        height: 76px;
+        border: 4px solid rgba(36, 50, 74, 0.16);
+        border-radius: 50%;
+        background: #ffffff;
+        box-shadow: 0 16px 28px rgba(52, 87, 112, 0.16);
+        font-size: 2.4rem;
+        animation: target-fly var(--target-speed, 5s) linear forwards;
+      }
+
+      .bonus-target.is-hit {
+        pointer-events: none;
+        animation: target-hit 260ms ease forwards;
+      }
+
+      .footer-actions {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 12px;
+        margin-top: 18px;
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+
+        50% {
+          transform: translateY(-12px);
+        }
+      }
+
+      @keyframes bounce {
+        0%,
+        100% {
+          transform: translateX(-50%) translateY(0);
+        }
+
+        50% {
+          transform: translateX(-50%) translateY(-10px);
+        }
+      }
+
+      @keyframes pop {
+        from {
+          opacity: 0;
+          transform: scale(0.82);
+        }
+
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      @keyframes answer-pop {
+        0% {
+          transform: scale(1);
+        }
+
+        45% {
+          transform: scale(1.1);
+        }
+
+        100% {
+          transform: scale(1.02);
+        }
+      }
+
+      @keyframes answer-shake {
+        0%,
+        100% {
+          transform: translateX(0);
+        }
+
+        25% {
+          transform: translateX(-8px);
+        }
+
+        50% {
+          transform: translateX(8px);
+        }
+
+        75% {
+          transform: translateX(-5px);
+        }
+      }
+
+      @keyframes target-fly {
+        from {
+          transform: translateX(0) rotate(-6deg);
+        }
+
+        to {
+          transform: translateX(calc(100vw + 180px)) rotate(8deg);
+        }
+      }
+
+      @keyframes target-hit {
+        to {
+          opacity: 0;
+          transform: scale(1.35) rotate(16deg);
+        }
+      }
+
+      @media (max-width: 760px) {
+        .topbar,
+        .game-head {
+          flex-direction: column;
+        }
+
+        .home {
+          grid-template-columns: 1fr;
+        }
+
+        .garden {
+          min-height: 300px;
+          order: -1;
+        }
+
+        .mascot {
+          transform: translateX(-50%) scale(0.72);
+          transform-origin: bottom center;
+        }
+
+        .mode-grid,
+        .choices {
+          grid-template-columns: 1fr;
+        }
+
+        .pair-board {
+          grid-template-columns: repeat(3, minmax(68px, 1fr));
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="app">
+      <section class="topbar">
+        <div>
+          <p class="eyebrow">Cho bé 5 tuổi</p>
+          <h1>Vườn ABC 123</h1>
+          <p>Bé nghe tiếng Việt, nhìn, đếm và chọn thật vui.</p>
+        </div>
+        <div class="top-actions">
+          <button class="sound-toggle" type="button" id="sound-toggle" aria-label="Bật tiếng">
+            <span class="button-icon" aria-hidden="true">🔊</span>
+            <span id="sound-label">Bật tiếng</span>
+          </button>
+          <div class="scorebox" aria-label="Điểm thưởng">
+            <span class="score" id="score">0</span>
+            <span id="stars">☆☆☆☆☆</span>
+          </div>
+        </div>
+      </section>
+
+      <div id="screen"></div>
+    </main>
+
+    <script>
+      const screen = document.getElementById("screen");
+      const scoreNode = document.getElementById("score");
+      const starsNode = document.getElementById("stars");
+      const soundButton = document.getElementById("sound-toggle");
+      const soundLabel = document.getElementById("sound-label");
+
+      const letters = ["A", "Ă", "Â", "B", "C", "D", "E", "Ê", "G", "H", "K", "L", "M", "N", "Ô", "P", "T", "V"];
+      const letterNames = {
+        A: "a",
+        Ă: "á",
+        Â: "ớ",
+        B: "bê",
+        C: "xê",
+        D: "dê",
+        E: "e",
+        Ê: "ê",
+        G: "giê",
+        H: "hát",
+        K: "ca",
+        L: "e lờ",
+        M: "em mờ",
+        N: "en nờ",
+        Ô: "ô",
+        P: "pê",
+        T: "tê",
+        V: "vê",
+      };
+      const numberNames = ["không", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín", "mười"];
+      const words = [
+        ["A", "Áo", "👕"],
+        ["B", "Bóng", "⚽"],
+        ["C", "Cá", "🐟"],
+        ["D", "Dép", "🩴"],
+        ["G", "Gà", "🐔"],
+        ["H", "Hoa", "🌸"],
+        ["K", "Kem", "🍦"],
+        ["M", "Mèo", "🐱"],
+        ["Ô", "Ô tô", "🚗"],
+        ["T", "Táo", "🍎"],
+      ];
+      const pairColors = [
+        { color: "#f15c45", shadow: "rgba(241, 92, 69, 0.32)" },
+        { color: "#24a86a", shadow: "rgba(36, 168, 106, 0.32)" },
+        { color: "#466789", shadow: "rgba(70, 103, 137, 0.32)" },
+        { color: "#b75bd8", shadow: "rgba(183, 91, 216, 0.32)" },
+        { color: "#e49b16", shadow: "rgba(228, 155, 22, 0.34)" },
+        { color: "#2d9bb3", shadow: "rgba(45, 155, 179, 0.32)" },
+      ];
+      const countItems = [
+        { icon: "🍎", name: "quả táo" },
+        { icon: "🌸", name: "bông hoa" },
+        { icon: "⚽", name: "quả bóng" },
+        { icon: "🎈", name: "quả bóng bay" },
+        { icon: "⭐", name: "ngôi sao" },
+        { icon: "🚗", name: "ô tô" },
+      ];
+
+      const state = {
+        score: 0,
+        mode: "numbers",
+        task: null,
+        pairSelected: [],
+        pairFound: [],
+        traceStep: 0,
+        feedback: "",
+        bonusHits: 0,
+        bonusTimeLeft: 0,
+        bonusTimer: null,
+        bonusSpawnTimer: null,
+        nextTaskTimer: null,
+        soundReady: false,
+        voices: [],
+        currentAudio: null,
+      };
+
+      function shuffle(items) {
+        const copy = items.slice();
+        for (let i = copy.length - 1; i > 0; i -= 1) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [copy[i], copy[j]] = [copy[j], copy[i]];
+        }
+        return copy;
+      }
+
+      function randomItem(items) {
+        return items[Math.floor(Math.random() * items.length)];
+      }
+
+      function buildChoices(answer, pool, size = 3) {
+        const choices = [answer];
+        const candidates = shuffle(pool).filter((item) => String(item) !== String(answer));
+        while (choices.length < size && candidates.length > 0) {
+          choices.push(candidates.shift());
+        }
+        return shuffle(choices);
+      }
+
+      function escapeHtml(value) {
+        return String(value).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
+      }
+
+      function updateHud() {
+        scoreNode.textContent = state.score;
+        starsNode.textContent = state.score >= 10 ? "🎮 Đủ 10 điểm" : `🎯 ${state.score}/10 điểm`;
+      }
+
+      function canPlayBonus() {
+        return state.score >= 10;
+      }
+
+      function awardLearningPoint() {
+        state.score += 1;
+        updateHud();
+        if (state.score === 10) {
+          speak("Bi và Xoài đã đủ mười điểm để chơi game thưởng");
+        }
+      }
+
+      function clearBonusTimers() {
+        clearInterval(state.bonusTimer);
+        clearInterval(state.bonusSpawnTimer);
+        state.bonusTimer = null;
+        state.bonusSpawnTimer = null;
+      }
+
+      function clearTaskTimer() {
+        clearTimeout(state.nextTaskTimer);
+        state.nextTaskTimer = null;
+      }
+
+      function bonusButtonMarkup(id = "bonus") {
+        if (!canPlayBonus()) return "";
+        return `<button class="primary" type="button" id="${id}" aria-label="Chơi game thưởng"><span class="button-icon" aria-hidden="true">🎮</span><span>Chơi game thưởng</span></button>`;
+      }
+
+      function speechKey(text) {
+        return String(text)
+          .toLowerCase()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .replace(/đ/g, "d")
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-+|-+$/g, "")
+          .slice(0, 96) || "voice";
+      }
+
+      function stopCurrentAudio() {
+        if (state.currentAudio) {
+          state.currentAudio.pause();
+          state.currentAudio.currentTime = 0;
+          state.currentAudio = null;
+        }
+        if (window.speechSynthesis) window.speechSynthesis.cancel();
+      }
+
+      function speak(text) {
+        stopCurrentAudio();
+        const audio = new Audio(`tts/${speechKey(text)}.m4a`);
+        state.currentAudio = audio;
+        audio.preload = "auto";
+        audio.addEventListener("ended", () => {
+          if (state.currentAudio === audio) state.currentAudio = null;
+        }, { once: true });
+        audio.addEventListener("error", () => {
+          if (state.currentAudio === audio) state.currentAudio = null;
+          speakWithBrowser(text);
+        }, { once: true });
+        audio.play().catch(() => speakWithBrowser(text));
+      }
+
+      function speakWithBrowser(text) {
+        if (!window.speechSynthesis) {
+          soundLabel.textContent = "Bấm loa để thử lại";
+          return;
+        }
+        window.speechSynthesis.resume();
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = "vi-VN";
+        utterance.voice = getVietnameseVoice();
+        utterance.rate = 0.82;
+        utterance.pitch = 1.08;
+        window.speechSynthesis.speak(utterance);
+      }
+
+      function getVietnameseVoice() {
+        return state.voices
+          .find((voice) => voice.lang.toLowerCase().startsWith("vi"));
+      }
+
+      function loadVoices() {
+        if (!window.speechSynthesis) return;
+        state.voices = window.speechSynthesis.getVoices();
+      }
+
+      function enableSound() {
+        loadVoices();
+        state.soundReady = true;
+        soundLabel.textContent = "Đã bật tiếng";
+        speak("Đã bật tiếng Việt. Bi và Xoài cùng học nhé.");
+      }
+
+      function letterSpeech(letter) {
+        return letterNames[letter] || letter.toLowerCase();
+      }
+
+      function numberSpeech(number) {
+        return numberNames[number] || String(number);
+      }
+
+      function answerSpeech(choice) {
+        if (state.task.kind === "letter") return `Con chọn chữ ${letterSpeech(choice)}`;
+        if (state.task.kind === "number" || state.task.kind === "count") return `Con chọn số ${numberSpeech(Number(choice))}`;
+        return `Con chọn ${choice}`;
+      }
+
+      function tone(kind) {
+        if (!window.AudioContext) return;
+        const context = new AudioContext();
+        const osc = context.createOscillator();
+        const gain = context.createGain();
+        osc.frequency.value = kind === "yes" ? 740 : kind === "tap" ? 440 : 220;
+        osc.type = "sine";
+        gain.gain.setValueAtTime(0.001, context.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.1, context.currentTime + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001, context.currentTime + 0.18);
+        osc.connect(gain);
+        gain.connect(context.destination);
+        osc.start();
+        osc.stop(context.currentTime + 0.2);
+      }
+
+      function renderHome() {
+        clearTaskTimer();
+        clearBonusTimers();
+        updateHud();
+        screen.innerHTML = `
+          <section class="screen home">
+            <div class="garden" aria-hidden="true">
+              <div class="sun"></div>
+              <div class="rainbow"></div>
+              <div class="mascot"><div class="eyes"><span></span><span></span></div></div>
+            </div>
+            <div>
+              <p class="eyebrow">Chọn trò chơi</p>
+              <h2>Bé muốn học gì hôm nay?</h2>
+              <div class="mode-grid">
+                <button class="mode-btn" type="button" data-mode="numbers" data-speech="Học số bằng tiếng Việt"><span>123</span>Học số</button>
+                <button class="mode-btn" type="button" data-mode="letters" data-speech="Học chữ cái tiếng Việt"><span>ABC</span>Học chữ</button>
+                <button class="mode-btn" type="button" data-mode="count" data-speech="Đếm đồ vật bằng tiếng Việt"><span>🍎</span>Đếm đồ vật</button>
+                <button class="mode-btn" type="button" data-mode="pairs" data-speech="Tìm cặp chữ và hình"><span>🧩</span>Tìm cặp giống nhau</button>
+              </div>
+              <div class="bonus-card">
+                <strong>🎁 Học đủ 10 điểm sẽ mở game thưởng.</strong>
+                <span>${canPlayBonus() ? "Bi và Xoài đã đủ điểm rồi!" : `Còn ${10 - state.score} điểm nữa để mở game.`}</span>
+                ${bonusButtonMarkup("bonus-home")}
+              </div>
+              <button class="primary" type="button" id="start">Bắt đầu</button>
+            </div>
+          </section>
+        `;
+        screen.querySelectorAll("[data-mode]").forEach((button) => {
+          button.addEventListener("click", () => {
+            state.mode = button.dataset.mode;
+            screen.querySelectorAll("[data-mode]").forEach((item) => item.style.outline = "");
+            button.style.outline = "5px solid rgba(241, 92, 69, 0.24)";
+            speak(button.dataset.speech);
+            tone("tap");
+          });
+        });
+        document.getElementById("start").addEventListener("click", nextTask);
+        document.getElementById("bonus-home")?.addEventListener("click", renderBonusGame);
+      }
+
+      function nextTask() {
+        clearTaskTimer();
+        clearBonusTimers();
+        state.feedback = "";
+        state.pairSelected = [];
+        state.pairFound = [];
+        state.traceStep = 0;
+        if (state.mode === "numbers") renderFindNumber();
+        if (state.mode === "letters") renderFindLetter();
+        if (state.mode === "count") renderCountObjects();
+        if (state.mode === "pairs") renderPairs();
+      }
+
+      function renderShell(title, body, actions = "") {
+        clearTaskTimer();
+        clearBonusTimers();
+        updateHud();
+        screen.innerHTML = `
+          <section class="screen game">
+            <div class="game-head">
+              <div>
+                <p class="eyebrow">Nhiệm vụ nhỏ</p>
+                <h2>${escapeHtml(title)}</h2>
+              </div>
+              <button class="small-btn" type="button" id="home" aria-label="Về vườn">
+                <span class="button-icon" aria-hidden="true">🏡</span>
+                <span>Về vườn</span>
+              </button>
+            </div>
+            <div class="prompt-card">
+              ${body}
+              <p class="feedback">${escapeHtml(state.feedback)}</p>
+              <div class="footer-actions">
+                <button class="small-btn" type="button" id="listen" aria-label="Nghe lại">
+                  <span class="button-icon" aria-hidden="true">🔊</span>
+                  <span>Nghe lại</span>
+                </button>
+                <button class="small-btn" type="button" id="next" aria-label="Câu mới">
+                  <span class="button-icon" aria-hidden="true">🔄</span>
+                  <span>Câu mới</span>
+                </button>
+                ${actions}
+                ${bonusButtonMarkup()}
+              </div>
+            </div>
+          </section>
+        `;
+        document.getElementById("home").addEventListener("click", renderHome);
+        document.getElementById("next").addEventListener("click", nextTask);
+        document.getElementById("bonus")?.addEventListener("click", renderBonusGame);
+      }
+
+      function renderFindNumber(forceNew = true) {
+        if (forceNew) {
+          const answer = Math.floor(Math.random() * 10);
+          state.task = {
+            kind: "number",
+            answer,
+            choices: buildChoices(answer, Array.from({ length: 10 }, (_, index) => index)),
+            speech: `Bi và Xoài hãy tìm số ${numberSpeech(answer)}`,
+          };
+        }
+        renderShell(
+          `Bi và Xoài hãy tìm số ${state.task.answer}`,
+          `
+            <div class="big-symbol">${state.task.answer}</div>
+            <div class="choices">
+              ${state.task.choices.map((choice) => `<button class="choice" type="button" data-answer="${choice}" aria-label="Số ${numberSpeech(choice)}">${choice}</button>`).join("")}
+            </div>
+          `,
+        );
+        bindAnswerButtons();
+        document.getElementById("listen").addEventListener("click", () => { enableSound(); speak(state.task.speech); });
+        speak(state.task.speech);
+      }
+
+      function renderFindLetter(forceNew = true) {
+        if (forceNew) {
+          const answer = randomItem(letters);
+          state.task = {
+            kind: "letter",
+            answer,
+            choices: buildChoices(answer, letters),
+            speech: `Con hãy tìm chữ ${letterSpeech(answer)}`,
+          };
+        }
+        renderShell(
+          `Tìm chữ ${state.task.answer}`,
+          `
+            <div class="big-symbol">${state.task.answer}</div>
+            <div class="choices">
+              ${state.task.choices.map((choice) => `<button class="choice" type="button" data-answer="${choice}" aria-label="Chữ ${letterSpeech(choice)}">${choice}</button>`).join("")}
+            </div>
+          `,
+          `<button class="small-btn" type="button" id="trace" aria-label="Tập tô chữ"><span class="button-icon" aria-hidden="true">✏️</span><span>Tập tô chữ</span></button>`,
+        );
+        bindAnswerButtons();
+        document.getElementById("listen").addEventListener("click", () => { enableSound(); speak(state.task.speech); });
+        document.getElementById("trace").addEventListener("click", () => renderTrace(state.task.answer));
+        speak(state.task.speech);
+      }
+
+      function renderCountObjects(forceNew = true) {
+        if (forceNew) {
+          const count = Math.floor(Math.random() * 7) + 3;
+          const item = randomItem(countItems);
+          state.task = {
+            kind: "count",
+            answer: String(count),
+            choices: buildChoices(String(count), Array.from({ length: 10 }, (_, index) => String(index + 1))),
+            icon: item.icon,
+            itemName: item.name,
+            count,
+            speech: `Bi và Xoài hãy đếm ${item.name}`,
+          };
+        }
+        renderShell(
+          `Đếm ${state.task.itemName}`,
+          `
+            <div class="objects">
+              ${Array.from({ length: state.task.count }).map((_, index) => `<span class="object" style="animation-delay:${index * 55}ms">${state.task.icon}</span>`).join("")}
+            </div>
+            <div class="choices">
+              ${state.task.choices.map((choice) => `<button class="choice" type="button" data-answer="${choice}" aria-label="Số ${numberSpeech(Number(choice))}">${choice}</button>`).join("")}
+            </div>
+          `,
+        );
+        bindAnswerButtons();
+        document.getElementById("listen").addEventListener("click", () => { enableSound(); speak(state.task.speech); });
+        speak(state.task.speech);
+      }
+
+      function renderPairs() {
+        const selected = shuffle(words).slice(0, 4);
+        const tiles = shuffle([
+          ...selected.map((item, index) => ({ uid: `letter-${index}`, pair: item[0], label: item[0], speech: `Chữ ${letterSpeech(item[0])}`, color: pairColors[index].color, shadow: pairColors[index].shadow })),
+          ...selected.map((item, index) => ({ uid: `word-${index}`, pair: item[0], label: item[2], speech: item[1], color: pairColors[index].color, shadow: pairColors[index].shadow })),
+        ]);
+        state.task = { kind: "pairs", tiles, speech: "Con hãy tìm chữ cái và hình có cùng âm đầu" };
+        drawPairs();
+        speak(state.task.speech);
+      }
+
+      function drawPairs() {
+        renderShell(
+          "Tìm chữ và hình",
+          `
+            <div class="pair-board">
+              ${state.task.tiles.map((tile, index) => {
+                const found = state.pairFound.includes(tile.uid);
+                const selected = state.pairSelected.includes(index);
+                return `<button class="tile ${found ? "is-found" : ""} ${selected ? "is-selected" : ""}" type="button" data-pair="${index}" data-pair-letter="${escapeHtml(tile.pair)}" style="--pair-color:${tile.color}; --pair-shadow:${tile.shadow}" aria-label="${escapeHtml(tile.speech)}">${escapeHtml(tile.label)}</button>`;
+              }).join("")}
+            </div>
+          `,
+        );
+        screen.querySelectorAll("[data-pair]").forEach((button) => {
+          button.addEventListener("click", () => choosePair(Number(button.dataset.pair)));
+        });
+        document.getElementById("listen").addEventListener("click", () => { enableSound(); speak(state.task.speech); });
+      }
+
+      function choosePair(index) {
+        const tile = state.task.tiles[index];
+        if (state.pairFound.includes(tile.uid) || state.pairSelected.includes(index)) return;
+        state.pairSelected.push(index);
+        tone("tap");
+        speak(tile.speech);
+        if (state.pairSelected.length < 2) {
+          drawPairs();
+          return;
+        }
+        const [firstIndex, secondIndex] = state.pairSelected;
+        const first = state.task.tiles[firstIndex];
+        const second = state.task.tiles[secondIndex];
+        if (first.pair === second.pair) {
+          state.pairFound.push(first.uid, second.uid);
+          state.pairSelected = [];
+          awardLearningPoint();
+          state.feedback = "Đúng một cặp rồi!";
+          tone("yes");
+          speak("Đúng rồi");
+          if (state.pairFound.length === state.task.tiles.length) {
+            state.feedback = "Bé tìm đủ tất cả cặp rồi!";
+          }
+          drawPairs();
+          return;
+        }
+        state.feedback = "Chưa giống nhau, mình thử lại nhé.";
+        tone("no");
+        drawPairs();
+        setTimeout(() => {
+          state.pairSelected = [];
+          drawPairs();
+        }, 700);
+      }
+
+      function renderTrace(letter) {
+        state.task = { kind: "trace", answer: letter, speech: `Con hãy bấm theo chấm để tô chữ ${letterSpeech(letter)}` };
+        drawTrace();
+        speak(state.task.speech);
+      }
+
+      function drawTrace() {
+        const progress = `${state.traceStep * 20}%`;
+        renderShell(
+          `Tập tô chữ ${state.task.answer}`,
+          `
+            <div class="trace-symbol" style="--trace-progress:${progress}" aria-label="Chữ ${letterSpeech(state.task.answer)} đã tô ${state.traceStep} trên 5 nét">
+              <span class="trace-base" aria-hidden="true">${escapeHtml(state.task.answer)}</span>
+              <span class="trace-fill" aria-hidden="true">${escapeHtml(state.task.answer)}</span>
+            </div>
+            <div class="trace-progress" style="--trace-progress:${progress}" aria-hidden="true"><span></span></div>
+            <div class="trace-board">
+              <div class="trace-line">
+                ${Array.from({ length: 5 }).map((_, index) => `<button class="dot ${index < state.traceStep ? "is-active" : ""}" type="button" data-dot="${index}" ${index < state.traceStep || state.traceStep >= 5 ? "disabled" : ""}>${index + 1}</button>`).join("")}
+              </div>
+            </div>
+          `,
+        );
+        screen.querySelectorAll("[data-dot]").forEach((button) => {
+          button.addEventListener("click", () => {
+            const index = Number(button.dataset.dot);
+            if (index !== state.traceStep) {
+              state.feedback = "Bấm theo thứ tự số nhé.";
+              tone("no");
+              drawTrace();
+              return;
+            }
+            state.traceStep += 1;
+            tone("tap");
+            if (state.traceStep >= 5) {
+              awardLearningPoint();
+              state.feedback = "Tô chữ xong rồi, giỏi quá!";
+              speak("Giỏi quá");
+            } else {
+              state.feedback = `Tô được ${state.traceStep} nét rồi.`;
+            }
+            drawTrace();
+          });
+        });
+        document.getElementById("listen").addEventListener("click", () => { enableSound(); speak(state.task.speech); });
+      }
+
+      function bindAnswerButtons() {
+        screen.querySelectorAll("[data-answer]").forEach((button) => {
+          button.addEventListener("click", () => {
+            const correct = button.dataset.answer === String(state.task.answer);
+            const spokenChoice = answerSpeech(button.dataset.answer);
+            const answerButtons = [...screen.querySelectorAll("[data-answer]")];
+            const feedback = screen.querySelector(".feedback");
+            answerButtons.forEach((item) => {
+              item.disabled = true;
+              item.classList.remove("is-correct", "is-wrong");
+            });
+            if (correct) {
+              clearTaskTimer();
+              button.classList.add("is-correct");
+              awardLearningPoint();
+              state.feedback = `${spokenChoice}. Đúng rồi, bé giỏi quá!`;
+              if (feedback) feedback.textContent = state.feedback;
+              updateHud();
+              tone("yes");
+              speak(`${spokenChoice}. Đúng rồi, bé giỏi quá`);
+              state.nextTaskTimer = setTimeout(nextTask, 900);
+            } else {
+              button.classList.add("is-wrong");
+              state.feedback = `${spokenChoice}. Chưa đúng, mình thử lại nhé.`;
+              if (feedback) feedback.textContent = state.feedback;
+              tone("no");
+              speak(`${spokenChoice}. Chưa đúng, thử lại nhé`);
+              setTimeout(renderCurrentTask, 900);
+            }
+          });
+        });
+      }
+
+      function renderCurrentTask() {
+        if (state.task.kind === "number") renderFindNumber(false);
+        if (state.task.kind === "letter") renderFindLetter(false);
+        if (state.task.kind === "count") renderCountObjects(false);
+      }
+
+      function renderBonusGame() {
+        clearTaskTimer();
+        clearBonusTimers();
+        if (!canPlayBonus()) {
+          state.feedback = "Cần đủ 10 điểm học để mở game thưởng.";
+          renderHome();
+          return;
+        }
+        state.score -= 10;
+        state.bonusHits = 0;
+        state.bonusTimeLeft = 20;
+        updateHud();
+        screen.innerHTML = `
+          <section class="screen game">
+            <div class="game-head">
+              <div>
+                <p class="eyebrow">Game thưởng</p>
+                <h2>Bắn chim giấy nhận sao</h2>
+              </div>
+              <button class="small-btn" type="button" id="home" aria-label="Về vườn">
+                <span class="button-icon" aria-hidden="true">🏡</span>
+                <span>Về vườn</span>
+              </button>
+            </div>
+            <div class="prompt-card">
+              <div class="bonus-stats" aria-label="Thông tin game thưởng">
+                <span class="bonus-pill">⏱️ <span id="bonus-time">20</span> giây</span>
+                <span class="bonus-pill">⭐ <span id="bonus-hits">0</span> sao</span>
+              </div>
+              <div class="bonus-scene" id="bonus-scene" aria-label="Chạm vào chim giấy đang bay"></div>
+              <p class="feedback" id="bonus-feedback">Chạm vào chim giấy đang bay nhé!</p>
+              <div class="footer-actions">
+                <button class="small-btn" type="button" id="bonus-again" ${canPlayBonus() ? "" : "disabled"} aria-label="Chơi tiếp">
+                  <span class="button-icon" aria-hidden="true">🎮</span>
+                  <span>Chơi tiếp</span>
+                </button>
+                <button class="small-btn" type="button" id="learn-more" aria-label="Học tiếp">
+                  <span class="button-icon" aria-hidden="true">📚</span>
+                  <span>Học tiếp</span>
+                </button>
+              </div>
+            </div>
+          </section>
+        `;
+        document.getElementById("home").addEventListener("click", renderHome);
+        document.getElementById("learn-more").addEventListener("click", renderHome);
+        document.getElementById("bonus-again").addEventListener("click", renderBonusGame);
+        speak("Game thưởng bắt đầu. Chạm vào chim giấy đang bay nhé.");
+        spawnBonusTarget();
+        state.bonusSpawnTimer = setInterval(spawnBonusTarget, 820);
+        state.bonusTimer = setInterval(() => {
+          state.bonusTimeLeft -= 1;
+          document.getElementById("bonus-time").textContent = state.bonusTimeLeft;
+          if (state.bonusTimeLeft <= 0) finishBonusGame();
+        }, 1000);
+      }
+
+      function spawnBonusTarget() {
+        const scene = document.getElementById("bonus-scene");
+        if (!scene || state.bonusTimeLeft <= 0) return;
+        const target = document.createElement("button");
+        target.type = "button";
+        target.className = "bonus-target";
+        target.setAttribute("aria-label", "Chim giấy");
+        target.textContent = randomItem(["🕊️", "🐦", "⭐"]);
+        const top = Math.floor(Math.random() * 68) + 8;
+        const speed = Math.floor(Math.random() * 1600) + 3800;
+        target.style.setProperty("--target-top", `${top}%`);
+        target.style.setProperty("--target-speed", `${speed}ms`);
+        target.addEventListener("click", () => {
+          if (target.classList.contains("is-hit")) return;
+          target.classList.add("is-hit");
+          state.bonusHits += 1;
+          document.getElementById("bonus-hits").textContent = state.bonusHits;
+          document.getElementById("bonus-feedback").textContent = "Trúng rồi, nhận một ngôi sao!";
+          tone("yes");
+          setTimeout(() => target.remove(), 260);
+        });
+        scene.appendChild(target);
+        setTimeout(() => target.remove(), speed + 300);
+      }
+
+      function finishBonusGame() {
+        clearBonusTimers();
+        document.querySelectorAll(".bonus-target").forEach((target) => target.remove());
+        const feedback = document.getElementById("bonus-feedback");
+        if (feedback) feedback.textContent = `Hết giờ rồi! Bi và Xoài nhận ${state.bonusHits} sao.`;
+        document.getElementById("bonus-again").disabled = !canPlayBonus();
+        speak(`Hết giờ rồi. Bi và Xoài nhận ${state.bonusHits} sao.`);
+      }
+
+      loadVoices();
+      if (window.speechSynthesis) {
+        window.speechSynthesis.onvoiceschanged = loadVoices;
+      }
+      soundButton.addEventListener("click", enableSound);
+      renderHome();
+    </script>
+  </body>
+</html>

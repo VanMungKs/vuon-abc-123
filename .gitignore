@@ -1,0 +1,5 @@
+node_modules/
+rsd-extracted/
+.DS_Store
+*.log
+

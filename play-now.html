@@ -1,0 +1,3189 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Thám Tử Nhí - Game rèn quan sát và trí nhớ</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        min-height: 100%;
+        margin: 0;
+      }
+
+      body {
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        color: #172033;
+        background:
+          radial-gradient(circle at 10% 10%, rgba(255, 213, 79, 0.48), transparent 25rem),
+          radial-gradient(circle at 86% 12%, rgba(88, 199, 190, 0.4), transparent 24rem),
+          linear-gradient(135deg, #fff8e8 0%, #e8f6ff 48%, #f8edff 100%);
+      }
+
+      button,
+      input {
+        font: inherit;
+      }
+
+      button {
+        cursor: pointer;
+      }
+
+      button:disabled {
+        cursor: not-allowed;
+        opacity: 0.55;
+      }
+
+      .game-shell {
+        width: min(1180px, calc(100% - 32px));
+        min-height: 100vh;
+        margin: 0 auto;
+        padding: 24px 0 36px;
+      }
+
+      .hud {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        margin-bottom: 18px;
+      }
+
+      .eyebrow {
+        margin: 0 0 6px;
+        color: #456179;
+        font-size: 0.78rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+
+      h1 {
+        margin-bottom: 4px;
+        font-size: clamp(2rem, 6vw, 4.8rem);
+        line-height: 0.95;
+      }
+
+      h2 {
+        margin-bottom: 12px;
+        font-size: clamp(1.75rem, 4vw, 3.5rem);
+        line-height: 1.02;
+      }
+
+      h3 {
+        font-size: clamp(1.3rem, 2.4vw, 2rem);
+        line-height: 1.15;
+      }
+
+      .hud p:not(.eyebrow),
+      .mission-head p:not(.eyebrow),
+      .intro-copy p:not(.eyebrow),
+      .complete-panel p,
+      .feedback-panel p {
+        color: #395168;
+        font-size: 1.05rem;
+      }
+
+      .score-board {
+        display: grid;
+        place-items: center;
+        min-width: 142px;
+        padding: 14px 18px;
+        border: 2px solid rgba(23, 32, 51, 0.12);
+        border-radius: 22px;
+        background: rgba(255, 255, 255, 0.66);
+        box-shadow: 0 18px 40px rgba(55, 84, 115, 0.13);
+      }
+
+      .score {
+        color: #e65347;
+        font-size: 2rem;
+        font-weight: 900;
+      }
+
+      .score-label {
+        color: #456179;
+        font-size: 0.84rem;
+      }
+
+      .stars {
+        margin-top: 4px;
+        color: #d08a00;
+        font-size: 1.15rem;
+        letter-spacing: 0.04em;
+      }
+
+      .progress-track {
+        height: 12px;
+        overflow: hidden;
+        margin-bottom: 18px;
+        border-radius: 99px;
+        background: rgba(23, 32, 51, 0.12);
+      }
+
+      .progress-track span {
+        display: block;
+        width: 0;
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, #e65347, #f5b23f, #38a06f);
+        transition: width 260ms ease;
+      }
+
+      .screen {
+        position: relative;
+        overflow: hidden;
+        border: 2px solid rgba(23, 32, 51, 0.12);
+        border-radius: 30px;
+        background: rgba(255, 255, 255, 0.74);
+        box-shadow: 0 24px 70px rgba(55, 84, 115, 0.16);
+      }
+
+      .intro {
+        display: grid;
+        grid-template-columns: minmax(330px, 1.05fr) minmax(300px, 0.95fr);
+        align-items: center;
+        min-height: 640px;
+        padding: clamp(24px, 4vw, 56px);
+      }
+
+      .intro-art {
+        position: relative;
+        min-height: 470px;
+      }
+
+      .planet,
+      .clue {
+        position: absolute;
+        border-radius: 50%;
+      }
+
+      .planet-one {
+        width: 168px;
+        height: 168px;
+        left: 2%;
+        top: 6%;
+        background: #f5b23f;
+        box-shadow: inset -18px -20px 0 rgba(181, 84, 65, 0.22);
+      }
+
+      .planet-two {
+        width: 120px;
+        height: 120px;
+        right: 14%;
+        bottom: 8%;
+        background: #58c7be;
+        box-shadow: inset -14px -16px 0 rgba(35, 99, 132, 0.2);
+      }
+
+      .detective {
+        position: absolute;
+        left: 50%;
+        top: 52%;
+        width: 260px;
+        height: 360px;
+        transform: translate(-50%, -50%);
+        animation: float 3s ease-in-out infinite;
+      }
+
+      .detective span {
+        position: absolute;
+        display: block;
+      }
+
+      .hat {
+        left: 56px;
+        top: 28px;
+        width: 150px;
+        height: 64px;
+        border-radius: 50px 50px 24px 24px;
+        background: #385979;
+      }
+
+      .hat::after {
+        position: absolute;
+        left: -28px;
+        bottom: -10px;
+        width: 206px;
+        height: 24px;
+        border-radius: 999px;
+        background: #263b55;
+        content: "";
+      }
+
+      .face {
+        left: 66px;
+        top: 82px;
+        width: 132px;
+        height: 132px;
+        border: 5px solid #172033;
+        border-radius: 44% 44% 50% 50%;
+        background: #ffd59f;
+      }
+
+      .face::before,
+      .face::after {
+        position: absolute;
+        top: 54px;
+        width: 13px;
+        height: 13px;
+        border-radius: 50%;
+        background: #172033;
+        content: "";
+      }
+
+      .face::before {
+        left: 35px;
+      }
+
+      .face::after {
+        right: 35px;
+      }
+
+      .glass {
+        left: 142px;
+        top: 128px;
+        width: 86px;
+        height: 86px;
+        border: 8px solid #172033;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.22);
+      }
+
+      .glass::after {
+        position: absolute;
+        right: -44px;
+        bottom: -28px;
+        width: 64px;
+        height: 12px;
+        border-radius: 999px;
+        background: #172033;
+        transform: rotate(42deg);
+        content: "";
+      }
+
+      .body {
+        left: 48px;
+        top: 205px;
+        width: 166px;
+        height: 120px;
+        border: 5px solid #172033;
+        border-radius: 42px 42px 52px 52px;
+        background: #ffd54f;
+      }
+
+      .clue {
+        display: grid;
+        place-items: center;
+        width: 58px;
+        height: 58px;
+        color: #ffffff;
+        font-size: 2rem;
+        font-weight: 900;
+      }
+
+      .clue-a {
+        right: 5%;
+        top: 14%;
+        background: #e65347;
+        animation: pop 1.8s ease-in-out infinite;
+      }
+
+      .clue-b {
+        left: 10%;
+        bottom: 16%;
+        background: #38a06f;
+        animation: pop 1.8s 520ms ease-in-out infinite;
+      }
+
+      label {
+        display: grid;
+        gap: 8px;
+        margin: 24px 0 18px;
+        color: #395168;
+        font-weight: 800;
+      }
+
+      input {
+        width: min(100%, 380px);
+        padding: 15px 18px;
+        border: 2px solid rgba(23, 32, 51, 0.18);
+        border-radius: 18px;
+        color: #172033;
+        background: #ffffff;
+        outline: none;
+      }
+
+      input:focus {
+        border-color: #e65347;
+        box-shadow: 0 0 0 5px rgba(230, 83, 71, 0.16);
+      }
+
+      .primary-action,
+      .ghost-action,
+      .choice-list button,
+      .memory-card {
+        border: 0;
+        font-weight: 900;
+        transition:
+          transform 170ms ease,
+          box-shadow 170ms ease,
+          filter 170ms ease;
+      }
+
+      .primary-action {
+        min-height: 54px;
+        padding: 0 26px;
+        border-radius: 18px;
+        color: #ffffff;
+        background: linear-gradient(135deg, #e65347, #f5a63a);
+        box-shadow: 0 14px 28px rgba(230, 83, 71, 0.27);
+      }
+
+      .primary-action.small {
+        min-height: 46px;
+      }
+
+      .ghost-action {
+        min-height: 46px;
+        padding: 0 20px;
+        border: 2px solid rgba(23, 32, 51, 0.16);
+        border-radius: 16px;
+        color: #172033;
+        background: rgba(255, 255, 255, 0.82);
+      }
+
+      .primary-action:hover,
+      .ghost-action:hover,
+      .choice-list button:hover,
+      .memory-card:hover {
+        transform: translateY(-2px);
+        filter: saturate(1.05);
+      }
+
+      .mission,
+      .feedback-panel,
+      .complete-panel {
+        min-height: 660px;
+        padding: clamp(18px, 3vw, 36px);
+      }
+
+      .mission-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 24px;
+      }
+
+      .timer {
+        display: grid;
+        place-items: center;
+        min-width: 112px;
+        height: 112px;
+        border: 8px solid rgba(245, 178, 63, 0.28);
+        border-radius: 50%;
+        color: #7c4b00;
+        background: #fff4ca;
+        font-weight: 900;
+      }
+
+      .timer span {
+        display: block;
+        font-size: 2.8rem;
+        line-height: 0.9;
+      }
+
+      .classroom-scene {
+        position: relative;
+        min-height: 470px;
+        overflow: hidden;
+        border-radius: 28px;
+        background:
+          linear-gradient(0deg, #f7d89a 0 24%, transparent 24%),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.72) 0 1px, transparent 1px),
+          linear-gradient(180deg, #cfeefe, #fff7d9 64%);
+        background-size: auto, 52px 52px, auto;
+        box-shadow: inset 0 -8px 0 rgba(23, 32, 51, 0.08);
+      }
+
+      .window {
+        position: absolute;
+        left: 54px;
+        top: 48px;
+        width: 170px;
+        height: 132px;
+        border: 8px solid #385979;
+        border-radius: 20px;
+        background: linear-gradient(135deg, #82d9ff, #dff8ff);
+      }
+
+      .window span,
+      .window::before,
+      .window::after {
+        position: absolute;
+        background: #385979;
+        content: "";
+      }
+
+      .window span {
+        left: 50%;
+        top: 0;
+        width: 8px;
+        height: 100%;
+        transform: translateX(-50%);
+      }
+
+      .window::before {
+        left: 0;
+        top: 50%;
+        width: 100%;
+        height: 8px;
+        transform: translateY(-50%);
+      }
+
+      .board {
+        position: absolute;
+        right: 64px;
+        top: 52px;
+        display: grid;
+        place-items: center;
+        width: 300px;
+        height: 136px;
+        border: 10px solid #9c6740;
+        border-radius: 18px;
+        color: rgba(255, 255, 255, 0.9);
+        background: #2d7f65;
+        font-size: 2.4rem;
+        font-weight: 900;
+      }
+
+      .plant {
+        position: absolute;
+        left: 128px;
+        bottom: 116px;
+        width: 58px;
+        height: 70px;
+        border-radius: 0 0 18px 18px;
+        background: #e65347;
+      }
+
+      .plant::before,
+      .plant::after {
+        position: absolute;
+        bottom: 54px;
+        width: 62px;
+        height: 34px;
+        border-radius: 90% 8px 90% 8px;
+        background: #38a06f;
+        content: "";
+      }
+
+      .plant::before {
+        left: -42px;
+        transform: rotate(-28deg);
+      }
+
+      .plant::after {
+        right: -42px;
+        transform: rotate(28deg) scaleX(-1);
+      }
+
+      .bag {
+        position: absolute;
+        left: 56px;
+        bottom: 74px;
+        width: 86px;
+        height: 92px;
+        border: 6px solid #172033;
+        border-radius: 26px 26px 18px 18px;
+        background: #4da3ff;
+      }
+
+      .bag::before {
+        position: absolute;
+        left: 19px;
+        top: -34px;
+        width: 36px;
+        height: 40px;
+        border: 6px solid #172033;
+        border-bottom: 0;
+        border-radius: 22px 22px 0 0;
+        content: "";
+      }
+
+      .shelf {
+        position: absolute;
+        right: 94px;
+        bottom: 172px;
+        display: flex;
+        gap: 14px;
+        width: 190px;
+        height: 78px;
+        padding: 18px;
+        border-radius: 18px;
+        background: #b97949;
+      }
+
+      .shelf span {
+        width: 34px;
+        border-radius: 8px;
+        background: #f5b23f;
+      }
+
+      .shelf span:nth-child(2) {
+        background: #e65347;
+      }
+
+      .shelf span:nth-child(3) {
+        background: #58c7be;
+      }
+
+      .desk {
+        position: absolute;
+        left: 50%;
+        bottom: 72px;
+        width: 330px;
+        height: 136px;
+        border-radius: 28px 28px 18px 18px;
+        background: #f5b23f;
+        transform: translateX(-50%);
+      }
+
+      .desk::after {
+        position: absolute;
+        left: 28px;
+        right: 28px;
+        bottom: -50px;
+        height: 64px;
+        border-radius: 0 0 18px 18px;
+        background: #9c6740;
+        content: "";
+      }
+
+      .book {
+        position: absolute;
+        display: block;
+        width: 88px;
+        height: 22px;
+        border-radius: 7px;
+      }
+
+      .red-book {
+        left: 104px;
+        background: #e65347;
+      }
+
+      .red-book.one {
+        top: 36px;
+      }
+
+      .red-book.two {
+        top: 62px;
+      }
+
+      .green-book {
+        left: 198px;
+        top: 54px;
+        background: #38a06f;
+      }
+
+      .kid {
+        position: absolute;
+        left: 56%;
+        bottom: 174px;
+        width: 120px;
+        height: 178px;
+      }
+
+      .kid .head {
+        position: absolute;
+        left: 28px;
+        top: 0;
+        width: 66px;
+        height: 66px;
+        border: 5px solid #172033;
+        border-radius: 50%;
+        background: #ffd59f;
+      }
+
+      .kid .shirt {
+        position: absolute;
+        left: 18px;
+        bottom: 0;
+        width: 88px;
+        height: 104px;
+        border: 5px solid #172033;
+        border-radius: 28px 28px 18px 18px;
+        background: #ffd54f;
+      }
+
+      .kid .magnifier {
+        position: absolute;
+        right: -12px;
+        top: 62px;
+        width: 54px;
+        height: 54px;
+        border: 6px solid #172033;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.38);
+      }
+
+      .kid .magnifier::after {
+        position: absolute;
+        right: -28px;
+        bottom: -18px;
+        width: 42px;
+        height: 9px;
+        border-radius: 99px;
+        background: #172033;
+        transform: rotate(38deg);
+        content: "";
+      }
+
+      .ball-object {
+        position: absolute;
+        right: 40px;
+        bottom: 62px;
+        width: 70px;
+        height: 70px;
+        border: 6px solid #172033;
+        border-radius: 50%;
+        background:
+          linear-gradient(90deg, transparent 45%, #172033 45% 55%, transparent 55%),
+          linear-gradient(0deg, transparent 45%, #172033 45% 55%, transparent 55%),
+          #58c7be;
+      }
+
+      .look-scene {
+        position: relative;
+        display: grid;
+        min-height: 470px;
+        overflow: hidden;
+        border-radius: 28px;
+        background:
+          radial-gradient(circle at 18% 18%, rgba(255, 255, 255, 0.56), transparent 9rem),
+          linear-gradient(180deg, var(--scene-sky, #cfeefe), var(--scene-floor, #fff7d9) 68%);
+        box-shadow: inset 0 -8px 0 rgba(23, 32, 51, 0.08);
+      }
+
+      .look-scene::before {
+        position: absolute;
+        inset: auto 0 0;
+        height: 25%;
+        background: var(--scene-ground, #f7d89a);
+        content: "";
+      }
+
+      .scene-object {
+        position: absolute;
+        display: grid;
+        place-items: center;
+        width: clamp(58px, 8vw, 96px);
+        min-height: clamp(58px, 8vw, 96px);
+        padding: 8px;
+        border: 5px solid rgba(23, 32, 51, 0.88);
+        border-radius: 28px;
+        color: #172033;
+        background: var(--object-color, #ffffff);
+        box-shadow: 0 12px 24px rgba(55, 84, 115, 0.16);
+        font-size: clamp(1.7rem, 4vw, 3.2rem);
+        font-weight: 900;
+        transform: translate(-50%, -50%) rotate(var(--tilt, 0deg));
+        animation: scene-pop 500ms ease both;
+      }
+
+      .scene-object span {
+        display: block;
+        color: #172033;
+        font-size: 0.72rem;
+        line-height: 1.05;
+        text-align: center;
+      }
+
+      .scene-object.is-hidden-round {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.82);
+      }
+
+      .scene-label {
+        position: absolute;
+        left: 24px;
+        top: 22px;
+        display: inline-flex;
+        align-items: center;
+        min-height: 38px;
+        padding: 0 14px;
+        border-radius: 999px;
+        color: #ffffff;
+        background: #385979;
+        font-weight: 900;
+      }
+
+      .mission-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      .mission-pill {
+        display: inline-grid;
+        place-items: center;
+        min-height: 34px;
+        padding: 0 12px;
+        border-radius: 999px;
+        color: #172033;
+        background: rgba(255, 255, 255, 0.76);
+        font-size: 0.9rem;
+        font-weight: 900;
+      }
+
+      .memory-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(94px, 1fr));
+        gap: 14px;
+        width: min(620px, 100%);
+        margin: 0 auto;
+      }
+
+      .count-grid {
+        grid-template-columns: repeat(4, minmax(82px, 1fr));
+      }
+
+      .memory-card {
+        display: grid;
+        place-items: center;
+        min-height: 142px;
+        padding: 16px 10px;
+        border: 2px solid rgba(23, 32, 51, 0.12);
+        border-radius: 24px;
+        color: #172033;
+        background: #ffffff;
+        box-shadow: 0 14px 24px rgba(55, 84, 115, 0.14);
+      }
+
+      .memory-card.is-missing {
+        border-style: dashed;
+        color: #456179;
+        background: rgba(255, 255, 255, 0.48);
+        box-shadow: inset 0 0 0 5px rgba(56, 89, 121, 0.08);
+      }
+
+      .path-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(82px, 1fr));
+        gap: 14px;
+        width: min(560px, 100%);
+        margin: 0 auto;
+      }
+
+      .path-cell {
+        position: relative;
+        display: grid;
+        place-items: center;
+        min-height: 128px;
+        border: 2px solid rgba(23, 32, 51, 0.14);
+        border-radius: 24px;
+        color: #172033;
+        background: rgba(255, 255, 255, 0.72);
+        box-shadow: 0 14px 24px rgba(55, 84, 115, 0.12);
+        font-size: 2rem;
+        font-weight: 900;
+      }
+
+      .path-cell.is-path {
+        border-color: rgba(245, 178, 63, 0.7);
+        background: #fff3a8;
+        animation: sequence-glow 900ms ease both;
+      }
+
+      .path-cell.is-selected {
+        color: #ffffff;
+        background: #385979;
+      }
+
+      .path-step {
+        display: grid;
+        place-items: center;
+        width: 54px;
+        height: 54px;
+        border-radius: 50%;
+        background: rgba(230, 83, 71, 0.92);
+        color: #ffffff;
+        font-size: 1.6rem;
+      }
+
+      .path-status {
+        min-height: 44px;
+        margin: 14px 0 18px;
+        color: #395168;
+        font-weight: 900;
+        text-align: center;
+      }
+
+      .world-strip,
+      .reward-strip,
+      .achievement-strip,
+      .vault-strip,
+      .mode-strip {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+      }
+
+      .world-card,
+      .reward-chip,
+      .achievement-chip,
+      .vault-card,
+      .mode-card {
+        display: inline-grid;
+        place-items: center;
+        min-height: 42px;
+        padding: 8px 14px;
+        border: 2px solid rgba(23, 32, 51, 0.12);
+        border-radius: 16px;
+        color: #172033;
+        background: rgba(255, 255, 255, 0.72);
+        font-weight: 900;
+      }
+
+      .world-card,
+      .mode-card {
+        cursor: pointer;
+        transition:
+          transform 170ms ease,
+          background 170ms ease,
+          color 170ms ease;
+      }
+
+      .world-card:hover,
+      .mode-card:hover {
+        transform: translateY(-2px);
+      }
+
+      .world-card.is-active,
+      .mode-card.is-active,
+      .vault-card.is-unlocked {
+        color: #ffffff;
+        background: #385979;
+      }
+
+      .logic-board,
+      .maze-board,
+      .robot-board {
+        display: grid;
+        gap: 12px;
+        width: min(680px, 100%);
+        margin: 0 auto 18px;
+        padding: 18px;
+        border-radius: 24px;
+        background: rgba(255, 255, 255, 0.62);
+      }
+
+      .logic-line {
+        display: grid;
+        place-items: center;
+        min-height: 54px;
+        border-radius: 16px;
+        color: #172033;
+        background: rgba(255, 255, 255, 0.82);
+        font-size: clamp(1.2rem, 3vw, 2rem);
+        font-weight: 900;
+      }
+
+      .maze-board {
+        grid-template-columns: repeat(4, minmax(54px, 1fr));
+      }
+
+      .maze-cell {
+        display: grid;
+        place-items: center;
+        min-height: 72px;
+        border-radius: 16px;
+        color: #172033;
+        background: rgba(255, 255, 255, 0.84);
+        font-weight: 900;
+      }
+
+      .maze-cell.is-wall {
+        color: #ffffff;
+        background: #385979;
+      }
+
+      .maze-cell.is-start {
+        background: #74ddb4;
+      }
+
+      .maze-cell.is-end {
+        background: #ffd65a;
+      }
+
+      .robot-board {
+        grid-template-columns: repeat(5, minmax(44px, 1fr));
+        align-items: center;
+      }
+
+      .robot-cell {
+        display: grid;
+        place-items: center;
+        min-height: 66px;
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.84);
+        font-weight: 900;
+      }
+
+      .robot-cell.is-robot {
+        background: #86d7ff;
+      }
+
+      .robot-cell.is-goal {
+        background: #ffd65a;
+      }
+
+      .command-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin: 16px 0;
+      }
+
+      .command-list span {
+        display: inline-grid;
+        place-items: center;
+        min-height: 42px;
+        padding: 0 12px;
+        border-radius: 999px;
+        color: #ffffff;
+        background: #385979;
+        font-weight: 900;
+      }
+
+      .team-progress {
+        width: min(680px, 100%);
+        height: 18px;
+        overflow: hidden;
+        margin: 18px auto 8px;
+        border-radius: 999px;
+        background: rgba(23, 32, 51, 0.12);
+      }
+
+      .team-progress span {
+        display: block;
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, #58c7be, #f5b23f, #e65347);
+      }
+
+      .obstacle-track {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(54px, 1fr));
+        align-items: center;
+        gap: 12px;
+        width: min(760px, 100%);
+        margin: 0 auto 18px;
+        padding: 18px;
+        border-radius: 26px;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.42));
+      }
+
+      .track-step {
+        display: grid;
+        place-items: center;
+        min-height: 92px;
+        border: 2px solid rgba(23, 32, 51, 0.12);
+        border-radius: 22px;
+        background: rgba(255, 255, 255, 0.84);
+        font-size: 2rem;
+        font-weight: 900;
+      }
+
+      .track-step.is-cleared {
+        background: #74ddb4;
+      }
+
+      .track-step.is-active {
+        color: #ffffff;
+        background: #e65347;
+        animation: pop 900ms ease-in-out infinite;
+      }
+
+      .mini-feedback {
+        min-height: 28px;
+        margin: 10px 0;
+        color: #e65347;
+        font-weight: 900;
+        text-align: center;
+      }
+
+      .jigsaw-board,
+      .match-board {
+        display: grid;
+        gap: 12px;
+        width: min(620px, 100%);
+        margin: 0 auto 18px;
+      }
+
+      .jigsaw-board {
+        grid-template-columns: repeat(3, minmax(76px, 1fr));
+      }
+
+      .jigsaw-tile,
+      .match-tile {
+        display: grid;
+        place-items: center;
+        min-height: 112px;
+        border: 2px solid rgba(23, 32, 51, 0.14);
+        border-radius: 22px;
+        color: #172033;
+        background: rgba(255, 255, 255, 0.86);
+        box-shadow: 0 14px 24px rgba(55, 84, 115, 0.12);
+        font-size: 2rem;
+        font-weight: 900;
+      }
+
+      .jigsaw-tile.is-empty {
+        border-style: dashed;
+        color: #456179;
+        background: rgba(255, 255, 255, 0.34);
+        box-shadow: inset 0 0 0 5px rgba(56, 89, 121, 0.08);
+      }
+
+      .match-board {
+        grid-template-columns: repeat(4, minmax(68px, 1fr));
+      }
+
+      .match-tile {
+        min-height: 96px;
+      }
+
+      .match-tile.is-found {
+        background: #74ddb4;
+      }
+
+      .match-tile.is-selected {
+        color: #ffffff;
+        background: #385979;
+      }
+
+      .team-panel {
+        width: min(720px, 100%);
+        margin: 18px 0;
+        padding: 14px;
+        border: 2px solid rgba(23, 32, 51, 0.1);
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.66);
+      }
+
+      .team-row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 12px;
+        align-items: center;
+        min-height: 42px;
+        color: #395168;
+        font-weight: 900;
+      }
+
+      .show-front .memory-card {
+        animation: card-pop 500ms ease both;
+      }
+
+      .icon-badge,
+      .mini-icon,
+      .card-back {
+        display: grid;
+        place-items: center;
+        border-radius: 999px;
+        color: #172033;
+        font-weight: 900;
+      }
+
+      .icon-badge {
+        width: 72px;
+        height: 72px;
+        margin-bottom: 9px;
+        font-size: 2.6rem;
+      }
+
+      .mini-icon {
+        width: 32px;
+        height: 32px;
+      }
+
+      .card-back {
+        width: 70px;
+        height: 70px;
+        color: #ffffff;
+        background: #385979;
+        font-size: 2.2rem;
+      }
+
+      .tone-gold,
+      .tone-amber {
+        background: #ffd65a;
+      }
+
+      .tone-coral,
+      .tone-rose {
+        background: #ff8a78;
+      }
+
+      .tone-blue,
+      .tone-cyan {
+        background: #86d7ff;
+      }
+
+      .tone-green,
+      .tone-mint {
+        background: #74ddb4;
+      }
+
+      .tone-violet {
+        background: #d7b8ff;
+      }
+
+      .sequence-stage {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 16px;
+        min-height: 330px;
+        padding: 60px 20px;
+      }
+
+      .sequence-orb {
+        display: grid;
+        place-items: center;
+        width: 148px;
+        min-height: 148px;
+        padding: 16px;
+        border: 7px solid rgba(23, 32, 51, 0.12);
+        border-radius: 50%;
+        color: #172033;
+        background: #fff3a8;
+        box-shadow: 0 20px 30px rgba(245, 178, 63, 0.2);
+        font-weight: 900;
+        text-align: center;
+        opacity: 0.3;
+        animation: sequence-glow 900ms ease both;
+      }
+
+      .question-box {
+        width: min(820px, 100%);
+        margin: 0 auto;
+        padding: clamp(18px, 3vw, 34px);
+        border-radius: 28px;
+        background: rgba(255, 255, 255, 0.62);
+      }
+
+      .choice-list {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .choice-list button {
+        min-height: 88px;
+        padding: 16px;
+        border-radius: 22px;
+        color: #172033;
+        background: #ffffff;
+        box-shadow: 0 14px 26px rgba(55, 84, 115, 0.15);
+      }
+
+      .icon-choice-list button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+      }
+
+      .sequence-answer {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        min-height: 54px;
+        margin: 18px 0;
+      }
+
+      .sequence-answer span {
+        display: inline-grid;
+        place-items: center;
+        min-height: 42px;
+        padding: 0 14px;
+        border-radius: 999px;
+        color: #ffffff;
+        background: #385979;
+        font-weight: 900;
+      }
+
+      .inline-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 18px;
+      }
+
+      .intro-actions {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .intro-actions .ghost-action {
+        display: inline-grid;
+        place-items: center;
+        text-decoration: none;
+      }
+
+      .feedback-panel,
+      .complete-panel {
+        display: grid;
+        place-items: center;
+        text-align: center;
+        animation: rise 260ms ease both;
+      }
+
+      .badge-result {
+        display: grid;
+        place-items: center;
+        width: 116px;
+        height: 116px;
+        margin-bottom: 18px;
+        border-radius: 50%;
+        color: #ffffff;
+        background: #e65347;
+        font-size: 4rem;
+        font-weight: 900;
+        box-shadow: 0 20px 34px rgba(230, 83, 71, 0.24);
+      }
+
+      .badge-result.is-correct {
+        background: #38a06f;
+        box-shadow: 0 20px 34px rgba(56, 160, 111, 0.24);
+      }
+
+      .trophy {
+        display: grid;
+        place-items: center;
+        width: 134px;
+        height: 134px;
+        margin-bottom: 18px;
+        border-radius: 38px;
+        color: #ffffff;
+        background: linear-gradient(135deg, #f5b23f, #e65347);
+        box-shadow: 0 24px 38px rgba(245, 178, 63, 0.28);
+        font-size: 5rem;
+        transform: rotate(-5deg);
+      }
+
+      .save-state {
+        min-height: 28px;
+        font-weight: 800;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translate(-50%, -52%);
+        }
+
+        50% {
+          transform: translate(-50%, -48%);
+        }
+      }
+
+      @keyframes pop {
+        0%,
+        100% {
+          transform: scale(1) rotate(-8deg);
+        }
+
+        50% {
+          transform: scale(1.08) rotate(8deg);
+        }
+      }
+
+      @keyframes card-pop {
+        from {
+          opacity: 0;
+          transform: translateY(12px) scale(0.98);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      @keyframes scene-pop {
+        from {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(0.8) rotate(var(--tilt, 0deg));
+        }
+
+        to {
+          opacity: 1;
+          transform: translate(-50%, -50%) scale(1) rotate(var(--tilt, 0deg));
+        }
+      }
+
+      @keyframes sequence-glow {
+        0% {
+          opacity: 0.25;
+          transform: scale(0.92);
+        }
+
+        35%,
+        70% {
+          opacity: 1;
+          transform: scale(1.08);
+          background: #74ddb4;
+        }
+
+        100% {
+          opacity: 0.45;
+          transform: scale(1);
+        }
+      }
+
+      @keyframes rise {
+        from {
+          opacity: 0;
+          transform: translateY(12px);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @media (max-width: 780px) {
+        .game-shell {
+          width: min(100% - 20px, 1180px);
+          padding-top: 10px;
+        }
+
+        .hud,
+        .mission-head {
+          align-items: stretch;
+          flex-direction: column;
+        }
+
+        .score-board {
+          grid-template-columns: auto auto 1fr;
+          justify-items: start;
+        }
+
+        .stars {
+          justify-self: end;
+          margin-top: 0;
+        }
+
+        .intro {
+          grid-template-columns: 1fr;
+          min-height: auto;
+        }
+
+        .intro-art {
+          min-height: 330px;
+          order: -1;
+        }
+
+        .detective {
+          transform: translate(-50%, -50%) scale(0.78);
+        }
+
+        .timer {
+          align-self: flex-start;
+          width: 96px;
+          min-width: 96px;
+          height: 96px;
+        }
+
+        .classroom-scene {
+          min-height: 420px;
+        }
+
+        .look-scene {
+          min-height: 420px;
+        }
+
+        .board {
+          right: 20px;
+          width: 190px;
+        }
+
+        .window {
+          left: 20px;
+          width: 138px;
+        }
+
+        .desk {
+          width: 270px;
+        }
+
+        .kid {
+          left: 54%;
+          transform: scale(0.88);
+        }
+
+        .memory-grid {
+          grid-template-columns: repeat(3, minmax(78px, 1fr));
+          gap: 10px;
+        }
+
+        .count-grid {
+          grid-template-columns: repeat(3, minmax(78px, 1fr));
+        }
+
+        .path-grid {
+          gap: 10px;
+        }
+
+        .path-cell {
+          min-height: 108px;
+        }
+
+        .memory-card {
+          min-height: 112px;
+          border-radius: 18px;
+        }
+
+        .choice-list {
+          grid-template-columns: 1fr;
+        }
+
+        .sequence-orb {
+          width: 116px;
+          min-height: 116px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        h1 {
+          font-size: 2.2rem;
+        }
+
+        h2 {
+          font-size: 1.9rem;
+        }
+
+        .feedback-panel,
+        .complete-panel,
+        .mission {
+          min-height: 520px;
+          padding: 18px;
+          border-radius: 22px;
+        }
+
+        .intro {
+          padding: 18px;
+          border-radius: 22px;
+        }
+
+        .intro-art {
+          min-height: 280px;
+        }
+
+        .detective {
+          top: 58%;
+          transform: translate(-50%, -50%) scale(0.64);
+        }
+
+        .planet-one {
+          width: 110px;
+          height: 110px;
+        }
+
+        .planet-two {
+          width: 86px;
+          height: 86px;
+        }
+
+        .classroom-scene {
+          min-height: 390px;
+        }
+
+        .look-scene {
+          min-height: 390px;
+        }
+
+        .board {
+          top: 44px;
+          width: 160px;
+          height: 104px;
+          font-size: 1.6rem;
+        }
+
+        .window {
+          width: 116px;
+          height: 104px;
+        }
+
+        .shelf {
+          right: 24px;
+          width: 150px;
+        }
+
+        .bag {
+          left: 28px;
+        }
+
+        .plant {
+          left: 88px;
+        }
+
+        .desk {
+          width: 232px;
+        }
+
+        .kid {
+          left: 50%;
+          transform: scale(0.74);
+        }
+
+        .memory-grid {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .icon-badge {
+          width: 54px;
+          height: 54px;
+          font-size: 2rem;
+        }
+
+        .memory-card {
+          min-height: 98px;
+          padding: 10px 6px;
+          font-size: 0.82rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="game-shell">
+      <section class="hud">
+        <div>
+          <p class="eyebrow">Nhiệm vụ hôm nay</p>
+          <h1>Thám Tử Nhí</h1>
+          <p>Rèn mắt tinh, nhớ nhanh, phản xạ tốt</p>
+        </div>
+        <div class="score-board" aria-label="Điểm hiện tại">
+          <span class="score" id="score">0</span>
+          <span class="score-label">điểm</span>
+          <span class="stars" id="stars" aria-label="Số sao">☆☆☆☆☆</span>
+        </div>
+      </section>
+
+      <section class="progress-track" id="progress-wrap" hidden>
+        <span id="progress"></span>
+      </section>
+
+      <div id="screen"></div>
+    </main>
+
+    <template id="intro-template">
+      <section class="screen intro">
+        <div class="intro-art" aria-hidden="true">
+          <div class="planet planet-one"></div>
+          <div class="planet planet-two"></div>
+          <div class="detective">
+            <span class="hat"></span>
+            <span class="face"></span>
+            <span class="glass"></span>
+            <span class="body"></span>
+          </div>
+          <div class="clue clue-a">?</div>
+          <div class="clue clue-b">!</div>
+        </div>
+        <div class="intro-copy">
+          <p class="eyebrow">Game quan sát và trí nhớ</p>
+          <h2>Vào vai thám tử nhí, tìm manh mối bằng đôi mắt thật tinh.</h2>
+          <div class="world-strip" aria-label="Các thế giới trong game">
+            <button class="world-card is-active" type="button" data-world-index="0">Detective Academy</button>
+            <button class="world-card" type="button" data-world-index="1">Mystery Town</button>
+            <button class="world-card" type="button" data-world-index="2">Robot Factory</button>
+            <button class="world-card" type="button" data-world-index="3">Ancient Island</button>
+          </div>
+          <div class="mode-strip" aria-label="Chế độ chơi">
+            <button class="mode-card is-active" type="button" data-mode="solo">Chơi cá nhân</button>
+            <button class="mode-card" type="button" data-mode="team">Chơi theo nhóm</button>
+          </div>
+          <div class="team-panel" id="team-panel" hidden>
+            <div class="team-row"><span>Đội Tia Chớp</span><strong id="team-a-preview">0 KP</strong></div>
+            <div class="team-row"><span>Đội Sao Nhỏ</span><strong id="team-b-preview">0 KP</strong></div>
+          </div>
+          <label>
+            Tên đội chơi
+            <input id="player-name" maxlength="24" value="Đội Mắt Tinh" />
+          </label>
+          <div class="intro-actions">
+            <button class="primary-action" type="button" id="start-button">Bắt đầu phiêu lưu</button>
+            <a class="ghost-action" href="little-abc-123.html" target="_blank" rel="noopener">Vườn ABC 123</a>
+          </div>
+        </div>
+      </section>
+    </template>
+
+    <script>
+      const state = {
+        playerName: "Đội Mắt Tinh",
+        adventure: null,
+        phase: "ready",
+        roundIndex: 0,
+        questionIndex: 0,
+        score: 0,
+        xp: 0,
+        coins: 0,
+        knowledgePoints: 0,
+        selectedWorldIndex: 0,
+        playMode: "solo",
+        teamScores: [0, 0],
+        activeTeamIndex: 0,
+        correct: 0,
+        answered: 0,
+        sequence: [],
+        path: [],
+        robotCommands: [],
+        obstacleIndex: 0,
+        tempMessage: "",
+        jigsawTiles: [],
+        matchSelected: [],
+        matchFound: [],
+        timer: null,
+        audio: null,
+      };
+
+      const screen = document.getElementById("screen");
+      const scoreNode = document.getElementById("score");
+      const starsNode = document.getElementById("stars");
+      const progressNode = document.getElementById("progress");
+      const progressWrap = document.getElementById("progress-wrap");
+
+      const colorLabels = {
+        gold: "vàng",
+        amber: "vàng",
+        coral: "cam đỏ",
+        rose: "hồng đỏ",
+        blue: "xanh dương",
+        cyan: "xanh dương",
+        green: "xanh lá",
+        mint: "xanh lá",
+        violet: "tím",
+      };
+
+      const worlds = [
+        ["Detective Academy", "Quan sát và trí nhớ cơ bản"],
+        ["Mystery Town", "Logic và suy luận thám tử"],
+        ["Robot Factory", "Tư duy tuần tự và command"],
+        ["Ancient Island", "Pattern, mê cung và mật mã"],
+      ];
+
+      const characterRoles = [
+        ["Detective", "Tăng Observation"],
+        ["Scientist", "Tăng Logic"],
+        ["Engineer", "Tăng Coding"],
+        ["Wizard", "Bonus đặc biệt"],
+      ];
+
+      const cardBank = [
+        ["sun", "Mặt trời", "☀", "gold"],
+        ["kite", "Diều", "◇", "coral"],
+        ["book", "Sách", "▤", "blue"],
+        ["leaf", "Lá", "◖", "green"],
+        ["moon", "Mặt trăng", "☾", "violet"],
+        ["ball", "Bóng", "●", "mint"],
+        ["star", "Ngôi sao", "★", "amber"],
+        ["pencil", "Bút chì", "▰", "rose"],
+        ["clock", "Đồng hồ", "◷", "cyan"],
+        ["apple", "Táo", "●", "rose"],
+        ["key", "Chìa khóa", "⚿", "gold"],
+        ["flower", "Bông hoa", "✿", "coral"],
+        ["boat", "Thuyền", "▱", "blue"],
+        ["bell", "Chuông", "◉", "amber"],
+        ["cup", "Cốc nước", "▢", "mint"],
+        ["rocket", "Tên lửa", "▲", "violet"],
+      ];
+
+      const sceneBank = [
+        {
+          type: "scene",
+          title: "Lớp Học Bí Mật",
+          prompt: "Quan sát căn phòng thật kỹ trước khi bảng manh mối đóng lại.",
+          observeSeconds: 11,
+          visual: "classroom",
+          questions: [
+            {
+              text: "Chiếc cặp màu xanh nằm ở đâu?",
+              options: ["Gần cửa sổ", "Dưới bảng", "Trên kệ sách"],
+              correct: "Gần cửa sổ",
+              clue: "Cặp xanh nằm cạnh chậu cây, sát cửa sổ bên trái.",
+            },
+            {
+              text: "Có mấy quyển sách màu đỏ trên bàn?",
+              options: ["1", "2", "3"],
+              correct: "2",
+              clue: "Hai quyển sách đỏ được xếp chồng ở giữa bàn học.",
+            },
+            {
+              text: "Bạn áo vàng đang cầm gì?",
+              options: ["Kính lúp", "Quả bóng", "Bút chì"],
+              correct: "Kính lúp",
+              clue: "Bạn áo vàng đang giơ kính lúp cạnh bàn học.",
+            },
+          ],
+        },
+        {
+          type: "scene",
+          title: "Công Viên Sắc Màu",
+          prompt: "Nhìn kỹ sân chơi và ghi nhớ màu sắc, vị trí, số lượng.",
+          observeSeconds: 10,
+          visual: {
+            label: "Công viên",
+            sky: "#c9f2ff",
+            floor: "#efffdd",
+            ground: "#8de0a6",
+            items: [
+              { icon: "◇", label: "diều đỏ", color: "#ff8a78", x: 18, y: 30, tilt: -10 },
+              { icon: "●", label: "bóng xanh", color: "#86d7ff", x: 72, y: 72, tilt: 8 },
+              { icon: "★", label: "ngôi sao vàng", color: "#ffd65a", x: 48, y: 42, tilt: 4 },
+              { icon: "▱", label: "ghế nâu", color: "#d9a266", x: 26, y: 74, tilt: 0 },
+              { icon: "✿", label: "hoa hồng", color: "#ffb1cb", x: 86, y: 52, tilt: -6 },
+            ],
+          },
+          questions: [
+            {
+              text: "Con diều màu gì?",
+              options: ["Đỏ", "Xanh", "Vàng"],
+              correct: "Đỏ",
+              clue: "Con diều đỏ bay ở góc trái phía trên.",
+            },
+            {
+              text: "Quả bóng nằm ở phía nào?",
+              options: ["Bên phải", "Bên trái", "Ở giữa trên cao"],
+              correct: "Bên phải",
+              clue: "Quả bóng xanh nằm sát bên phải, gần mặt đất.",
+            },
+            {
+              text: "Bông hoa nằm gần đồ vật nào?",
+              options: ["Quả bóng", "Chiếc ghế", "Con diều"],
+              correct: "Quả bóng",
+              clue: "Bông hoa ở bên phải, khá gần quả bóng xanh.",
+            },
+          ],
+        },
+        {
+          type: "scene",
+          title: "Thư Viện Yên Tĩnh",
+          prompt: "Quan sát kệ sách và các đồ vật nhỏ trong thư viện.",
+          observeSeconds: 10,
+          visual: {
+            label: "Thư viện",
+            sky: "#f5e7ff",
+            floor: "#fff5d6",
+            ground: "#e4c585",
+            items: [
+              { icon: "▤", label: "sách xanh", color: "#86d7ff", x: 20, y: 64, tilt: -4 },
+              { icon: "◷", label: "đồng hồ", color: "#ffd65a", x: 50, y: 24, tilt: 0 },
+              { icon: "☾", label: "đèn tím", color: "#d7b8ff", x: 78, y: 38, tilt: 10 },
+              { icon: "▰", label: "bút hồng", color: "#ffb1cb", x: 38, y: 74, tilt: 8 },
+              { icon: "⚿", label: "chìa khóa", color: "#ffd65a", x: 68, y: 72, tilt: -9 },
+            ],
+          },
+          questions: [
+            {
+              text: "Đồng hồ nằm ở đâu?",
+              options: ["Phía trên giữa", "Góc dưới trái", "Cạnh chìa khóa"],
+              correct: "Phía trên giữa",
+              clue: "Đồng hồ vàng nằm cao nhất, gần giữa khung cảnh.",
+            },
+            {
+              text: "Vật màu tím là gì?",
+              options: ["Đèn", "Sách", "Bút"],
+              correct: "Đèn",
+              clue: "Chiếc đèn tím nằm phía phải phía trên.",
+            },
+            {
+              text: "Chìa khóa nằm gần phía nào?",
+              options: ["Dưới bên phải", "Trên bên trái", "Giữa trên"],
+              correct: "Dưới bên phải",
+              clue: "Chìa khóa vàng nằm ở nửa phải, gần sàn.",
+            },
+          ],
+        },
+        {
+          type: "scene",
+          title: "Bếp Nhỏ Vui Vẻ",
+          prompt: "Ghi nhớ thật nhanh các món đồ trong căn bếp.",
+          observeSeconds: 10,
+          visual: {
+            label: "Căn bếp",
+            sky: "#ffe9df",
+            floor: "#e7f9ff",
+            ground: "#f3c987",
+            items: [
+              { icon: "●", label: "quả táo", color: "#ff8a78", x: 18, y: 68, tilt: -5 },
+              { icon: "▢", label: "cốc xanh", color: "#74ddb4", x: 42, y: 52, tilt: 5 },
+              { icon: "◉", label: "chuông vàng", color: "#ffd65a", x: 70, y: 58, tilt: -10 },
+              { icon: "▤", label: "sổ tay", color: "#86d7ff", x: 58, y: 78, tilt: 6 },
+              { icon: "✿", label: "khăn hoa", color: "#ffb1cb", x: 84, y: 34, tilt: 12 },
+            ],
+          },
+          questions: [
+            {
+              text: "Quả táo nằm ở phía nào?",
+              options: ["Bên trái", "Bên phải", "Trên cao"],
+              correct: "Bên trái",
+              clue: "Quả táo đỏ nằm ở góc trái phía dưới.",
+            },
+            {
+              text: "Cốc nước có màu gì?",
+              options: ["Xanh lá", "Đỏ", "Tím"],
+              correct: "Xanh lá",
+              clue: "Cốc xanh nằm hơi lệch trái ở giữa cảnh.",
+            },
+            {
+              text: "Vật nào nằm cao nhất?",
+              options: ["Khăn hoa", "Sổ tay", "Quả táo"],
+              correct: "Khăn hoa",
+              clue: "Khăn hoa ở góc phải phía trên.",
+            },
+          ],
+        },
+      ];
+
+      function shuffle(items) {
+        const copy = items.slice();
+        for (let index = copy.length - 1; index > 0; index -= 1) {
+          const swapIndex = Math.floor(Math.random() * (index + 1));
+          [copy[index], copy[swapIndex]] = [copy[swapIndex], copy[index]];
+        }
+        return copy;
+      }
+
+      function sample(items, count) {
+        return shuffle(items).slice(0, count);
+      }
+
+      function clone(value) {
+        return JSON.parse(JSON.stringify(value));
+      }
+
+      function randomItem(items) {
+        return items[Math.floor(Math.random() * items.length)];
+      }
+
+      function escapeHtml(value) {
+        return String(value)
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;");
+      }
+
+      function buildSceneRound() {
+        const round = clone(randomItem(sceneBank));
+        round.questions = sample(round.questions, 2).map((question) => ({
+          ...question,
+          options: shuffle(question.options),
+        }));
+        return round;
+      }
+
+      function buildGridRound() {
+        const cards = sample(cardBank, 9);
+        const target = randomItem(cards);
+        return {
+          type: "grid",
+          title: randomItem(["Kệ Đồ Nhớ Vị Trí", "Bản Đồ Kho Báu", "Hộp Bí Mật 3x3"]),
+          prompt: "Ghi nhớ vị trí các món đồ, rồi tìm đúng ô được yêu cầu.",
+          observeSeconds: randomItem([7, 8, 9]),
+          targetId: target[0],
+          targetText: `${target[1]} nằm ở ô nào?`,
+          cards,
+        };
+      }
+
+      function buildSequenceRound() {
+        const length = randomItem([4, 5, 6]);
+        const sequenceCards = sample(cardBank, length);
+        const choices = shuffle([...sequenceCards, ...sample(cardBank.filter((card) => !sequenceCards.some((item) => item[0] === card[0])), 2)]);
+        return {
+          type: "sequence",
+          title: randomItem(["Chuỗi Ký Ức Lấp Lánh", "Tín Hiệu Bí Mật", "Đường Đi Của Sao Nhỏ"]),
+          prompt: "Nhớ thứ tự các biểu tượng xuất hiện rồi bấm lại đúng chuỗi.",
+          observeSeconds: randomItem([6, 7, 8]),
+          sequence: sequenceCards.map((card) => card[0]),
+          choices,
+        };
+      }
+
+      function buildMissingRound() {
+        const cards = sample(cardBank, 9);
+        const target = randomItem(cards);
+        const distractors = sample(cards.filter((card) => card[0] !== target[0]), 3);
+        return {
+          type: "missing",
+          title: randomItem(["Vật Gì Biến Mất?", "Manh Mối Tàng Hình", "Ai Nhanh Mắt Hơn?"]),
+          prompt: "Nhìn kỹ toàn bộ đồ vật, lát nữa một món sẽ biến mất.",
+          observeSeconds: randomItem([7, 8, 9]),
+          targetId: target[0],
+          targetText: "Món đồ nào vừa biến mất?",
+          clue: `${target[1]} là món đã biến mất khỏi bảng quan sát.`,
+          options: shuffle([target, ...distractors]),
+          cards,
+        };
+      }
+
+      function buildCountRound() {
+        const cards = sample(cardBank, 12);
+        const targetColor = randomItem(cards)[3];
+        const correctCount = cards.filter((card) => card[3] === targetColor).length;
+        const options = shuffle(
+          [...new Set([correctCount, Math.max(1, correctCount - 1), correctCount + 1, correctCount + 2])]
+            .slice(0, 4)
+            .map(String),
+        );
+        return {
+          type: "count",
+          title: randomItem(["Đếm Nhanh Theo Màu", "Mắt Tinh Đếm Giỏi", "Săn Màu Siêu Tốc"]),
+          prompt: "Quan sát thật nhanh và đếm nhóm đồ vật có cùng màu.",
+          observeSeconds: randomItem([8, 9, 10]),
+          targetText: `Có bao nhiêu món màu ${colorLabels[targetColor] || targetColor}?`,
+          correct: String(correctCount),
+          clue: `Có ${correctCount} món thuộc nhóm màu ${colorLabels[targetColor] || targetColor}.`,
+          cards,
+        };
+      }
+
+      function buildPathRound() {
+        const path = sample([0, 1, 2, 3, 4, 5, 6, 7, 8], randomItem([4, 5]));
+        return {
+          type: "path",
+          title: randomItem(["Đường Đi Bí Mật", "Bước Chân Thám Tử", "Mật Mã 9 Ô"]),
+          prompt: "Ghi nhớ thứ tự các ô sáng lên, rồi bấm lại đúng đường đi.",
+          observeSeconds: randomItem([6, 7, 8]),
+          path,
+          targetText: `Bấm lại đúng ${path.length} ô theo thứ tự vừa thấy.`,
+          clue: `Đường đi đúng là: ${path.map((cell) => cell + 1).join(" → ")}.`,
+        };
+      }
+
+      function buildLogicRound() {
+        const puzzles = [
+          {
+            subtype: "NUMBER_PATTERN",
+            title: "Mật Mã Số Học",
+            board: ["2 → 4", "3 → 6", "4 → 8", "5 → ?"],
+            question: "Số nào thay dấu hỏi?",
+            options: ["8", "10", "12", "15"],
+            correct: "10",
+            clue: "Mỗi số được nhân đôi, nên 5 → 10.",
+          },
+          {
+            subtype: "ODD_ONE_OUT",
+            title: "Tìm Vật Khác Biệt",
+            board: ["Táo", "Cam", "Chuối", "Bút chì"],
+            question: "Vật nào không cùng nhóm?",
+            options: ["Táo", "Cam", "Chuối", "Bút chì"],
+            correct: "Bút chì",
+            clue: "Táo, cam, chuối là trái cây; bút chì là đồ dùng học tập.",
+          },
+          {
+            subtype: "RELATIONSHIP",
+            title: "Quan Hệ Bí Mật",
+            board: ["Chim → Tổ", "Cá → Nước", "Ong → ?"],
+            question: "Ong thường gắn với nơi nào?",
+            options: ["Tổ ong", "Hang đá", "Bể cá", "Sân bóng"],
+            correct: "Tổ ong",
+            clue: "Chim ở tổ, cá ở nước, ong ở tổ ong.",
+          },
+          {
+            subtype: "CONDITIONAL_LOGIC",
+            title: "Suy Luận Điều Kiện",
+            board: ["Nếu trời mưa thì mang ô.", "Hôm nay trời mưa."],
+            question: "Bạn nhỏ nên làm gì?",
+            options: ["Mang ô", "Mang vợt", "Tưới cây", "Đeo kính bơi"],
+            correct: "Mang ô",
+            clue: "Điều kiện đã xảy ra, nên hành động đúng là mang ô.",
+          },
+        ];
+        const puzzle = clone(randomItem(puzzles));
+        return {
+          type: "logic",
+          title: puzzle.title,
+          prompt: `Logic Puzzle - ${puzzle.subtype}`,
+          observeSeconds: 5,
+          board: puzzle.board,
+          question: puzzle.question,
+          options: shuffle(puzzle.options),
+          correct: puzzle.correct,
+          clue: puzzle.clue,
+          difficulty: "EASY",
+        };
+      }
+
+      function buildPatternRound() {
+        const patterns = [
+          {
+            title: "Chuỗi Màu Bí Ẩn",
+            board: ["Đỏ", "Xanh", "Đỏ", "Xanh", "?"],
+            question: "Màu tiếp theo là gì?",
+            options: ["Đỏ", "Xanh", "Vàng", "Tím"],
+            correct: "Đỏ",
+            clue: "Quy luật lặp lại Đỏ - Xanh.",
+          },
+          {
+            title: "Hình Dạng Luân Phiên",
+            board: ["●", "■", "▲", "●", "■", "?"],
+            question: "Hình tiếp theo là gì?",
+            options: ["▲", "●", "■", "★"],
+            correct: "▲",
+            clue: "Quy luật là tròn, vuông, tam giác rồi lặp lại.",
+          },
+        ];
+        const puzzle = clone(randomItem(patterns));
+        return {
+          type: "pattern",
+          title: puzzle.title,
+          prompt: "Tìm quy luật xuất hiện trong chuỗi.",
+          observeSeconds: 5,
+          board: puzzle.board,
+          question: puzzle.question,
+          options: shuffle(puzzle.options),
+          correct: puzzle.correct,
+          clue: puzzle.clue,
+          difficulty: "EASY",
+        };
+      }
+
+      function buildMathRound() {
+        const a = randomItem([4, 5, 6, 7, 8, 9]);
+        const b = randomItem([2, 3, 4, 5]);
+        const correct = a + b;
+        return {
+          type: "math",
+          title: "Bài Toán Manh Mối",
+          prompt: "Giải nhanh bài toán để mở khóa manh mối.",
+          observeSeconds: 4,
+          board: [`${a} + ${b} = ?`],
+          question: "Kết quả đúng là gì?",
+          options: shuffle([correct, correct - 1, correct + 1, correct + 2].map(String)),
+          correct: String(correct),
+          clue: `${a} cộng ${b} bằng ${correct}.`,
+          difficulty: "EASY",
+        };
+      }
+
+      function buildObstacleMathRound() {
+        const challenges = Array.from({ length: 4 }).map((_, index) => {
+          const a = randomItem([3, 4, 5, 6, 7, 8, 9, 10]);
+          const b = randomItem([2, 3, 4, 5, 6]);
+          const operation = index % 2 === 0 ? "+" : "-";
+          const left = operation === "+" ? a : a + b;
+          const correct = operation === "+" ? a + b : a;
+          return {
+            question: `${left} ${operation} ${b} = ?`,
+            correct: String(correct),
+            options: shuffle([correct, correct - 1, correct + 1, correct + 2].map(String)),
+          };
+        });
+        return {
+          type: "obstacle-math",
+          title: "Toán Vượt Chướng Ngại Vật",
+          prompt: "Trả lời đúng phép tính để thám tử nhảy qua chướng ngại vật và nhận điểm thưởng.",
+          observeSeconds: 3,
+          challenges,
+          clue: "Mỗi phép tính đúng giúp vượt thêm một chướng ngại vật.",
+          difficulty: "EASY",
+        };
+      }
+
+      function buildJigsawRound() {
+        return {
+          type: "jigsaw",
+          title: "Xếp Hình Kho Báu",
+          prompt: "Di chuyển các mảnh cạnh ô trống để ghép lại bản đồ kho báu.",
+          observeSeconds: 3,
+          initialTiles: [1, 2, 3, 4, 5, 6, 7, null, 8],
+          solvedTiles: [1, 2, 3, 4, 5, 6, 7, 8, null],
+          clue: "Ô số 8 cần nằm trước ô trống ở góc cuối.",
+          difficulty: "MEDIUM",
+        };
+      }
+
+      function buildMatchingRound() {
+        const selected = sample(cardBank, 6);
+        const tiles = shuffle([...selected, ...selected].map((card, index) => ({
+          uid: `${card[0]}-${index}`,
+          id: card[0],
+          label: card[1],
+          icon: card[2],
+          color: card[3],
+        })));
+        return {
+          type: "matching",
+          title: "Tìm Hình Giống Nhau",
+          prompt: "Lật thẻ và tìm đủ các cặp hình giống nhau để mở khóa rương thưởng.",
+          observeSeconds: 3,
+          tiles,
+          clue: "Hãy nhớ vị trí sau mỗi lần lật thẻ để ghép đúng cặp.",
+          difficulty: "EASY",
+        };
+      }
+
+      function buildMazeRound() {
+        return {
+          type: "maze",
+          title: "Mê Cung Cổ Đại",
+          prompt: "Tìm đường đi từ S đến E, tránh các ô tường.",
+          observeSeconds: 6,
+          grid: [
+            ["S", "W", "W", "W"],
+            [".", ".", ".", "W"],
+            ["W", "W", ".", "W"],
+            ["W", ".", ".", "E"],
+          ],
+          question: "Đường nào đưa thám tử tới E?",
+          options: shuffle(["Xuống → Phải → Phải → Xuống → Xuống → Phải", "Phải → Phải → Xuống", "Xuống → Xuống → Phải", "Phải → Xuống → Phải → Xuống"]),
+          correct: "Xuống → Phải → Phải → Xuống → Xuống → Phải",
+          clue: "Từ S đi xuống, sang phải hai lần, xuống hai lần, rồi sang phải tới E.",
+          difficulty: "MEDIUM",
+        };
+      }
+
+      function buildRobotRound() {
+        return {
+          type: "robot",
+          title: "Cứu Robot Trong Nhà Máy",
+          prompt: "Sắp xếp command để robot đi tới ngôi sao năng lượng.",
+          observeSeconds: 5,
+          targetText: "Chọn đúng chuỗi command cho robot.",
+          commands: ["MOVE", "MOVE", "RIGHT", "MOVE"],
+          choices: ["MOVE", "RIGHT", "LEFT", "REPEAT"],
+          clue: "Robot cần MOVE, MOVE, RIGHT, MOVE.",
+          difficulty: "MEDIUM",
+        };
+      }
+
+      function buildDeductionRound() {
+        const puzzles = [
+          {
+            title: "Vụ Án Chiếc Bánh Biến Mất",
+            board: ["Mai nói: Mình thấy Bình ở thư viện.", "Bình nói: Mình không vào bếp.", "Có vụn bánh trên áo Bình."],
+            question: "Ai đáng nghi nhất?",
+            options: ["Bình", "Mai", "Cô giáo", "Không ai"],
+            correct: "Bình",
+            clue: "Vụn bánh trên áo Bình là manh mối mạnh nhất.",
+          },
+          {
+            title: "Ai Cầm Chìa Khóa?",
+            board: ["An chỉ cầm sách.", "Vy cầm đồ màu vàng.", "Chìa khóa màu vàng."],
+            question: "Ai có thể đang cầm chìa khóa?",
+            options: ["Vy", "An", "Cả hai", "Không ai"],
+            correct: "Vy",
+            clue: "Chìa khóa màu vàng và Vy cầm đồ màu vàng.",
+          },
+        ];
+        const puzzle = clone(randomItem(puzzles));
+        return {
+          type: "deduction",
+          title: puzzle.title,
+          prompt: "Đọc manh mối và suy luận như một thám tử.",
+          observeSeconds: 6,
+          board: puzzle.board,
+          question: puzzle.question,
+          options: shuffle(puzzle.options),
+          correct: puzzle.correct,
+          clue: puzzle.clue,
+          difficulty: "EASY",
+        };
+      }
+
+      function buildAdventure() {
+        const required = [buildSceneRound(), buildObstacleMathRound(), buildMatchingRound(), buildJigsawRound(), buildLogicRound(), buildRobotRound()];
+        const extras = sample(
+          [buildSequenceRound, buildMissingRound, buildCountRound, buildPathRound, buildPatternRound, buildMathRound, buildMazeRound, buildDeductionRound],
+          4,
+        ).map((builder) => builder());
+        return {
+          sessionId: Date.now().toString(36),
+          mission: randomItem(["Vụ án chiếc bánh biến mất", "Cứu robot khỏi nhà máy", "Mật mã trên đảo cổ", "Kho tri thức không gian"]),
+          world: worlds[state.selectedWorldIndex] || randomItem(worlds),
+          character: randomItem(characterRoles),
+          mode: state.playMode,
+          rounds: shuffle([...required, ...extras]),
+        };
+      }
+
+      function totalQuestions() {
+        return (state.adventure?.rounds || []).reduce((total, round) => total + (round.type === "scene" ? round.questions.length : 1), 0);
+      }
+
+      function stars() {
+        return Math.max(0, Math.min(5, Math.ceil(state.score / 170)));
+      }
+
+      function updateHud() {
+        const total = totalQuestions();
+        scoreNode.textContent = state.score;
+        starsNode.textContent = "★".repeat(stars()) + "☆".repeat(5 - stars());
+        progressNode.style.width = `${total ? Math.round((state.answered / total) * 100) : 0}%`;
+        progressWrap.hidden = state.phase === "ready";
+      }
+
+      function tone(kind) {
+        if (!window.AudioContext) return;
+        state.audio ||= new AudioContext();
+        const context = state.audio;
+        const oscillator = context.createOscillator();
+        const gain = context.createGain();
+        const frequencies = { start: 392, ready: 523, success: 784, miss: 220, tap: 440 };
+        oscillator.frequency.value = frequencies[kind];
+        oscillator.type = kind === "miss" ? "triangle" : "sine";
+        gain.gain.setValueAtTime(0.001, context.currentTime);
+        gain.gain.exponentialRampToValueAtTime(kind === "miss" ? 0.07 : 0.11, context.currentTime + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001, context.currentTime + 0.18);
+        oscillator.connect(gain);
+        gain.connect(context.destination);
+        oscillator.start();
+        oscillator.stop(context.currentTime + 0.2);
+      }
+
+      function renderIntro() {
+        state.phase = "ready";
+        updateHud();
+        screen.innerHTML = document.getElementById("intro-template").innerHTML;
+        bindIntroControls();
+        document.getElementById("start-button").addEventListener("click", () => {
+          state.playerName = document.getElementById("player-name").value.trim() || "Đội Mắt Tinh";
+          state.adventure = buildAdventure();
+          state.roundIndex = 0;
+          state.questionIndex = 0;
+          state.score = 0;
+          state.xp = 0;
+          state.coins = 0;
+          state.knowledgePoints = 0;
+          state.teamScores = [0, 0];
+          state.activeTeamIndex = 0;
+          state.correct = 0;
+          state.answered = 0;
+          state.tempMessage = "";
+          startRound();
+        });
+      }
+
+      function bindIntroControls() {
+        const worldButtons = [...screen.querySelectorAll("[data-world-index]")];
+        const modeButtons = [...screen.querySelectorAll("[data-mode]")];
+        const teamPanel = document.getElementById("team-panel");
+        worldButtons.forEach((button) => {
+          button.classList.toggle("is-active", Number(button.dataset.worldIndex) === state.selectedWorldIndex);
+          button.addEventListener("click", () => {
+            state.selectedWorldIndex = Number(button.dataset.worldIndex);
+            worldButtons.forEach((item) => item.classList.toggle("is-active", item === button));
+            tone("tap");
+          });
+        });
+        modeButtons.forEach((button) => {
+          button.classList.toggle("is-active", button.dataset.mode === state.playMode);
+          button.addEventListener("click", () => {
+            state.playMode = button.dataset.mode;
+            modeButtons.forEach((item) => item.classList.toggle("is-active", item === button));
+            teamPanel.hidden = state.playMode !== "team";
+            tone("tap");
+          });
+        });
+        teamPanel.hidden = state.playMode !== "team";
+      }
+
+      function currentRound() {
+        return state.adventure?.rounds[state.roundIndex];
+      }
+
+      function startRound() {
+        const round = currentRound();
+        if (!round) {
+          renderComplete();
+          return;
+        }
+
+        state.phase = "observe";
+        state.sequence = [];
+        state.path = [];
+        state.robotCommands = [];
+        state.obstacleIndex = 0;
+        state.tempMessage = "";
+        state.jigsawTiles = [];
+        state.matchSelected = [];
+        state.matchFound = [];
+        clearInterval(state.timer);
+        let remaining = round.observeSeconds;
+        tone("start");
+        renderObserve(remaining);
+        state.timer = setInterval(() => {
+          remaining -= 1;
+          if (remaining <= 0) {
+            clearInterval(state.timer);
+            tone("ready");
+            renderAnswer();
+            return;
+          }
+          renderObserve(remaining);
+        }, 1000);
+      }
+
+      function renderObserve(remaining) {
+        const round = currentRound();
+        updateHud();
+        screen.innerHTML = `
+          <section class="screen mission">
+            <div class="mission-head">
+              <div>
+                <p class="eyebrow">Màn ${state.roundIndex + 1} / ${state.adventure.rounds.length}</p>
+                <h2>${escapeHtml(round.title)}</h2>
+                <p>${escapeHtml(round.prompt)}</p>
+                <div class="mission-meta">
+                  <span class="mission-pill">Lượt chơi ngẫu nhiên</span>
+                  <span class="mission-pill">Mã ${escapeHtml(state.adventure.sessionId)}</span>
+                  <span class="mission-pill">${escapeHtml(state.adventure.world[0])}</span>
+                  <span class="mission-pill">${escapeHtml(state.adventure.character[0])}</span>
+                  ${teamMissionPills()}
+                </div>
+              </div>
+              <div class="timer"><span>${remaining}</span>giây</div>
+            </div>
+            ${observeContent(round)}
+          </section>
+        `;
+      }
+
+      function observeContent(round) {
+        if (round.type === "scene") {
+          if (round.visual === "classroom") {
+            return `
+              <div class="classroom-scene" aria-label="Khung cảnh lớp học cần quan sát">
+                <div class="window"><span></span></div>
+                <div class="board">A B C</div>
+                <div class="plant"></div>
+                <div class="bag"></div>
+                <div class="shelf"><span></span><span></span><span></span></div>
+                <div class="desk">
+                  <span class="book red-book one"></span>
+                  <span class="book red-book two"></span>
+                  <span class="book green-book"></span>
+                </div>
+                <div class="kid">
+                  <span class="head"></span>
+                  <span class="shirt"></span>
+                  <span class="magnifier"></span>
+                </div>
+                <div class="ball-object"></div>
+              </div>
+            `;
+          }
+
+          return sceneVisual(round.visual);
+        }
+
+        if (round.type === "grid" || round.type === "missing") {
+          return `<div class="memory-grid show-front">${round.cards.map(cardFront).join("")}</div>`;
+        }
+
+        if (round.type === "count") {
+          return `<div class="memory-grid count-grid show-front">${round.cards.map(cardFront).join("")}</div>`;
+        }
+
+        if (round.type === "path") {
+          return pathGrid(round, true);
+        }
+
+        if (["logic", "pattern", "math", "deduction"].includes(round.type)) {
+          return logicBoard(round);
+        }
+
+        if (round.type === "maze") {
+          return mazeBoard(round);
+        }
+
+        if (round.type === "robot") {
+          return robotBoard();
+        }
+
+        if (round.type === "obstacle-math") {
+          return obstacleTrack(round);
+        }
+
+        if (round.type === "jigsaw") {
+          return jigsawBoard(round.initialTiles);
+        }
+
+        if (round.type === "matching") {
+          return matchBoard(round, true);
+        }
+
+        if (round.type === "sequence") {
+          return `
+          <div class="sequence-stage">
+            ${round.sequence
+              .map((id, index) => `<div class="sequence-orb" style="animation-delay:${index * 450}ms">${escapeHtml(choiceName(round, id))}</div>`)
+              .join("")}
+          </div>
+          `;
+        }
+
+        return "";
+      }
+
+      function teamMissionPills() {
+        if (state.playMode !== "team") return "";
+        return `
+          <span class="mission-pill">Lượt: ${state.activeTeamIndex === 0 ? "Đội Tia Chớp" : "Đội Sao Nhỏ"}</span>
+          <span class="mission-pill">Tia Chớp ${state.teamScores[0]} KP</span>
+          <span class="mission-pill">Sao Nhỏ ${state.teamScores[1]} KP</span>
+        `;
+      }
+
+      function sceneVisual(visual) {
+        return `
+          <div
+            class="look-scene"
+            aria-label="Khung cảnh ${escapeHtml(visual.label)} cần quan sát"
+            style="--scene-sky:${visual.sky}; --scene-floor:${visual.floor}; --scene-ground:${visual.ground};"
+          >
+            <span class="scene-label">${escapeHtml(visual.label)}</span>
+            ${visual.items
+              .map(
+                (item, index) => `
+                  <div
+                    class="scene-object"
+                    style="left:${item.x}%; top:${item.y}%; --object-color:${item.color}; --tilt:${item.tilt || 0}deg; animation-delay:${index * 80}ms"
+                    aria-label="${escapeHtml(item.label)}"
+                  >
+                    ${escapeHtml(item.icon)}
+                    <span>${escapeHtml(item.label)}</span>
+                  </div>
+                `,
+              )
+              .join("")}
+          </div>
+        `;
+      }
+
+      function logicBoard(round) {
+        return `
+          <div class="logic-board">
+            ${round.board.map((line) => `<div class="logic-line">${escapeHtml(line)}</div>`).join("")}
+          </div>
+        `;
+      }
+
+      function mazeBoard(round) {
+        return `
+          <div class="maze-board">
+            ${round.grid
+              .flat()
+              .map((cell) => {
+                const classes = ["maze-cell", cell === "W" ? "is-wall" : "", cell === "S" ? "is-start" : "", cell === "E" ? "is-end" : ""]
+                  .filter(Boolean)
+                  .join(" ");
+                return `<div class="${classes}">${cell === "." ? "" : escapeHtml(cell)}</div>`;
+              })
+              .join("")}
+          </div>
+        `;
+      }
+
+      function robotBoard() {
+        return `
+          <div class="robot-board" aria-label="Robot cần đi đến ngôi sao">
+            <div class="robot-cell is-robot">🤖</div>
+            <div class="robot-cell"></div>
+            <div class="robot-cell"></div>
+            <div class="robot-cell"></div>
+            <div class="robot-cell is-goal">★</div>
+          </div>
+        `;
+      }
+
+      function obstacleTrack(round) {
+        return `
+          <div class="obstacle-track" aria-label="Đường vượt chướng ngại vật">
+            <div class="track-step ${state.obstacleIndex >= 0 ? "is-cleared" : ""}">🕵</div>
+            ${round.challenges
+              .map((_, index) => `<div class="track-step ${index < state.obstacleIndex ? "is-cleared" : index === state.obstacleIndex ? "is-active" : ""}">▲</div>`)
+              .join("")}
+          </div>
+        `;
+      }
+
+      function jigsawBoard(tiles) {
+        return `
+          <div class="jigsaw-board" aria-label="Bảng xếp hình">
+            ${tiles
+              .map((tile, index) => `
+                <button class="jigsaw-tile ${tile === null ? "is-empty" : ""}" type="button" data-jigsaw-index="${index}">
+                  ${tile === null ? "Trống" : tile}
+                </button>
+              `)
+              .join("")}
+          </div>
+        `;
+      }
+
+      function matchBoard(round, reveal) {
+        return `
+          <div class="match-board" aria-label="Bảng tìm hình giống nhau">
+            ${round.tiles
+              .map((tile, index) => {
+                const visible = reveal || state.matchFound.includes(tile.uid) || state.matchSelected.includes(index);
+                const classes = [
+                  "match-tile",
+                  state.matchFound.includes(tile.uid) ? "is-found" : "",
+                  state.matchSelected.includes(index) ? "is-selected" : "",
+                ].filter(Boolean).join(" ");
+                return `<button class="${classes}" type="button" data-match-index="${index}">${visible ? escapeHtml(tile.icon) : "?"}</button>`;
+              })
+              .join("")}
+          </div>
+        `;
+      }
+
+      function missingPreview(round) {
+        return `
+          <div class="memory-grid show-front">
+            ${round.cards
+              .map((card) => (card[0] === round.targetId ? missingCard() : cardFront(card)))
+              .join("")}
+          </div>
+        `;
+      }
+
+      function missingCard() {
+        return `
+          <button class="memory-card is-missing" type="button" aria-label="Ô trống">
+            <span class="card-back">?</span>
+            <span>Biến mất</span>
+          </button>
+        `;
+      }
+
+      function pathGrid(round, reveal) {
+        return `
+          <div class="path-grid" aria-label="Bảng đường đi 9 ô">
+            ${Array.from({ length: 9 })
+              .map((_, index) => {
+                const stepIndex = round.path.indexOf(index);
+                const selectedIndex = state.path.indexOf(index);
+                const classes = [
+                  "path-cell",
+                  reveal && stepIndex >= 0 ? "is-path" : "",
+                  !reveal && selectedIndex >= 0 ? "is-selected" : "",
+                ]
+                  .filter(Boolean)
+                  .join(" ");
+                const content = reveal && stepIndex >= 0 ? `<span class="path-step">${stepIndex + 1}</span>` : selectedIndex >= 0 ? selectedIndex + 1 : index + 1;
+                const delay = reveal && stepIndex >= 0 ? `style="animation-delay:${stepIndex * 360}ms"` : "";
+                return `<button class="${classes}" type="button" data-path-cell="${index}" ${delay}>${content}</button>`;
+              })
+              .join("")}
+          </div>
+        `;
+      }
+
+      function cardFront(card) {
+        return `
+          <button class="memory-card" type="button" aria-label="${escapeHtml(card[1])}">
+            <span class="icon-badge tone-${card[3]}">${card[2]}</span>
+            <span>${escapeHtml(card[1])}</span>
+          </button>
+        `;
+      }
+
+      function renderAnswer() {
+        const round = currentRound();
+        state.phase = "answer";
+        updateHud();
+
+        if (round.type === "scene") {
+          const question = round.questions[state.questionIndex];
+          screen.innerHTML = `
+            <section class="screen mission">
+              <div class="mission-head"><div><p class="eyebrow">Tới lượt thám tử</p><h2>${escapeHtml(round.title)}</h2></div></div>
+              <div class="question-box">
+                <h3>${escapeHtml(question.text)}</h3>
+                <div class="choice-list">
+                  ${question.options.map((option, index) => `<button type="button" data-answer-index="${index}">${escapeHtml(option)}</button>`).join("")}
+                </div>
+              </div>
+            </section>
+          `;
+          screen.querySelectorAll("[data-answer-index]").forEach((button) => {
+            button.addEventListener("click", () => answerScene(question.options[Number(button.dataset.answerIndex)]));
+          });
+          return;
+        }
+
+        if (round.type === "grid") {
+          screen.innerHTML = `
+            <section class="screen mission">
+              <div class="mission-head"><div><p class="eyebrow">Tới lượt thám tử</p><h2>${escapeHtml(round.title)}</h2></div></div>
+              <div class="question-box">
+                <h3>${escapeHtml(round.targetText)}</h3>
+                <div class="memory-grid">
+                  ${round.cards.map((card) => `<button class="memory-card" type="button" data-card="${card[0]}"><span class="card-back">?</span></button>`).join("")}
+                </div>
+              </div>
+            </section>
+          `;
+          screen.querySelectorAll("[data-card]").forEach((button) => {
+            button.addEventListener("click", () => answerGrid(button.dataset.card));
+          });
+          return;
+        }
+
+        if (round.type === "missing") {
+          screen.innerHTML = `
+            <section class="screen mission">
+              <div class="mission-head"><div><p class="eyebrow">Tới lượt thám tử</p><h2>${escapeHtml(round.title)}</h2></div></div>
+              <div class="question-box">
+                <h3>${escapeHtml(round.targetText)}</h3>
+                ${missingPreview(round)}
+                <div class="choice-list" style="margin-top:18px">
+                  ${round.options.map((card, index) => `<button type="button" data-missing-index="${index}">${escapeHtml(card[1])}</button>`).join("")}
+                </div>
+              </div>
+            </section>
+          `;
+          screen.querySelectorAll("[data-missing-index]").forEach((button) => {
+            button.addEventListener("click", () => answerMissing(round.options[Number(button.dataset.missingIndex)][0]));
+          });
+          return;
+        }
+
+        if (round.type === "count") {
+          const options = [
+            ...new Set(shuffle([round.correct, String(Math.max(1, Number(round.correct) - 1)), String(Number(round.correct) + 1), String(Number(round.correct) + 2)])),
+          ].slice(0, 4);
+          screen.innerHTML = `
+            <section class="screen mission">
+              <div class="mission-head"><div><p class="eyebrow">Tới lượt thám tử</p><h2>${escapeHtml(round.title)}</h2></div></div>
+              <div class="question-box">
+                <h3>${escapeHtml(round.targetText)}</h3>
+                <div class="memory-grid count-grid show-front" style="margin-bottom:18px">
+                  ${round.cards.map((card) => `<button class="memory-card" type="button"><span class="card-back">?</span></button>`).join("")}
+                </div>
+                <div class="choice-list">
+                  ${options.map((option, index) => `<button type="button" data-count-index="${index}">${escapeHtml(option)}</button>`).join("")}
+                </div>
+              </div>
+            </section>
+          `;
+          screen.querySelectorAll("[data-count-index]").forEach((button) => {
+            button.addEventListener("click", () => answerCount(options[Number(button.dataset.countIndex)]));
+          });
+          return;
+        }
+
+        if (round.type === "path") {
+          screen.innerHTML = `
+            <section class="screen mission">
+              <div class="mission-head"><div><p class="eyebrow">Tới lượt thám tử</p><h2>${escapeHtml(round.title)}</h2></div></div>
+              <div class="question-box">
+                <h3>${escapeHtml(round.targetText)}</h3>
+                <p class="path-status">Đã chọn ${state.path.length} / ${round.path.length} bước</p>
+                ${pathGrid(round, false)}
+                <div class="inline-actions">
+                  <button type="button" class="ghost-action" id="remove-path" ${state.path.length === 0 ? "disabled" : ""}>Xóa bước cuối</button>
+                  <button type="button" class="primary-action small" id="check-path" ${state.path.length !== round.path.length ? "disabled" : ""}>Kiểm tra</button>
+                </div>
+              </div>
+            </section>
+          `;
+          screen.querySelectorAll("[data-path-cell]").forEach((button) => {
+            button.addEventListener("click", () => choosePath(Number(button.dataset.pathCell)));
+          });
+          document.getElementById("remove-path").addEventListener("click", removeLastPathItem);
+          document.getElementById("check-path").addEventListener("click", checkPath);
+          return;
+        }
+
+        if (["logic", "pattern", "math", "maze", "deduction"].includes(round.type)) {
+          screen.innerHTML = `
+            <section class="screen mission">
+              <div class="mission-head"><div><p class="eyebrow">Tới lượt thám tử</p><h2>${escapeHtml(round.title)}</h2></div></div>
+              <div class="question-box">
+                ${round.type === "maze" ? mazeBoard(round) : logicBoard(round)}
+                <h3>${escapeHtml(round.question)}</h3>
+                <div class="choice-list">
+                  ${round.options.map((option, index) => `<button type="button" data-generic-index="${index}">${escapeHtml(option)}</button>`).join("")}
+                </div>
+              </div>
+            </section>
+          `;
+          screen.querySelectorAll("[data-generic-index]").forEach((button) => {
+            button.addEventListener("click", () => answerGeneric(round.options[Number(button.dataset.genericIndex)]));
+          });
+          return;
+        }
+
+        if (round.type === "robot") {
+          screen.innerHTML = `
+            <section class="screen mission">
+              <div class="mission-head"><div><p class="eyebrow">Tới lượt thám tử</p><h2>${escapeHtml(round.title)}</h2></div></div>
+              <div class="question-box">
+                ${robotBoard()}
+                <h3>${escapeHtml(round.targetText)}</h3>
+                <div class="command-list" id="command-answer">
+                  ${state.robotCommands.map((command) => `<span>${escapeHtml(command)}</span>`).join("")}
+                </div>
+                <div class="choice-list icon-choice-list">
+                  ${round.choices.map((command) => `<button type="button" data-command="${escapeHtml(command)}">${escapeHtml(command)}</button>`).join("")}
+                </div>
+                <div class="inline-actions">
+                  <button type="button" class="ghost-action" id="remove-command" ${state.robotCommands.length === 0 ? "disabled" : ""}>Xóa command cuối</button>
+                  <button type="button" class="primary-action small" id="check-command" ${state.robotCommands.length !== round.commands.length ? "disabled" : ""}>Chạy robot</button>
+                </div>
+              </div>
+            </section>
+          `;
+          screen.querySelectorAll("[data-command]").forEach((button) => {
+            button.addEventListener("click", () => chooseRobotCommand(button.dataset.command));
+          });
+          document.getElementById("remove-command").addEventListener("click", removeLastRobotCommand);
+          document.getElementById("check-command").addEventListener("click", checkRobot);
+          return;
+        }
+
+        if (round.type === "obstacle-math") {
+          const challenge = round.challenges[state.obstacleIndex];
+          screen.innerHTML = `
+            <section class="screen mission">
+              <div class="mission-head"><div><p class="eyebrow">Tới lượt thám tử</p><h2>${escapeHtml(round.title)}</h2></div></div>
+              <div class="question-box">
+                ${obstacleTrack(round)}
+                <h3>${escapeHtml(challenge.question)}</h3>
+                <p class="path-status">Chướng ngại ${state.obstacleIndex + 1} / ${round.challenges.length}</p>
+                <p class="mini-feedback">${escapeHtml(state.tempMessage)}</p>
+                <div class="choice-list">
+                  ${challenge.options.map((option, index) => `<button type="button" data-obstacle-index="${index}">${escapeHtml(option)}</button>`).join("")}
+                </div>
+              </div>
+            </section>
+          `;
+          screen.querySelectorAll("[data-obstacle-index]").forEach((button) => {
+            button.addEventListener("click", () => answerObstacleMath(challenge.options[Number(button.dataset.obstacleIndex)]));
+          });
+          return;
+        }
+
+        if (round.type === "jigsaw") {
+          if (!state.jigsawTiles.length) {
+            state.jigsawTiles = round.initialTiles.slice();
+          }
+          screen.innerHTML = `
+            <section class="screen mission">
+              <div class="mission-head"><div><p class="eyebrow">Tới lượt thám tử</p><h2>${escapeHtml(round.title)}</h2></div></div>
+              <div class="question-box">
+                <h3>Đưa các mảnh về thứ tự 1 đến 8, ô trống ở cuối.</h3>
+                <p class="mini-feedback">${escapeHtml(state.tempMessage)}</p>
+                ${jigsawBoard(state.jigsawTiles)}
+              </div>
+            </section>
+          `;
+          screen.querySelectorAll("[data-jigsaw-index]").forEach((button) => {
+            button.addEventListener("click", () => moveJigsaw(Number(button.dataset.jigsawIndex)));
+          });
+          return;
+        }
+
+        if (round.type === "matching") {
+          screen.innerHTML = `
+            <section class="screen mission">
+              <div class="mission-head"><div><p class="eyebrow">Tới lượt thám tử</p><h2>${escapeHtml(round.title)}</h2></div></div>
+              <div class="question-box">
+                <h3>Tìm đủ ${round.tiles.length / 2} cặp hình giống nhau.</h3>
+                <p class="path-status">Đã tìm ${state.matchFound.length / 2} / ${round.tiles.length / 2} cặp</p>
+                <p class="mini-feedback">${escapeHtml(state.tempMessage)}</p>
+                ${matchBoard(round, false)}
+              </div>
+            </section>
+          `;
+          screen.querySelectorAll("[data-match-index]").forEach((button) => {
+            button.addEventListener("click", () => chooseMatchTile(Number(button.dataset.matchIndex)));
+          });
+          return;
+        }
+
+        if (round.type === "sequence") {
+          screen.innerHTML = `
+          <section class="screen mission">
+            <div class="mission-head"><div><p class="eyebrow">Tới lượt thám tử</p><h2>${escapeHtml(round.title)}</h2></div></div>
+            <div class="question-box">
+              <h3>Bấm lại đúng ${round.sequence.length} biểu tượng theo thứ tự.</h3>
+              <div class="sequence-answer" id="sequence-answer"></div>
+              <div class="choice-list icon-choice-list">
+                ${round.choices
+                  .map((card) => `<button type="button" data-choice="${card[0]}"><span class="mini-icon tone-${card[3]}">${escapeHtml(card[1].charAt(0))}</span>${escapeHtml(card[1])}</button>`)
+                  .join("")}
+              </div>
+              <div class="inline-actions">
+                <button type="button" class="ghost-action" id="remove-sequence">Xóa bước cuối</button>
+                <button type="button" class="primary-action small" id="check-sequence" disabled>Kiểm tra</button>
+              </div>
+            </div>
+          </section>
+          `;
+          screen.querySelectorAll("[data-choice]").forEach((button) => {
+            button.addEventListener("click", () => chooseSequence(button.dataset.choice));
+          });
+          document.getElementById("remove-sequence").addEventListener("click", removeLastSequence);
+          document.getElementById("check-sequence").addEventListener("click", checkSequence);
+          renderSequenceAnswer();
+        }
+      }
+
+      function answerScene(option) {
+        const question = currentRound().questions[state.questionIndex];
+        recordAnswer(option === question.correct, option === question.correct ? "Chuẩn rồi!" : "Suýt nữa thôi!", question.clue);
+      }
+
+      function answerGrid(cardId) {
+        const round = currentRound();
+        const target = round.cards.find((card) => card[0] === round.targetId);
+        recordAnswer(cardId === round.targetId, cardId === round.targetId ? "Tìm đúng kho báu!" : "Ô này chưa đúng", `${target[1]} là món cần tìm trong bảng vừa xem.`);
+      }
+
+      function answerMissing(cardId) {
+        const round = currentRound();
+        recordAnswer(cardId === round.targetId, cardId === round.targetId ? "Bắt được manh mối!" : "Món đó vẫn còn trên bảng", round.clue);
+      }
+
+      function answerCount(value) {
+        const round = currentRound();
+        recordAnswer(value === round.correct, value === round.correct ? "Đếm rất nhanh!" : "Cần đếm kỹ hơn chút", round.clue);
+      }
+
+      function answerGeneric(value) {
+        const round = currentRound();
+        recordAnswer(value === round.correct, value === round.correct ? "Suy luận chuẩn!" : "Manh mối chưa khớp", round.clue);
+      }
+
+      function chooseSequence(id) {
+        const round = currentRound();
+        if (state.sequence.length >= round.sequence.length) return;
+        state.sequence.push(id);
+        tone("tap");
+        renderSequenceAnswer();
+      }
+
+      function removeLastSequence() {
+        state.sequence.pop();
+        tone("tap");
+        renderSequenceAnswer();
+      }
+
+      function renderSequenceAnswer() {
+        const round = currentRound();
+        document.getElementById("sequence-answer").innerHTML = state.sequence.map((id) => `<span>${escapeHtml(choiceName(round, id))}</span>`).join("");
+        document.getElementById("check-sequence").disabled = state.sequence.length !== round.sequence.length;
+        document.getElementById("remove-sequence").disabled = state.sequence.length === 0;
+      }
+
+      function checkSequence() {
+        const round = currentRound();
+        const correct = round.sequence.every((id, index) => id === state.sequence[index]);
+        const names = round.sequence.map((id) => choiceName(round, id)).join(" → ");
+        recordAnswer(correct, correct ? "Nhớ đúng cả chuỗi!" : "Thứ tự cần nhớ là", names);
+      }
+
+      function choosePath(cellIndex) {
+        const round = currentRound();
+        if (state.path.length >= round.path.length || state.path.includes(cellIndex)) return;
+        state.path.push(cellIndex);
+        tone("tap");
+        renderAnswer();
+      }
+
+      function removeLastPathItem() {
+        state.path.pop();
+        tone("tap");
+        renderAnswer();
+      }
+
+      function checkPath() {
+        const round = currentRound();
+        const correct = round.path.every((cell, index) => cell === state.path[index]);
+        recordAnswer(correct, correct ? "Đi đúng đường rồi!" : "Đường đi đúng là", round.clue);
+      }
+
+      function chooseRobotCommand(command) {
+        const round = currentRound();
+        if (state.robotCommands.length >= round.commands.length) return;
+        state.robotCommands.push(command);
+        tone("tap");
+        renderAnswer();
+      }
+
+      function removeLastRobotCommand() {
+        state.robotCommands.pop();
+        tone("tap");
+        renderAnswer();
+      }
+
+      function checkRobot() {
+        const round = currentRound();
+        const correct = round.commands.every((command, index) => command === state.robotCommands[index]);
+        recordAnswer(correct, correct ? "Robot tới đích!" : "Robot cần command khác", round.clue);
+      }
+
+      function answerObstacleMath(value) {
+        const round = currentRound();
+        const challenge = round.challenges[state.obstacleIndex];
+        if (value === challenge.correct) {
+          state.obstacleIndex += 1;
+          state.score += 45;
+          state.xp += 20;
+          state.coins += 4;
+          state.knowledgePoints = Math.min(1000, state.knowledgePoints + 45);
+          addTeamPoints(45);
+          state.tempMessage = "Đúng rồi, vượt qua một chướng ngại vật!";
+          tone("success");
+          if (state.obstacleIndex >= round.challenges.length) {
+            recordAnswer(true, "Vượt chướng ngại vật!", "Hoàn thành đường chạy toán học và nhận điểm thưởng.");
+            return;
+          }
+        } else {
+          state.tempMessage = "Chưa đúng, thử lại để vượt vật cản nhé.";
+          state.score = Math.max(0, state.score - 10);
+          tone("miss");
+        }
+        renderAnswer();
+      }
+
+      function moveJigsaw(index) {
+        const round = currentRound();
+        const blank = state.jigsawTiles.indexOf(null);
+        const canMove = [blank - 3, blank + 3].includes(index) || (Math.floor(blank / 3) === Math.floor(index / 3) && Math.abs(blank - index) === 1);
+        if (!canMove) {
+          state.tempMessage = "Mảnh này chưa sát ô trống.";
+          tone("miss");
+          renderAnswer();
+          return;
+        }
+        [state.jigsawTiles[index], state.jigsawTiles[blank]] = [state.jigsawTiles[blank], state.jigsawTiles[index]];
+        state.tempMessage = "Di chuyển tốt!";
+        tone("tap");
+        if (round.solvedTiles.every((tile, tileIndex) => tile === state.jigsawTiles[tileIndex])) {
+          recordAnswer(true, "Ghép xong bản đồ!", "Các mảnh đã về đúng vị trí, kho báu đã mở.");
+          return;
+        }
+        renderAnswer();
+      }
+
+      function chooseMatchTile(index) {
+        const round = currentRound();
+        const tile = round.tiles[index];
+        if (state.matchFound.includes(tile.uid) || state.matchSelected.includes(index)) return;
+        state.matchSelected.push(index);
+        tone("tap");
+        if (state.matchSelected.length < 2) {
+          renderAnswer();
+          return;
+        }
+        const [firstIndex, secondIndex] = state.matchSelected;
+        const first = round.tiles[firstIndex];
+        const second = round.tiles[secondIndex];
+        if (first.id === second.id) {
+          state.matchFound.push(first.uid, second.uid);
+          state.matchSelected = [];
+          state.score += 35;
+          state.xp += 15;
+          state.knowledgePoints = Math.min(1000, state.knowledgePoints + 35);
+          addTeamPoints(35);
+          state.tempMessage = "Tìm đúng một cặp!";
+          tone("success");
+          if (state.matchFound.length === round.tiles.length) {
+            recordAnswer(true, "Tìm đủ cặp hình!", "Bé đã ghép đúng tất cả hình giống nhau.");
+            return;
+          }
+          renderAnswer();
+          return;
+        }
+        state.tempMessage = "Hai thẻ chưa giống nhau, nhớ vị trí để thử tiếp.";
+        tone("miss");
+        renderAnswer();
+        setTimeout(() => {
+          state.matchSelected = [];
+          renderAnswer();
+        }, 650);
+      }
+
+      function addTeamPoints(points) {
+        if (state.playMode !== "team") return;
+        state.teamScores[state.activeTeamIndex] += points;
+        state.activeTeamIndex = state.activeTeamIndex === 0 ? 1 : 0;
+      }
+
+      function choiceName(round, id) {
+        const cards = round.choices || round.cards;
+        return cards.find((card) => card[0] === id)?.[1] || id;
+      }
+
+      function recordAnswer(isCorrect, title, detail) {
+        state.answered += 1;
+        if (isCorrect) {
+          state.correct += 1;
+          state.score += 120;
+          state.xp += 80;
+          state.coins += 12;
+          state.knowledgePoints = Math.min(1000, state.knowledgePoints + 120);
+          addTeamPoints(120);
+          tone("success");
+        } else {
+          state.score += 35;
+          state.xp += 20;
+          state.coins += 3;
+          state.knowledgePoints = Math.min(1000, state.knowledgePoints + 25);
+          addTeamPoints(25);
+          tone("miss");
+        }
+        renderFeedback(isCorrect, title, detail);
+      }
+
+      function renderFeedback(isCorrect, title, detail) {
+        state.phase = "feedback";
+        updateHud();
+        screen.innerHTML = `
+          <section class="screen feedback-panel">
+            <div>
+              <div class="badge-result ${isCorrect ? "is-correct" : ""}">${isCorrect ? "✓" : "!"}</div>
+              <h2>${escapeHtml(title)}</h2>
+              <p>${escapeHtml(detail)}</p>
+              <button class="primary-action" type="button" id="continue-button">Tiếp tục</button>
+            </div>
+          </section>
+        `;
+        document.getElementById("continue-button").addEventListener("click", continueGame);
+      }
+
+      function continueGame() {
+        const round = currentRound();
+        if (round.type === "scene" && state.questionIndex < round.questions.length - 1) {
+          state.questionIndex += 1;
+          renderAnswer();
+          return;
+        }
+        state.roundIndex += 1;
+        state.questionIndex = 0;
+        startRound();
+      }
+
+      function renderComplete() {
+        state.phase = "complete";
+        updateHud();
+        const achievements = unlockedAchievements();
+        const teamTarget = 5000;
+        const teamTotal = Math.min(teamTarget, 2600 + state.knowledgePoints);
+        const teamPercent = Math.round((teamTotal / teamTarget) * 100);
+        const vaultUnlocked = teamTotal >= teamTarget || state.correct >= Math.ceil(totalQuestions() * 0.8);
+        const result = {
+          playerName: state.playerName,
+          score: state.score,
+          xp: state.xp,
+          coins: state.coins,
+          knowledgePoints: state.knowledgePoints,
+          stars: stars(),
+          correct: state.correct,
+          total: totalQuestions(),
+          mission: state.adventure.mission,
+          world: state.adventure.world[0],
+          character: state.adventure.character[0],
+          createdAt: new Date().toISOString(),
+        };
+        localStorage.setItem("tham-tu-nhi-last-result", JSON.stringify(result));
+        screen.innerHTML = `
+          <section class="screen complete-panel">
+            <div>
+              <div class="trophy" aria-hidden="true">★</div>
+              <p class="eyebrow">Hoàn thành nhiệm vụ</p>
+              <h2>${escapeHtml(state.playerName)} đạt ${state.score} điểm</h2>
+              <p>${escapeHtml(state.adventure.mission)} - ${escapeHtml(state.adventure.world[0])}</p>
+              <div class="reward-strip">
+                <span class="reward-chip">${stars()} sao</span>
+                <span class="reward-chip">${state.xp} XP</span>
+                <span class="reward-chip">${state.coins} coins</span>
+                <span class="reward-chip">${state.knowledgePoints} Knowledge Points</span>
+              </div>
+              <p>Trả lời đúng ${state.correct} / ${totalQuestions()} thử thách.</p>
+              <div class="achievement-strip">
+                ${achievements.map((item) => `<span class="achievement-chip">${escapeHtml(item)}</span>`).join("")}
+              </div>
+              ${teamResultHtml()}
+              <div class="team-progress" aria-label="Tiến độ Team Quest">
+                <span style="width:${teamPercent}%"></span>
+              </div>
+              <p>Team Quest: Rescue The Space Ship - ${teamTotal} / ${teamTarget} KP (${teamPercent}%)</p>
+              <div class="vault-strip">
+                <span class="vault-card is-unlocked">Solar System</span>
+                <span class="vault-card is-unlocked">Moon</span>
+                <span class="vault-card ${vaultUnlocked ? "is-unlocked" : ""}">${vaultUnlocked ? "Black Hole mở khóa" : "Black Hole khóa"}</span>
+                <span class="vault-card">Rockets</span>
+              </div>
+              <p class="save-state">Daily Mystery hôm nay đã ghi nhận. Lần chơi sau sẽ được xáo trộn mới.</p>
+              <button class="primary-action" type="button" id="replay-button">Chơi lại</button>
+            </div>
+          </section>
+        `;
+        document.getElementById("replay-button").addEventListener("click", renderIntro);
+      }
+
+      function teamResultHtml() {
+        if (state.playMode !== "team") return "";
+        const winner = state.teamScores[0] === state.teamScores[1] ? "Hai đội hòa nhau" : state.teamScores[0] > state.teamScores[1] ? "Đội Tia Chớp thắng" : "Đội Sao Nhỏ thắng";
+        return `
+          <div class="team-panel">
+            <div class="team-row"><span>Đội Tia Chớp</span><strong>${state.teamScores[0]} KP</strong></div>
+            <div class="team-row"><span>Đội Sao Nhỏ</span><strong>${state.teamScores[1]} KP</strong></div>
+            <div class="team-row"><span>Kết quả nhóm</span><strong>${winner}</strong></div>
+          </div>
+        `;
+      }
+
+      function unlockedAchievements() {
+        const items = ["First Case"];
+        if (state.correct >= 5) items.push("Sherlock Nhí");
+        if (state.answered >= 8) items.push("Puzzle Explorer");
+        if (state.knowledgePoints >= 500) items.push("Knowledge Collector");
+        if (state.score >= 900) items.push("Three-Star Mind");
+        return items;
+      }
+
+      renderIntro();
+    </script>
+  </body>
+</html>
