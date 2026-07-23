@@ -1251,7 +1251,6 @@
         bonusSpawnTimer: null,
         nextTaskTimer: null,
         soundReady: false,
-        voices: [],
         currentAudio: null,
       };
 
@@ -1332,7 +1331,6 @@
           state.currentAudio.currentTime = 0;
           state.currentAudio = null;
         }
-        if (window.speechSynthesis) window.speechSynthesis.cancel();
       }
 
       function speak(text) {
@@ -1345,38 +1343,15 @@
         }, { once: true });
         audio.addEventListener("error", () => {
           if (state.currentAudio === audio) state.currentAudio = null;
-          speakWithBrowser(text);
+          soundLabel.textContent = "Thiếu tiếng Việt";
         }, { once: true });
-        audio.play().catch(() => speakWithBrowser(text));
-      }
-
-      function speakWithBrowser(text) {
-        if (!window.speechSynthesis) {
-          soundLabel.textContent = "Bấm loa để thử lại";
-          return;
-        }
-        window.speechSynthesis.resume();
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = "vi-VN";
-        utterance.voice = getVietnameseVoice();
-        utterance.rate = 0.82;
-        utterance.pitch = 1.08;
-        window.speechSynthesis.speak(utterance);
-      }
-
-      function getVietnameseVoice() {
-        return state.voices
-          .find((voice) => voice.lang.toLowerCase().startsWith("vi"));
-      }
-
-      function loadVoices() {
-        if (!window.speechSynthesis) return;
-        state.voices = window.speechSynthesis.getVoices();
+        audio.play().catch(() => {
+          if (state.currentAudio === audio) state.currentAudio = null;
+          soundLabel.textContent = "Bấm 🔊 để bật tiếng";
+        });
       }
 
       function enableSound() {
-        loadVoices();
         state.soundReady = true;
         soundLabel.textContent = "Đã bật tiếng";
         speak("Đã bật tiếng Việt. Bi và Xoài cùng học nhé.");
@@ -1955,10 +1930,6 @@
         speak(`Hết giờ rồi. Bi và Xoài nhận ${state.bonusHits} sao.`);
       }
 
-      loadVoices();
-      if (window.speechSynthesis) {
-        window.speechSynthesis.onvoiceschanged = loadVoices;
-      }
       soundButton.addEventListener("click", enableSound);
       renderHome();
     </script>
