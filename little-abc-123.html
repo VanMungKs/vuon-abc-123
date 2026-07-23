@@ -246,10 +246,30 @@
         margin: 24px 0;
       }
 
+      .play-section {
+        display: grid;
+        gap: 12px;
+        margin: 12px 0 18px;
+      }
+
+      .play-title {
+        margin: 0;
+        color: #42627e;
+        font-size: 1.15rem;
+        font-weight: 900;
+      }
+
+      .play-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+      }
+
       .mode-btn,
       .primary,
       .choice,
-      .small-btn {
+      .small-btn,
+      .memory-card {
         border: 0;
         font-weight: 900;
         transition:
@@ -271,6 +291,12 @@
         display: block;
         margin-bottom: 8px;
         font-size: 2.4rem;
+      }
+
+      .play-btn {
+        min-height: 112px;
+        border: 3px solid rgba(36, 50, 74, 0.08);
+        background: linear-gradient(180deg, #ffffff, #fff9df);
       }
 
       .primary {
@@ -314,7 +340,8 @@
       .primary:hover,
       .choice:hover,
       .small-btn:hover,
-      .tile:hover {
+      .tile:hover,
+      .memory-card:hover {
         transform: translateY(-2px);
         filter: saturate(1.04);
       }
@@ -511,7 +538,8 @@
       }
 
       .pair-board,
-      .trace-board {
+      .trace-board,
+      .memory-board {
         display: grid;
         gap: 12px;
         width: min(720px, 100%);
@@ -522,7 +550,12 @@
         grid-template-columns: repeat(4, minmax(68px, 1fr));
       }
 
-      .tile {
+      .memory-board {
+        grid-template-columns: repeat(4, minmax(76px, 1fr));
+      }
+
+      .tile,
+      .memory-card {
         position: relative;
         display: grid;
         place-items: center;
@@ -534,6 +567,34 @@
         box-shadow: 0 14px 24px rgba(52, 87, 112, 0.13);
         font-size: 2.5rem;
         font-weight: 900;
+      }
+
+      .memory-card {
+        min-height: 116px;
+        border-color: rgba(70, 103, 137, 0.16);
+        background: linear-gradient(135deg, #466789, #67d6c9);
+        color: #ffffff;
+        font-size: clamp(2.2rem, 7vw, 3.8rem);
+      }
+
+      .memory-card.is-open,
+      .memory-card.is-found {
+        color: #24324a;
+        background: #ffffff;
+        animation: answer-pop 420ms ease both;
+      }
+
+      .memory-card.is-found {
+        border-color: rgba(36, 168, 106, 0.44);
+        box-shadow:
+          0 18px 34px rgba(36, 168, 106, 0.2),
+          inset 0 0 0 5px rgba(36, 168, 106, 0.14);
+      }
+
+      .memory-card.is-wrong {
+        background: #f15c45;
+        color: #ffffff;
+        animation: answer-shake 420ms ease both;
       }
 
       .tile.is-selected {
@@ -1008,6 +1069,11 @@
           margin: 16px 0;
         }
 
+        .play-grid {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 10px;
+        }
+
         .mode-btn {
           min-height: 104px;
           padding: 14px 10px;
@@ -1096,7 +1162,13 @@
           gap: 10px;
         }
 
-        .tile {
+        .memory-board {
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+          gap: 8px;
+        }
+
+        .tile,
+        .memory-card {
           min-height: 86px;
           border-radius: 20px;
           font-size: clamp(2rem, 11vw, 2.7rem);
@@ -1204,6 +1276,10 @@
           grid-template-columns: 1fr;
         }
 
+        .play-grid {
+          grid-template-columns: 1fr;
+        }
+
         .mode-btn {
           min-height: 86px;
         }
@@ -1221,6 +1297,10 @@
           grid-template-columns: repeat(2, minmax(0, 1fr));
         }
 
+        .memory-board {
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+
         .train-slots,
         .train-choices,
         .missing-row {
@@ -1231,7 +1311,8 @@
           grid-template-columns: repeat(2, minmax(0, 1fr));
         }
 
-        .tile {
+        .tile,
+        .memory-card {
           min-height: 78px;
         }
 
@@ -1266,6 +1347,10 @@
 
         .pair-board {
           grid-template-columns: 1fr;
+        }
+
+        .memory-board {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
         }
       }
     </style>
@@ -1349,6 +1434,23 @@
         { icon: "🎈", name: "quả bóng bay" },
         { icon: "⭐", name: "ngôi sao" },
         { icon: "🚗", name: "ô tô" },
+      ];
+      const fruitItems = [
+        { icon: "🍎", name: "quả táo" },
+        { icon: "🍌", name: "quả chuối" },
+        { icon: "🍓", name: "quả dâu" },
+        { icon: "🍊", name: "quả cam" },
+        { icon: "🍇", name: "quả nho" },
+        { icon: "🍐", name: "quả lê" },
+        { icon: "🍉", name: "quả dưa hấu" },
+        { icon: "🍍", name: "quả dứa" },
+      ];
+      const oddChallenges = [
+        { common: { icon: "🍎", name: "quả táo" }, odd: { icon: "🍌", name: "quả chuối" } },
+        { common: { icon: "⭐", name: "ngôi sao" }, odd: { icon: "🌙", name: "mặt trăng" } },
+        { common: { icon: "🚗", name: "ô tô" }, odd: { icon: "🚂", name: "tàu hỏa" } },
+        { common: { icon: "⚽", name: "quả bóng" }, odd: { icon: "🎈", name: "quả bóng bay" } },
+        { common: { icon: "🌸", name: "bông hoa" }, odd: { icon: "🍄", name: "cây nấm" } },
       ];
       const correctNextDelayMs = 3200;
       const retryDelayMs = 2300;
@@ -1545,6 +1647,7 @@
             <div>
               <p class="eyebrow">Chọn trò chơi</p>
               <h2>Bé muốn học gì hôm nay?</h2>
+              <h3 class="play-title">Học vui</h3>
               <div class="mode-grid">
                 <button class="mode-btn" type="button" data-mode="numbers" data-speech="Học số bằng tiếng Việt"><span>123</span>Học số</button>
                 <button class="mode-btn" type="button" data-mode="letters" data-speech="Học chữ cái tiếng Việt"><span>ABC</span>Học chữ</button>
@@ -1553,6 +1656,14 @@
                 <button class="mode-btn" type="button" data-mode="train" data-speech="Tàu số vui nhộn"><span>🚂</span>Tàu số</button>
                 <button class="mode-btn" type="button" data-mode="missing" data-speech="Tìm số còn thiếu"><span>❓</span>Số còn thiếu</button>
                 <button class="mode-btn" type="button" data-mode="balloons" data-speech="Bắt chữ bay"><span>🎈</span>Bắt chữ bay</button>
+              </div>
+              <div class="play-section">
+                <h3 class="play-title">Góc giải trí</h3>
+                <div class="play-grid">
+                  <button class="mode-btn play-btn" type="button" data-mode="fruit-memory"><span>🍓🍎</span>Quả giống nhau</button>
+                  <button class="mode-btn play-btn" type="button" data-mode="number-memory"><span>7 7</span>Số giống nhau</button>
+                  <button class="mode-btn play-btn" type="button" data-mode="odd-one"><span>🔎</span>Hình khác biệt</button>
+                </div>
               </div>
               <div class="bonus-card">
                 <strong>🎁 Học đủ 10 điểm sẽ mở game thưởng.</strong>
@@ -1587,6 +1698,9 @@
         if (state.mode === "train") renderNumberTrain();
         if (state.mode === "missing") renderMissingNumber();
         if (state.mode === "balloons") renderLetterBalloons();
+        if (state.mode === "fruit-memory") renderMemoryGame("fruit");
+        if (state.mode === "number-memory") renderMemoryGame("number");
+        if (state.mode === "odd-one") renderOddOne();
       }
 
       function renderShell(title, body, actions = "") {
@@ -1936,6 +2050,147 @@
           });
         });
         document.getElementById("listen").addEventListener("click", () => { enableSound(); speak(state.task.speech); });
+      }
+
+      function renderMemoryGame(type) {
+        const isFruit = type === "fruit";
+        const selectedItems = isFruit
+          ? shuffle(fruitItems).slice(0, 4)
+          : shuffle(Array.from({ length: 10 }, (_, number) => ({ icon: String(number), name: `số ${numberSpeech(number)}` }))).slice(0, 4);
+        const cards = shuffle(selectedItems.flatMap((item, index) => [
+          { uid: `${type}-${index}-a`, pair: item.name, label: item.icon, speech: item.name },
+          { uid: `${type}-${index}-b`, pair: item.name, label: item.icon, speech: item.name },
+        ]));
+        state.task = {
+          kind: "memory",
+          type,
+          title: isFruit ? "Tìm quả giống nhau" : "Tìm số giống nhau",
+          cards,
+          speech: isFruit ? "Bi và Xoài hãy tìm hai quả giống nhau" : "Bi và Xoài hãy tìm hai số giống nhau",
+        };
+        state.pairSelected = [];
+        state.pairFound = [];
+        drawMemoryGame();
+        speak(state.task.speech);
+      }
+
+      function drawMemoryGame() {
+        renderShell(
+          state.task.title,
+          `
+            <div class="memory-board">
+              ${state.task.cards.map((card, index) => {
+                const found = state.pairFound.includes(card.uid);
+                const selected = state.pairSelected.includes(index);
+                const isOpen = found || selected;
+                return `<button class="memory-card ${isOpen ? "is-open" : ""} ${found ? "is-found" : ""}" type="button" data-memory="${index}" ${found ? "disabled" : ""} aria-label="${isOpen ? escapeHtml(card.speech) : "Thẻ úp"}">${isOpen ? escapeHtml(card.label) : "?"}</button>`;
+              }).join("")}
+            </div>
+          `,
+        );
+        screen.querySelectorAll("[data-memory]").forEach((button) => {
+          button.addEventListener("click", () => chooseMemoryCard(Number(button.dataset.memory)));
+        });
+        document.getElementById("listen").addEventListener("click", () => { enableSound(); speak(state.task.speech); });
+      }
+
+      function chooseMemoryCard(index) {
+        const card = state.task.cards[index];
+        if (state.pairFound.includes(card.uid) || state.pairSelected.includes(index) || state.pairSelected.length >= 2) return;
+        state.pairSelected.push(index);
+        tone("tap");
+        speak(card.speech);
+        drawMemoryGame();
+        if (state.pairSelected.length < 2) return;
+
+        const [firstIndex, secondIndex] = state.pairSelected;
+        const first = state.task.cards[firstIndex];
+        const second = state.task.cards[secondIndex];
+        if (first.pair === second.pair) {
+          state.pairFound.push(first.uid, second.uid);
+          state.pairSelected = [];
+          awardLearningPoint();
+          state.feedback = "Đúng một cặp rồi!";
+          tone("yes");
+          speak("Đúng rồi");
+          const completed = state.pairFound.length === state.task.cards.length;
+          if (state.pairFound.length === state.task.cards.length) {
+            state.feedback = "Bé tìm đủ tất cả cặp rồi!";
+          }
+          drawMemoryGame();
+          if (completed) state.nextTaskTimer = setTimeout(nextTask, correctNextDelayMs);
+          return;
+        }
+
+        state.feedback = "Chưa giống nhau, mình nhớ lại nhé.";
+        tone("no");
+        drawMemoryGame();
+        state.nextTaskTimer = setTimeout(() => {
+          state.pairSelected = [];
+          drawMemoryGame();
+        }, retryDelayMs);
+      }
+
+      function renderOddOne() {
+        const challenge = randomItem(oddChallenges);
+        const answerIndex = Math.floor(Math.random() * 9);
+        const cards = Array.from({ length: 9 }, (_, index) => ({
+          uid: `odd-${index}`,
+          label: index === answerIndex ? challenge.odd.icon : challenge.common.icon,
+          speech: index === answerIndex ? challenge.odd.name : challenge.common.name,
+          isOdd: index === answerIndex,
+        }));
+        state.task = {
+          kind: "odd",
+          title: "Tìm hình khác biệt",
+          cards,
+          answer: cards[answerIndex].uid,
+          speech: "Bi và Xoài hãy tìm hình khác biệt",
+        };
+        drawOddOne();
+        speak(state.task.speech);
+      }
+
+      function drawOddOne() {
+        renderShell(
+          state.task.title,
+          `
+            <div class="choices">
+              ${state.task.cards.map((card) => `<button class="choice" type="button" data-odd="${card.uid}" aria-label="${escapeHtml(card.speech)}">${escapeHtml(card.label)}</button>`).join("")}
+            </div>
+          `,
+        );
+        screen.querySelectorAll("[data-odd]").forEach((button) => {
+          button.addEventListener("click", () => chooseOddOne(button));
+        });
+        document.getElementById("listen").addEventListener("click", () => { enableSound(); speak(state.task.speech); });
+      }
+
+      function chooseOddOne(button) {
+        const isCorrect = button.dataset.odd === state.task.answer;
+        const answerButtons = [...screen.querySelectorAll("[data-odd]")];
+        const feedback = screen.querySelector(".feedback");
+        answerButtons.forEach((item) => {
+          item.disabled = true;
+          item.classList.remove("is-correct", "is-wrong");
+        });
+        if (isCorrect) {
+          clearTaskTimer();
+          button.classList.add("is-correct");
+          awardLearningPoint();
+          state.feedback = "Đúng rồi, bé tìm rất nhanh!";
+          if (feedback) feedback.textContent = state.feedback;
+          tone("yes");
+          speak("Đúng rồi");
+          state.nextTaskTimer = setTimeout(nextTask, correctNextDelayMs);
+          return;
+        }
+        button.classList.add("is-wrong");
+        state.feedback = "Chưa đúng, mình nhìn kỹ lại nhé.";
+        if (feedback) feedback.textContent = state.feedback;
+        tone("no");
+        speak("Chưa đúng, thử lại nhé");
+        state.nextTaskTimer = setTimeout(drawOddOne, retryDelayMs);
       }
 
       function bindAnswerButtons() {
