@@ -13,6 +13,7 @@
       body {
         min-height: 100%;
         margin: 0;
+        overflow-x: hidden;
       }
 
       body {
@@ -711,32 +712,294 @@
       }
 
       @media (max-width: 760px) {
+        .app {
+          width: min(100% - 18px, 560px);
+          padding: 12px 0 22px;
+        }
+
         .topbar,
         .game-head {
           flex-direction: column;
+          align-items: stretch;
+          gap: 10px;
+        }
+
+        .topbar h1 {
+          font-size: clamp(2.15rem, 12vw, 3.8rem);
+        }
+
+        .topbar p:not(.eyebrow) {
+          margin-bottom: 0;
+        }
+
+        .top-actions {
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) minmax(116px, 0.72fr);
+          width: 100%;
+        }
+
+        .sound-toggle,
+        .scorebox {
+          min-width: 0;
+          min-height: 56px;
+          border-radius: 18px;
+        }
+
+        .score {
+          font-size: 1.9rem;
+          line-height: 1;
+        }
+
+        .screen {
+          min-height: auto;
+          border-radius: 24px;
         }
 
         .home {
           grid-template-columns: 1fr;
+          gap: 14px;
+          padding: 18px;
         }
 
         .garden {
-          min-height: 300px;
+          min-height: 245px;
           order: -1;
         }
 
+        .sun {
+          width: 86px;
+          height: 86px;
+          box-shadow: 0 0 0 12px rgba(255, 214, 90, 0.25);
+        }
+
+        .rainbow {
+          top: 36px;
+          height: 128px;
+          border-width: 18px;
+        }
+
+        .rainbow::before {
+          inset: 14px;
+          border-width: 16px;
+        }
+
+        .rainbow::after {
+          inset: 42px;
+          border-width: 14px;
+        }
+
         .mascot {
-          transform: translateX(-50%) scale(0.72);
+          transform: translateX(-50%) scale(0.64);
           transform-origin: bottom center;
         }
 
-        .mode-grid,
+        .mode-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 10px;
+          margin: 16px 0;
+        }
+
+        .mode-btn {
+          min-height: 104px;
+          padding: 14px 10px;
+          border-radius: 20px;
+        }
+
+        .mode-btn span {
+          font-size: 2rem;
+        }
+
+        .primary {
+          width: 100%;
+        }
+
+        .game {
+          padding: 14px;
+        }
+
+        .game-head h2 {
+          margin-bottom: 0;
+          font-size: clamp(1.55rem, 8vw, 2.4rem);
+        }
+
+        .prompt-card {
+          gap: 14px;
+          padding: 14px;
+          border-radius: 22px;
+        }
+
+        .big-symbol {
+          min-height: 132px;
+          border-width: 4px;
+          border-radius: 24px;
+          font-size: clamp(4rem, 26vw, 7rem);
+        }
+
+        .objects {
+          gap: 8px;
+          min-height: 108px;
+        }
+
+        .object {
+          width: clamp(48px, 15vw, 66px);
+          height: clamp(48px, 15vw, 66px);
+          border-radius: 18px;
+          font-size: clamp(1.8rem, 8vw, 2.45rem);
+        }
+
+        .choices {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 10px;
+        }
+
+        .choice {
+          min-height: 82px;
+          border-radius: 20px;
+          font-size: clamp(2rem, 13vw, 3rem);
+        }
+
+        .pair-board {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 10px;
+        }
+
+        .tile {
+          min-height: 86px;
+          border-radius: 20px;
+          font-size: clamp(2rem, 11vw, 2.7rem);
+        }
+
+        .trace-symbol {
+          min-height: 160px;
+          border-width: 4px;
+          border-radius: 24px;
+          font-size: clamp(5rem, 30vw, 8rem);
+        }
+
+        .trace-base {
+          -webkit-text-stroke-width: 3px;
+        }
+
+        .trace-line {
+          gap: 7px;
+        }
+
+        .dot {
+          min-height: 60px;
+          border-radius: 18px;
+        }
+
+        .bonus-card {
+          margin-top: 14px;
+          padding: 14px;
+          border-radius: 20px;
+        }
+
+        .bonus-scene {
+          min-height: 285px;
+          border-width: 4px;
+          border-radius: 24px;
+        }
+
+        .bonus-target {
+          width: 64px;
+          height: 64px;
+          font-size: 2rem;
+        }
+
+        .footer-actions {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 10px;
+        }
+
+        .footer-actions .small-btn,
+        .footer-actions .primary {
+          width: 100%;
+          min-height: 52px;
+          padding-inline: 10px;
+        }
+      }
+
+      @media (max-width: 430px) {
+        .app {
+          width: min(100% - 12px, 430px);
+          padding-top: 8px;
+        }
+
+        .top-actions {
+          grid-template-columns: 1fr;
+        }
+
+        .scorebox {
+          grid-template-columns: auto auto;
+          justify-content: center;
+          gap: 10px;
+        }
+
+        .home {
+          padding: 14px;
+        }
+
+        .garden {
+          min-height: 200px;
+        }
+
+        .mascot {
+          transform: translateX(-50%) scale(0.52);
+        }
+
+        .mode-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .mode-btn {
+          min-height: 86px;
+        }
+
+        .choices {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .choice {
+          min-height: 74px;
+          padding: 8px;
+        }
+
+        .pair-board {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .tile {
+          min-height: 78px;
+        }
+
+        .trace-line {
+          grid-template-columns: repeat(5, minmax(0, 1fr));
+        }
+
+        .dot {
+          min-height: 54px;
+          border-radius: 16px;
+        }
+
+        .feedback {
+          font-size: 1.05rem;
+        }
+
+        .bonus-stats,
+        .footer-actions {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 340px) {
         .choices {
           grid-template-columns: 1fr;
         }
 
         .pair-board {
-          grid-template-columns: repeat(3, minmax(68px, 1fr));
+          grid-template-columns: 1fr;
         }
       }
     </style>
