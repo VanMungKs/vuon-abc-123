@@ -55,6 +55,7 @@ npm run dev
 - Tính điểm, sao, phản hồi đúng/sai và lưu kết quả tạm.
 - Vườn ABC 123: tab riêng cho bé 5 tuổi học số, chữ cái, đếm đồ vật, tìm cặp chữ-hình và tập tô chữ.
 - Cơ chế học để chơi: mỗi câu/cặp/nhiệm vụ đúng cộng 1 điểm, đủ 10 điểm mở game thưởng "Bắn chim giấy nhận sao".
+- Mini-game mới cho số và chữ: Tàu số tăng dần, Số còn thiếu, Bắt chữ bay.
 
 ## API scaffold theo RSD
 

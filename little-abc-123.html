@@ -409,6 +409,107 @@
         cursor: default;
       }
 
+      .train-track {
+        display: grid;
+        gap: 14px;
+      }
+
+      .train-slots {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .train-slot,
+      .missing-card {
+        display: grid;
+        place-items: center;
+        min-height: 92px;
+        border: 3px dashed rgba(36, 50, 74, 0.22);
+        border-radius: 24px;
+        background: rgba(255, 255, 255, 0.68);
+        color: #24324a;
+        font-size: clamp(1.9rem, 7vw, 3.1rem);
+        font-weight: 900;
+      }
+
+      .train-slot.is-filled {
+        border-style: solid;
+        color: #ffffff;
+        background: #466789;
+      }
+
+      .train-slot.is-next {
+        border-color: rgba(241, 92, 69, 0.54);
+        background: #fff4c2;
+      }
+
+      .train-choices {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .train-choice {
+        min-height: 78px;
+        border: 0;
+        border-radius: 22px;
+        color: #24324a;
+        background: #ffffff;
+        box-shadow: 0 14px 24px rgba(52, 87, 112, 0.13);
+        font-size: clamp(1.8rem, 6vw, 2.8rem);
+        font-weight: 900;
+      }
+
+      .train-choice.is-picked {
+        color: #ffffff;
+        background: #24a86a;
+      }
+
+      .train-choice.is-wrong {
+        color: #ffffff;
+        background: #f15c45;
+        animation: answer-shake 420ms ease both;
+      }
+
+      .missing-row {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .missing-card.is-missing {
+        color: #ffffff;
+        background: #f15c45;
+        border-style: solid;
+      }
+
+      .letter-sky {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+        min-height: 260px;
+        align-items: center;
+      }
+
+      .balloon-choice {
+        position: relative;
+        min-height: 132px;
+        border-radius: 48% 48% 54% 54%;
+        background: linear-gradient(180deg, #ffffff, #fff4c2);
+        animation: balloon-bob 2.2s ease-in-out infinite;
+      }
+
+      .balloon-choice::after {
+        position: absolute;
+        left: 50%;
+        bottom: -18px;
+        width: 2px;
+        height: 28px;
+        background: rgba(36, 50, 74, 0.22);
+        content: "";
+      }
+
       .pair-board,
       .trace-board {
         display: grid;
@@ -711,6 +812,17 @@
         }
       }
 
+      @keyframes balloon-bob {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+
+        50% {
+          transform: translateY(-10px);
+        }
+      }
+
       @media (max-width: 760px) {
         .app {
           width: min(100% - 18px, 560px);
@@ -858,6 +970,30 @@
           font-size: clamp(2rem, 13vw, 3rem);
         }
 
+        .train-slots,
+        .train-choices,
+        .missing-row {
+          gap: 7px;
+        }
+
+        .train-slot,
+        .missing-card,
+        .train-choice {
+          min-height: 64px;
+          border-radius: 18px;
+          font-size: clamp(1.45rem, 9vw, 2.35rem);
+        }
+
+        .letter-sky {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 10px;
+          min-height: 210px;
+        }
+
+        .balloon-choice {
+          min-height: 106px;
+        }
+
         .pair-board {
           grid-template-columns: repeat(2, minmax(0, 1fr));
           gap: 10px;
@@ -970,6 +1106,16 @@
           grid-template-columns: repeat(2, minmax(0, 1fr));
         }
 
+        .train-slots,
+        .train-choices,
+        .missing-row {
+          grid-template-columns: repeat(5, minmax(0, 1fr));
+        }
+
+        .letter-sky {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
         .tile {
           min-height: 78px;
         }
@@ -995,6 +1141,11 @@
 
       @media (max-width: 340px) {
         .choices {
+          grid-template-columns: 1fr;
+        }
+
+        .train-choices,
+        .letter-sky {
           grid-template-columns: 1fr;
         }
 
@@ -1091,6 +1242,7 @@
         task: null,
         pairSelected: [],
         pairFound: [],
+        orderSelected: [],
         traceStep: 0,
         feedback: "",
         bonusHits: 0,
@@ -1239,8 +1391,8 @@
       }
 
       function answerSpeech(choice) {
-        if (state.task.kind === "letter") return `Con chọn chữ ${letterSpeech(choice)}`;
-        if (state.task.kind === "number" || state.task.kind === "count") return `Con chọn số ${numberSpeech(Number(choice))}`;
+        if (state.task.kind === "letter" || state.task.kind === "balloons") return `Con chọn chữ ${letterSpeech(choice)}`;
+        if (state.task.kind === "number" || state.task.kind === "count" || state.task.kind === "missing") return `Con chọn số ${numberSpeech(Number(choice))}`;
         return `Con chọn ${choice}`;
       }
 
@@ -1279,6 +1431,9 @@
                 <button class="mode-btn" type="button" data-mode="letters" data-speech="Học chữ cái tiếng Việt"><span>ABC</span>Học chữ</button>
                 <button class="mode-btn" type="button" data-mode="count" data-speech="Đếm đồ vật bằng tiếng Việt"><span>🍎</span>Đếm đồ vật</button>
                 <button class="mode-btn" type="button" data-mode="pairs" data-speech="Tìm cặp chữ và hình"><span>🧩</span>Tìm cặp giống nhau</button>
+                <button class="mode-btn" type="button" data-mode="train" data-speech="Tàu số vui nhộn"><span>🚂</span>Tàu số</button>
+                <button class="mode-btn" type="button" data-mode="missing" data-speech="Tìm số còn thiếu"><span>❓</span>Số còn thiếu</button>
+                <button class="mode-btn" type="button" data-mode="balloons" data-speech="Bắt chữ bay"><span>🎈</span>Bắt chữ bay</button>
               </div>
               <div class="bonus-card">
                 <strong>🎁 Học đủ 10 điểm sẽ mở game thưởng.</strong>
@@ -1308,11 +1463,15 @@
         state.feedback = "";
         state.pairSelected = [];
         state.pairFound = [];
+        state.orderSelected = [];
         state.traceStep = 0;
         if (state.mode === "numbers") renderFindNumber();
         if (state.mode === "letters") renderFindLetter();
         if (state.mode === "count") renderCountObjects();
         if (state.mode === "pairs") renderPairs();
+        if (state.mode === "train") renderNumberTrain();
+        if (state.mode === "missing") renderMissingNumber();
+        if (state.mode === "balloons") renderLetterBalloons();
       }
 
       function renderShell(title, body, actions = "") {
@@ -1499,6 +1658,124 @@
         }, 700);
       }
 
+      function renderNumberTrain(forceNew = true) {
+        if (forceNew) {
+          const start = Math.floor(Math.random() * 5);
+          const numbers = Array.from({ length: 5 }, (_, index) => start + index);
+          state.task = {
+            kind: "train",
+            answer: numbers.join(","),
+            numbers,
+            choices: shuffle(numbers),
+            speech: "Bi và Xoài hãy xếp số từ bé đến lớn",
+          };
+          state.orderSelected = [];
+        }
+        drawNumberTrain();
+        speak(state.task.speech);
+      }
+
+      function drawNumberTrain() {
+        const nextIndex = state.orderSelected.length;
+        renderShell(
+          "Tàu số từ bé đến lớn",
+          `
+            <div class="train-track">
+              <div class="train-slots" aria-label="Các toa tàu số">
+                ${state.task.numbers.map((number, index) => {
+                  const filled = state.orderSelected[index];
+                  return `<div class="train-slot ${filled ? "is-filled" : index === nextIndex ? "is-next" : ""}">${filled ? filled : "🚂"}</div>`;
+                }).join("")}
+              </div>
+              <div class="train-choices">
+                ${state.task.choices.map((number) => {
+                  const picked = state.orderSelected.includes(number);
+                  return `<button class="train-choice ${picked ? "is-picked" : ""}" type="button" data-train="${number}" ${picked ? "disabled" : ""} aria-label="Số ${numberSpeech(number)}">${number}</button>`;
+                }).join("")}
+              </div>
+            </div>
+          `,
+        );
+        screen.querySelectorAll("[data-train]").forEach((button) => {
+          button.addEventListener("click", () => chooseTrainNumber(Number(button.dataset.train), button));
+        });
+        document.getElementById("listen").addEventListener("click", () => { enableSound(); speak(state.task.speech); });
+      }
+
+      function chooseTrainNumber(number, button) {
+        const expected = state.task.numbers[state.orderSelected.length];
+        if (number !== expected) {
+          state.feedback = `Con chọn số ${numberSpeech(number)}. Chưa đúng thứ tự rồi.`;
+          button.classList.add("is-wrong");
+          tone("no");
+          speak(`Con chọn số ${numberSpeech(number)}. Chưa đúng, thử lại nhé`);
+          setTimeout(drawNumberTrain, 650);
+          return;
+        }
+        state.orderSelected.push(number);
+        tone("yes");
+        if (state.orderSelected.length === state.task.numbers.length) {
+          awardLearningPoint();
+          state.feedback = "Tàu số chạy đúng đường rồi!";
+          speak("Đúng thứ tự rồi");
+        }
+        drawNumberTrain();
+      }
+
+      function renderMissingNumber(forceNew = true) {
+        if (forceNew) {
+          const start = Math.floor(Math.random() * 5);
+          const numbers = Array.from({ length: 5 }, (_, index) => start + index);
+          const missingIndex = Math.floor(Math.random() * numbers.length);
+          const answer = numbers[missingIndex];
+          state.task = {
+            kind: "missing",
+            answer: String(answer),
+            numbers,
+            missingIndex,
+            choices: buildChoices(String(answer), Array.from({ length: 10 }, (_, index) => String(index))),
+            speech: "Bi và Xoài hãy tìm số còn thiếu",
+          };
+        }
+        renderShell(
+          "Số nào còn thiếu?",
+          `
+            <div class="missing-row" aria-label="Dãy số còn thiếu">
+              ${state.task.numbers.map((number, index) => `<div class="missing-card ${index === state.task.missingIndex ? "is-missing" : ""}">${index === state.task.missingIndex ? "?" : number}</div>`).join("")}
+            </div>
+            <div class="choices">
+              ${state.task.choices.map((choice) => `<button class="choice" type="button" data-answer="${choice}" aria-label="Số ${numberSpeech(Number(choice))}">${choice}</button>`).join("")}
+            </div>
+          `,
+        );
+        bindAnswerButtons();
+        document.getElementById("listen").addEventListener("click", () => { enableSound(); speak(state.task.speech); });
+        speak(state.task.speech);
+      }
+
+      function renderLetterBalloons(forceNew = true) {
+        if (forceNew) {
+          const answer = randomItem(letters);
+          state.task = {
+            kind: "balloons",
+            answer,
+            choices: buildChoices(answer, letters, 6),
+            speech: `Bi và Xoài hãy bắt chữ ${letterSpeech(answer)}`,
+          };
+        }
+        renderShell(
+          `Bắt chữ ${state.task.answer}`,
+          `
+            <div class="letter-sky">
+              ${state.task.choices.map((choice, index) => `<button class="choice balloon-choice" type="button" data-answer="${choice}" style="animation-delay:${index * 90}ms" aria-label="Chữ ${letterSpeech(choice)}">${choice}</button>`).join("")}
+            </div>
+          `,
+        );
+        bindAnswerButtons();
+        document.getElementById("listen").addEventListener("click", () => { enableSound(); speak(state.task.speech); });
+        speak(state.task.speech);
+      }
+
       function renderTrace(letter) {
         state.task = { kind: "trace", answer: letter, speech: `Con hãy bấm theo chấm để tô chữ ${letterSpeech(letter)}` };
         drawTrace();
@@ -1583,6 +1860,8 @@
         if (state.task.kind === "number") renderFindNumber(false);
         if (state.task.kind === "letter") renderFindLetter(false);
         if (state.task.kind === "count") renderCountObjects(false);
+        if (state.task.kind === "missing") renderMissingNumber(false);
+        if (state.task.kind === "balloons") renderLetterBalloons(false);
       }
 
       function renderBonusGame() {
