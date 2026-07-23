@@ -1753,9 +1753,9 @@
           };
         }
         renderShell(
-          `Bi và Xoài hãy tìm số ${state.task.answer}`,
+          `Bi và Xoài hãy tìm số ${numberSpeech(state.task.answer)}`,
           `
-            <div class="big-symbol">${state.task.answer}</div>
+            <div class="big-symbol">${numberSpeech(state.task.answer)}</div>
             <div class="choices">
               ${state.task.choices.map((choice) => `<button class="choice" type="button" data-answer="${choice}" aria-label="Số ${numberSpeech(choice)}">${choice}</button>`).join("")}
             </div>
