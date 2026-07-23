@@ -1557,20 +1557,16 @@
                 <span>${canPlayBonus() ? "Bi và Xoài đã đủ điểm rồi!" : `Còn ${10 - state.score} điểm nữa để mở game.`}</span>
                 ${bonusButtonMarkup("bonus-home")}
               </div>
-              <button class="primary" type="button" id="start">Bắt đầu</button>
             </div>
           </section>
         `;
         screen.querySelectorAll("[data-mode]").forEach((button) => {
           button.addEventListener("click", () => {
             state.mode = button.dataset.mode;
-            screen.querySelectorAll("[data-mode]").forEach((item) => item.style.outline = "");
-            button.style.outline = "5px solid rgba(241, 92, 69, 0.24)";
-            speak(button.dataset.speech);
             tone("tap");
+            nextTask();
           });
         });
-        document.getElementById("start").addEventListener("click", nextTask);
         document.getElementById("bonus-home")?.addEventListener("click", renderBonusMenu);
       }
 
