@@ -1350,6 +1350,8 @@
         { icon: "⭐", name: "ngôi sao" },
         { icon: "🚗", name: "ô tô" },
       ];
+      const correctNextDelayMs = 2200;
+      const retryDelayMs = 1300;
       const bonusGames = [
         {
           id: "birds",
@@ -1956,14 +1958,14 @@
               updateHud();
               tone("yes");
               speak(`${spokenChoice}. Đúng rồi, bé giỏi quá`);
-              state.nextTaskTimer = setTimeout(nextTask, 900);
+              state.nextTaskTimer = setTimeout(nextTask, correctNextDelayMs);
             } else {
               button.classList.add("is-wrong");
               state.feedback = `${spokenChoice}. Chưa đúng, mình thử lại nhé.`;
               if (feedback) feedback.textContent = state.feedback;
               tone("no");
               speak(`${spokenChoice}. Chưa đúng, thử lại nhé`);
-              setTimeout(renderCurrentTask, 900);
+              setTimeout(renderCurrentTask, retryDelayMs);
             }
           });
         });
