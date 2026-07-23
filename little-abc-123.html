@@ -669,6 +669,47 @@
         font-size: 1.15rem;
       }
 
+      .bonus-menu-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .bonus-option {
+        display: grid;
+        gap: 10px;
+        min-height: 170px;
+        padding: 18px 14px;
+        border: 3px solid rgba(36, 50, 74, 0.12);
+        border-radius: 26px;
+        color: #24324a;
+        background: #ffffff;
+        box-shadow: 0 16px 30px rgba(52, 87, 112, 0.15);
+        font-weight: 900;
+        text-align: center;
+        transition:
+          transform 160ms ease,
+          box-shadow 160ms ease,
+          filter 160ms ease;
+      }
+
+      .bonus-option:hover {
+        transform: translateY(-2px);
+        filter: saturate(1.04);
+      }
+
+      .bonus-option-icon {
+        display: grid;
+        place-items: center;
+        min-height: 66px;
+        font-size: 3.2rem;
+      }
+
+      .bonus-option small {
+        color: #42627e;
+        font-size: 0.98rem;
+      }
+
       .bonus-stats {
         display: flex;
         flex-wrap: wrap;
@@ -699,6 +740,19 @@
           linear-gradient(180deg, #dff8ff, #fff2bf);
       }
 
+      .bonus-scene.star-rain {
+        background:
+          radial-gradient(circle at 20% 16%, rgba(255, 255, 255, 0.86), transparent 7rem),
+          linear-gradient(180deg, #466789, #8bd7ff 62%, #fff2bf);
+      }
+
+      .bonus-scene.flower-garden {
+        background:
+          linear-gradient(0deg, rgba(36, 168, 106, 0.42) 0 28%, transparent 28%),
+          radial-gradient(circle at 78% 18%, rgba(255, 214, 90, 0.64), transparent 7rem),
+          linear-gradient(180deg, #dff8ff, #fff8d8);
+      }
+
       .bonus-target {
         position: absolute;
         left: -90px;
@@ -713,6 +767,21 @@
         box-shadow: 0 16px 28px rgba(52, 87, 112, 0.16);
         font-size: 2.4rem;
         animation: target-fly var(--target-speed, 5s) linear forwards;
+      }
+
+      .bonus-target.star-target {
+        left: var(--target-left, 40%);
+        top: -90px;
+        color: #24324a;
+        background: #fff4c2;
+        animation: target-drop var(--target-speed, 4.2s) linear forwards;
+      }
+
+      .bonus-target.flower-target {
+        left: var(--target-left, 40%);
+        top: var(--target-top, 68%);
+        background: #ffffff;
+        animation: flower-pop var(--target-speed, 1.8s) ease-in-out forwards;
       }
 
       .bonus-target.is-hit {
@@ -809,6 +878,34 @@
         to {
           opacity: 0;
           transform: scale(1.35) rotate(16deg);
+        }
+      }
+
+      @keyframes target-drop {
+        from {
+          transform: translateY(0) rotate(-12deg);
+        }
+
+        to {
+          transform: translateY(calc(100vh + 180px)) rotate(18deg);
+        }
+      }
+
+      @keyframes flower-pop {
+        0% {
+          opacity: 0;
+          transform: translateY(28px) scale(0.72);
+        }
+
+        18%,
+        72% {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+
+        100% {
+          opacity: 0;
+          transform: translateY(24px) scale(0.82);
         }
       }
 
@@ -1031,6 +1128,24 @@
           border-radius: 20px;
         }
 
+        .bonus-menu-grid {
+          grid-template-columns: 1fr;
+          gap: 10px;
+        }
+
+        .bonus-option {
+          grid-template-columns: auto 1fr;
+          align-items: center;
+          min-height: 92px;
+          text-align: left;
+        }
+
+        .bonus-option-icon {
+          min-width: 72px;
+          min-height: 56px;
+          font-size: 2.65rem;
+        }
+
         .bonus-scene {
           min-height: 285px;
           border-width: 4px;
@@ -1235,6 +1350,32 @@
         { icon: "⭐", name: "ngôi sao" },
         { icon: "🚗", name: "ô tô" },
       ];
+      const bonusGames = [
+        {
+          id: "birds",
+          icon: "🕊️",
+          title: "Bắn chim giấy",
+          hint: "Chạm thật nhanh vào chim giấy đang bay.",
+          sceneClass: "",
+          speech: "Game thưởng bắn chim giấy bắt đầu. Chạm vào chim giấy đang bay nhé.",
+        },
+        {
+          id: "stars",
+          icon: "⭐",
+          title: "Hứng sao rơi",
+          hint: "Chạm vào ngôi sao trước khi rơi xuống đất.",
+          sceneClass: "star-rain",
+          speech: "Game thưởng hứng sao rơi bắt đầu. Chạm vào ngôi sao đang rơi nhé.",
+        },
+        {
+          id: "flowers",
+          icon: "🌸",
+          title: "Tưới hoa nở",
+          hint: "Chạm vào bông hoa vừa mọc để nhận sao.",
+          sceneClass: "flower-garden",
+          speech: "Game thưởng tưới hoa nở bắt đầu. Chạm vào bông hoa vừa mọc nhé.",
+        },
+      ];
 
       const state = {
         score: 0,
@@ -1251,6 +1392,7 @@
         bonusSpawnTimer: null,
         nextTaskTimer: null,
         soundReady: false,
+        bonusGame: "birds",
         currentAudio: null,
       };
 
@@ -1311,7 +1453,7 @@
 
       function bonusButtonMarkup(id = "bonus") {
         if (!canPlayBonus()) return "";
-        return `<button class="primary" type="button" id="${id}" aria-label="Chơi game thưởng"><span class="button-icon" aria-hidden="true">🎮</span><span>Chơi game thưởng</span></button>`;
+        return `<button class="primary" type="button" id="${id}" aria-label="Chọn game thưởng"><span class="button-icon" aria-hidden="true">🎮</span><span>Chọn game thưởng</span></button>`;
       }
 
       function speechKey(text) {
@@ -1429,7 +1571,7 @@
           });
         });
         document.getElementById("start").addEventListener("click", nextTask);
-        document.getElementById("bonus-home")?.addEventListener("click", renderBonusGame);
+        document.getElementById("bonus-home")?.addEventListener("click", renderBonusMenu);
       }
 
       function nextTask() {
@@ -1485,7 +1627,7 @@
         `;
         document.getElementById("home").addEventListener("click", renderHome);
         document.getElementById("next").addEventListener("click", nextTask);
-        document.getElementById("bonus")?.addEventListener("click", renderBonusGame);
+        document.getElementById("bonus")?.addEventListener("click", renderBonusMenu);
       }
 
       function renderFindNumber(forceNew = true) {
@@ -1839,7 +1981,11 @@
         if (state.task.kind === "balloons") renderLetterBalloons(false);
       }
 
-      function renderBonusGame() {
+      function getBonusGame(id) {
+        return bonusGames.find((game) => game.id === id) || bonusGames[0];
+      }
+
+      function renderBonusMenu() {
         clearTaskTimer();
         clearBonusTimers();
         if (!canPlayBonus()) {
@@ -1847,6 +1993,49 @@
           renderHome();
           return;
         }
+        updateHud();
+        screen.innerHTML = `
+          <section class="screen game">
+            <div class="game-head">
+              <div>
+                <p class="eyebrow">Game thưởng</p>
+                <h2>Bi và Xoài chọn trò nào?</h2>
+              </div>
+              <button class="small-btn" type="button" id="home" aria-label="Về vườn">
+                <span class="button-icon" aria-hidden="true">🏡</span>
+                <span>Về vườn</span>
+              </button>
+            </div>
+            <div class="prompt-card">
+              <div class="bonus-menu-grid">
+                ${bonusGames.map((game) => `
+                  <button class="bonus-option" type="button" data-bonus-game="${game.id}" aria-label="${escapeHtml(game.title)}">
+                    <span class="bonus-option-icon" aria-hidden="true">${game.icon}</span>
+                    <span>${escapeHtml(game.title)}<br><small>${escapeHtml(game.hint)}</small></span>
+                  </button>
+                `).join("")}
+              </div>
+              <p class="feedback">Mỗi lượt game thưởng dùng 10 điểm.</p>
+            </div>
+          </section>
+        `;
+        document.getElementById("home").addEventListener("click", renderHome);
+        screen.querySelectorAll("[data-bonus-game]").forEach((button) => {
+          button.addEventListener("click", () => startBonusGame(button.dataset.bonusGame));
+        });
+        speak("Bi và Xoài hãy chọn một game thưởng");
+      }
+
+      function startBonusGame(gameId = "birds") {
+        clearTaskTimer();
+        clearBonusTimers();
+        if (!canPlayBonus()) {
+          state.feedback = "Cần đủ 10 điểm học để mở game thưởng.";
+          renderHome();
+          return;
+        }
+        const game = getBonusGame(gameId);
+        state.bonusGame = game.id;
         state.score -= 10;
         state.bonusHits = 0;
         state.bonusTimeLeft = 20;
@@ -1856,7 +2045,7 @@
             <div class="game-head">
               <div>
                 <p class="eyebrow">Game thưởng</p>
-                <h2>Bắn chim giấy nhận sao</h2>
+                <h2>${escapeHtml(game.title)}</h2>
               </div>
               <button class="small-btn" type="button" id="home" aria-label="Về vườn">
                 <span class="button-icon" aria-hidden="true">🏡</span>
@@ -1868,12 +2057,16 @@
                 <span class="bonus-pill">⏱️ <span id="bonus-time">20</span> giây</span>
                 <span class="bonus-pill">⭐ <span id="bonus-hits">0</span> sao</span>
               </div>
-              <div class="bonus-scene" id="bonus-scene" aria-label="Chạm vào chim giấy đang bay"></div>
-              <p class="feedback" id="bonus-feedback">Chạm vào chim giấy đang bay nhé!</p>
+              <div class="bonus-scene ${game.sceneClass}" id="bonus-scene" aria-label="${escapeHtml(game.hint)}"></div>
+              <p class="feedback" id="bonus-feedback">${escapeHtml(game.hint)}</p>
               <div class="footer-actions">
                 <button class="small-btn" type="button" id="bonus-again" ${canPlayBonus() ? "" : "disabled"} aria-label="Chơi tiếp">
                   <span class="button-icon" aria-hidden="true">🎮</span>
-                  <span>Chơi tiếp</span>
+                  <span>Chơi lại</span>
+                </button>
+                <button class="small-btn" type="button" id="bonus-menu" ${canPlayBonus() ? "" : "disabled"} aria-label="Chọn trò khác">
+                  <span class="button-icon" aria-hidden="true">🎁</span>
+                  <span>Trò khác</span>
                 </button>
                 <button class="small-btn" type="button" id="learn-more" aria-label="Học tiếp">
                   <span class="button-icon" aria-hidden="true">📚</span>
@@ -1885,10 +2078,11 @@
         `;
         document.getElementById("home").addEventListener("click", renderHome);
         document.getElementById("learn-more").addEventListener("click", renderHome);
-        document.getElementById("bonus-again").addEventListener("click", renderBonusGame);
-        speak("Game thưởng bắt đầu. Chạm vào chim giấy đang bay nhé.");
+        document.getElementById("bonus-again").addEventListener("click", () => startBonusGame(state.bonusGame));
+        document.getElementById("bonus-menu").addEventListener("click", renderBonusMenu);
+        speak(game.speech);
         spawnBonusTarget();
-        state.bonusSpawnTimer = setInterval(spawnBonusTarget, 820);
+        state.bonusSpawnTimer = setInterval(spawnBonusTarget, game.id === "flowers" ? 620 : 780);
         state.bonusTimer = setInterval(() => {
           state.bonusTimeLeft -= 1;
           document.getElementById("bonus-time").textContent = state.bonusTimeLeft;
@@ -1899,26 +2093,44 @@
       function spawnBonusTarget() {
         const scene = document.getElementById("bonus-scene");
         if (!scene || state.bonusTimeLeft <= 0) return;
+        const game = getBonusGame(state.bonusGame);
         const target = document.createElement("button");
         target.type = "button";
-        target.className = "bonus-target";
-        target.setAttribute("aria-label", "Chim giấy");
-        target.textContent = randomItem(["🕊️", "🐦", "⭐"]);
-        const top = Math.floor(Math.random() * 68) + 8;
-        const speed = Math.floor(Math.random() * 1600) + 3800;
+        target.className = `bonus-target ${game.id === "stars" ? "star-target" : game.id === "flowers" ? "flower-target" : ""}`;
+        target.setAttribute("aria-label", game.id === "stars" ? "Ngôi sao" : game.id === "flowers" ? "Bông hoa" : "Chim giấy");
+        target.textContent = game.id === "stars"
+          ? randomItem(["⭐", "🌟", "💫"])
+          : game.id === "flowers"
+            ? randomItem(["🌸", "🌼", "🌻"])
+            : randomItem(["🕊️", "🐦", "⭐"]);
+        const top = game.id === "flowers" ? Math.floor(Math.random() * 20) + 58 : Math.floor(Math.random() * 68) + 8;
+        const left = Math.floor(Math.random() * 76) + 8;
+        const speed = game.id === "stars"
+          ? Math.floor(Math.random() * 1400) + 3000
+          : game.id === "flowers"
+            ? Math.floor(Math.random() * 900) + 1600
+            : Math.floor(Math.random() * 1600) + 3800;
         target.style.setProperty("--target-top", `${top}%`);
+        target.style.setProperty("--target-left", `${left}%`);
         target.style.setProperty("--target-speed", `${speed}ms`);
         target.addEventListener("click", () => {
           if (target.classList.contains("is-hit")) return;
           target.classList.add("is-hit");
           state.bonusHits += 1;
           document.getElementById("bonus-hits").textContent = state.bonusHits;
-          document.getElementById("bonus-feedback").textContent = "Trúng rồi, nhận một ngôi sao!";
+          document.getElementById("bonus-feedback").textContent = game.id === "flowers"
+            ? "Hoa nở rồi, nhận một ngôi sao!"
+            : "Trúng rồi, nhận một ngôi sao!";
           tone("yes");
           setTimeout(() => target.remove(), 260);
         });
         scene.appendChild(target);
         setTimeout(() => target.remove(), speed + 300);
+      }
+
+      function bonusResultSpeech() {
+        if (state.bonusHits > 60) return "Hết giờ rồi. Bi và Xoài nhận rất nhiều sao.";
+        return `Hết giờ rồi. Bi và Xoài nhận ${state.bonusHits} sao.`;
       }
 
       function finishBonusGame() {
@@ -1927,7 +2139,8 @@
         const feedback = document.getElementById("bonus-feedback");
         if (feedback) feedback.textContent = `Hết giờ rồi! Bi và Xoài nhận ${state.bonusHits} sao.`;
         document.getElementById("bonus-again").disabled = !canPlayBonus();
-        speak(`Hết giờ rồi. Bi và Xoài nhận ${state.bonusHits} sao.`);
+        document.getElementById("bonus-menu").disabled = !canPlayBonus();
+        speak(bonusResultSpeech());
       }
 
       soundButton.addEventListener("click", enableSound);
