@@ -226,6 +226,37 @@
         background: rgba(255, 246, 203, 0.86);
       }
 
+      .story-card {
+        display: grid;
+        gap: 8px;
+        padding: 14px;
+        border: 3px solid rgba(122, 109, 240, 0.16);
+        border-radius: 22px;
+        background:
+          radial-gradient(circle at 12% 18%, rgba(255, 255, 255, 0.7), transparent 4rem),
+          linear-gradient(135deg, rgba(238, 244, 255, 0.92), rgba(255, 242, 168, 0.72));
+      }
+
+      .story-line {
+        margin: 0;
+        color: #42627e;
+        font-weight: 900;
+        line-height: 1.45;
+      }
+
+      .story-goal {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 38px;
+        padding: 7px 10px;
+        border-radius: 999px;
+        color: #24324a;
+        background: rgba(255, 255, 255, 0.78);
+        font-size: 0.94rem;
+        font-weight: 900;
+      }
+
       .customer-head {
         display: flex;
         align-items: center;
@@ -645,7 +676,8 @@
         border-radius: 44px;
         background:
           radial-gradient(circle at 28% 18%, rgba(255, 255, 255, 0.84), transparent 8rem),
-          linear-gradient(180deg, #cdefff, #fff8df);
+          radial-gradient(circle at 80% 30%, var(--mirror-glow, rgba(255, 255, 255, 0.48)), transparent 7rem),
+          linear-gradient(180deg, var(--mirror-bg-a, #cdefff), var(--mirror-bg-b, #fff8df));
         box-shadow:
           inset 0 0 0 4px rgba(36, 50, 74, 0.08),
           0 20px 44px rgba(52, 87, 112, 0.18);
@@ -1350,6 +1382,12 @@
             <ul class="wish-list" id="wish-list"></ul>
           </div>
 
+          <div class="story-card">
+            <p class="eyebrow">Câu chuyện</p>
+            <p class="story-line" id="story-line">Xoài mở salon phép thuật để giúp khách tự tin trước buổi biểu diễn.</p>
+            <span class="story-goal" id="story-goal">✨ Hoàn thành kiểu tóc và bộ đồ phù hợp</span>
+          </div>
+
           <div class="customer-maker">
             <p class="eyebrow">Tạo khách riêng</p>
             <div class="name-row">
@@ -1455,6 +1493,9 @@
       const resultNotes = document.getElementById("result-notes");
       const gallery = document.getElementById("gallery");
       const starsNode = document.getElementById("salon-stars");
+      const mirror = document.querySelector(".mirror");
+      const storyLine = document.getElementById("story-line");
+      const storyGoal = document.getElementById("story-goal");
       const customerNameInput = document.getElementById("customer-name-input");
       const portraitPicker = document.getElementById("portrait-picker");
       const avatarPicker = document.getElementById("avatar-picker");
@@ -1512,12 +1553,96 @@
       const avatarChoices = ["😊", "😄", "🙂", "🥰", "🤩", "😎", "😍", "😇", "😋", "😁", "🤗", "😉", "😌", "😃", "☺️", "😆", "👧", "👦", "🧒", "👩", "👱‍♀️", "👩‍🦱", "👩‍🦰", "👩‍🦳", "👸", "🧑", "👨", "👵", "👶", "🧕"];
 
       const princessPortraits = [
-        { id: "snow-princess", label: "Công chúa Tuyết", icon: "❄️", bgA: "#14233f", bgB: "#78d8ff", hair: "#f8d8a8", dress: "#49bfe5", cape: "#b9f2ff" },
-        { id: "star-princess", label: "Công chúa Sao", icon: "⭐", bgA: "#30215f", bgB: "#ffc857", hair: "#ffe0a6", dress: "#8067f3", cape: "#ffd66b" },
-        { id: "flower-princess", label: "Công chúa Hoa", icon: "🌸", bgA: "#2f6f68", bgB: "#ff9ac2", hair: "#7a4a2b", dress: "#ff75a6", cape: "#ffd1e3" },
-        { id: "moon-princess", label: "Công chúa Trăng", icon: "🌙", bgA: "#24324a", bgB: "#b9c8ff", hair: "#d9d0ff", dress: "#6a82e8", cape: "#dfe7ff" },
-        { id: "rainbow-princess", label: "Công chúa Cầu Vồng", icon: "🌈", bgA: "#1877a8", bgB: "#ffc0cb", hair: "#f2a24d", dress: "#35c7a5", cape: "#fff0a8" },
-        { id: "pearl-princess", label: "Công chúa Ngọc Trai", icon: "💎", bgA: "#0e6f82", bgB: "#e7fbff", hair: "#2c2530", dress: "#b8f2ff", cape: "#ffffff" },
+        {
+          id: "snow-princess",
+          label: "Công chúa Tuyết",
+          icon: "❄️",
+          bgA: "#14233f",
+          bgB: "#78d8ff",
+          hair: "#cfd9e6",
+          dress: "#49bfe5",
+          cape: "#b9f2ff",
+          look: { length: "long", color: "#cfd9e6", style: "wavy", bangs: false, accessory: "crown" },
+          fashion: { outfit: "outfit-ice", hat: "hat-crown", glasses: "glasses-none", shoes: "shoes-white" },
+          story: "Công chúa Tuyết chuẩn bị mở vũ hội băng. Bé giúp bạn ấy có mái tóc lấp lánh và bộ đồ xanh băng thật tự tin.",
+          goal: "❄️ Mái tóc bạc sáng, vương miện và váy xanh băng",
+          mirror: { a: "#d8f7ff", b: "#eef7ff", glow: "rgba(120, 216, 255, 0.58)" },
+        },
+        {
+          id: "star-princess",
+          label: "Công chúa Sao",
+          icon: "⭐",
+          bgA: "#30215f",
+          bgB: "#ffc857",
+          hair: "#ffe0a6",
+          dress: "#8067f3",
+          cape: "#ffd66b",
+          look: { length: "long", color: "#d99a28", style: "curly", bangs: true, accessory: "star" },
+          fashion: { outfit: "outfit-star", hat: "hat-crown", glasses: "glasses-star", shoes: "shoes-white" },
+          story: "Công chúa Sao đi diễn trên sân khấu đêm. Bé phối tóc xoăn, kính sao và đầm ngôi sao để ánh đèn sáng lên.",
+          goal: "⭐ Tóc xoăn, kẹp sao, kính sao và đầm ngôi sao",
+          mirror: { a: "#e8ddff", b: "#fff0a8", glow: "rgba(255, 216, 96, 0.55)" },
+        },
+        {
+          id: "flower-princess",
+          label: "Công chúa Hoa",
+          icon: "🌸",
+          bgA: "#2f6f68",
+          bgB: "#ff9ac2",
+          hair: "#7a4a2b",
+          dress: "#ff75a6",
+          cape: "#ffd1e3",
+          look: { length: "medium", color: "#6f3f27", style: "wavy", bangs: true, accessory: "flower" },
+          fashion: { outfit: "outfit-rose", hat: "hat-flower", glasses: "glasses-none", shoes: "shoes-bow" },
+          story: "Công chúa Hoa tới lễ hội khu vườn. Bé chọn tóc mềm, hoa cài tóc và váy hồng để bạn ấy chào mọi người.",
+          goal: "🌸 Tóc mềm, hoa cài, váy hồng và giày nơ",
+          mirror: { a: "#dff9ec", b: "#ffe2ef", glow: "rgba(255, 154, 194, 0.52)" },
+        },
+        {
+          id: "moon-princess",
+          label: "Công chúa Trăng",
+          icon: "🌙",
+          bgA: "#24324a",
+          bgB: "#b9c8ff",
+          hair: "#d9d0ff",
+          dress: "#6a82e8",
+          cape: "#dfe7ff",
+          look: { length: "medium", color: "#9b5bd6", style: "straight", bangs: false, accessory: "heart" },
+          fashion: { outfit: "outfit-star", hat: "hat-none", glasses: "glasses-star", shoes: "shoes-white" },
+          story: "Công chúa Trăng kể chuyện trước giờ ngủ. Bé làm tóc gọn và phối đồ dịu nhẹ để câu chuyện thật êm.",
+          goal: "🌙 Tóc gọn, màu tím dịu và trang phục lấp lánh",
+          mirror: { a: "#dfe7ff", b: "#f7f0ff", glow: "rgba(185, 200, 255, 0.56)" },
+        },
+        {
+          id: "rainbow-princess",
+          label: "Công chúa Cầu Vồng",
+          icon: "🌈",
+          bgA: "#1877a8",
+          bgB: "#ffc0cb",
+          hair: "#f2a24d",
+          dress: "#35c7a5",
+          cape: "#fff0a8",
+          look: { length: "short", color: "#f28b45", style: "curly", bangs: true, accessory: "bow" },
+          fashion: { outfit: "outfit-sun", hat: "hat-sun", glasses: "glasses-sun", shoes: "shoes-red" },
+          story: "Công chúa Cầu Vồng chuẩn bị nhảy múa sau cơn mưa. Bé chọn màu tươi để bạn ấy chạy ra sân khấu.",
+          goal: "🌈 Tóc cam vui, nơ, váy nắng và kính mát",
+          mirror: { a: "#c9f7ff", b: "#fff0c2", glow: "rgba(255, 192, 203, 0.54)" },
+        },
+        {
+          id: "pearl-princess",
+          label: "Công chúa Ngọc Trai",
+          icon: "💎",
+          bgA: "#0e6f82",
+          bgB: "#e7fbff",
+          hair: "#2c2530",
+          dress: "#b8f2ff",
+          cape: "#ffffff",
+          look: { length: "long", color: "#2c2530", style: "straight", bangs: false, accessory: "flower" },
+          fashion: { outfit: "outfit-mint", hat: "hat-flower", glasses: "glasses-none", shoes: "shoes-white" },
+          story: "Công chúa Ngọc Trai tới buổi triển lãm đại dương. Bé làm tóc thẳng óng và phối màu xanh ngọc thật sạch sẽ.",
+          goal: "💎 Tóc đen óng, hoa nhỏ và áo xanh ngọc",
+          mirror: { a: "#c8fbff", b: "#e9fff3", glow: "rgba(14, 111, 130, 0.28)" },
+        },
       ];
 
       const customers = [
@@ -1585,6 +1710,7 @@
 
       const fashionItems = [
         { id: "outfit-aqua", type: "outfit", shape: "shirt", label: "Áo xanh biển", icon: "👚", price: 0, color: "#67d6c9" },
+        { id: "outfit-ice", type: "outfit", shape: "dress", label: "Váy băng tuyết", icon: "❄️", price: 4, color: "#49bfe5" },
         { id: "outfit-rose", type: "outfit", shape: "dress", label: "Váy hồng", icon: "👗", price: 3, color: "#ff78a9" },
         { id: "outfit-sun", type: "outfit", shape: "dress", label: "Váy nắng", icon: "🌼", price: 4, color: "#ffb238" },
         { id: "outfit-mint", type: "outfit", shape: "shirt", label: "Áo bạc hà", icon: "🍃", price: 4, color: "#38a06f" },
@@ -1694,6 +1820,47 @@
           bangs: Math.random() > 0.5,
           accessory: randomFrom(accessories.filter((item) => item.id !== "none")).id,
         };
+      }
+
+      function resetMirrorTheme() {
+        mirror.style.setProperty("--mirror-bg-a", "#cdefff");
+        mirror.style.setProperty("--mirror-bg-b", "#fff8df");
+        mirror.style.setProperty("--mirror-glow", "rgba(255, 255, 255, 0.48)");
+      }
+
+      function applyPortraitTheme(portrait) {
+        if (!portrait) {
+          resetMirrorTheme();
+          return;
+        }
+        state.look = {
+          ...state.look,
+          ...portrait.look,
+          washed: false,
+          dried: false,
+        };
+        Object.values(portrait.fashion).forEach((id) => {
+          if (!state.ownedFashion.includes(id)) state.ownedFashion.push(id);
+        });
+        state.fashion = {
+          ...state.fashion,
+          ...portrait.fashion,
+        };
+        mirror.style.setProperty("--mirror-bg-a", portrait.mirror.a);
+        mirror.style.setProperty("--mirror-bg-b", portrait.mirror.b);
+        mirror.style.setProperty("--mirror-glow", portrait.mirror.glow);
+        saveFashion();
+      }
+
+      function renderStory() {
+        const portrait = portraitById(state.customer.portraitId);
+        if (portrait) {
+          storyLine.textContent = portrait.story;
+          storyGoal.textContent = portrait.goal;
+          return;
+        }
+        storyLine.textContent = `${state.customer.name} tới salon của Xoài để chuẩn bị cho một ngày đặc biệt. Bé đọc yêu cầu, chăm tóc và phối đồ để khách tự tin hơn.`;
+        storyGoal.textContent = "✨ Làm đúng yêu cầu để nhận sao mua đồ";
       }
 
       function tone(kind) {
@@ -1808,8 +1975,20 @@
           ...state.customer,
           face: portrait.icon,
           portraitId: portrait.id,
+          target: {
+            washed: true,
+            dried: true,
+            ...portrait.look,
+          },
         };
+        applyPortraitTheme(portrait);
         renderCustomer();
+        applyLook();
+        applyFashion();
+        renderControls();
+        renderFashionShop();
+        renderServiceStrip();
+        resultPanel.classList.remove("is-open");
         feedback.textContent = `${state.customer.name} đã chọn ${portrait.label}.`;
         sparkle();
         tone("sparkle");
@@ -1821,6 +2000,7 @@
           face,
           portraitId: "",
         };
+        resetMirrorTheme();
         renderCustomer();
         feedback.textContent = `${state.customer.name} đã có hình đại diện mới.`;
         sparkle();
@@ -2015,6 +2195,7 @@
         } else {
           faceNode.textContent = state.customer.face;
         }
+        renderStory();
         customerNameInput.value = state.customer.name;
         const wishList = document.getElementById("wish-list");
         const target = state.customer.target;
@@ -2046,10 +2227,23 @@
           bangs: false,
           accessory: "none",
         };
+        const portrait = portraitById(state.customer.portraitId);
+        if (portrait) {
+          state.customer.target = {
+            washed: true,
+            dried: true,
+            ...portrait.look,
+          };
+          applyPortraitTheme(portrait);
+        } else {
+          resetMirrorTheme();
+        }
         resultPanel.classList.remove("is-open");
         renderCustomer();
         applyLook();
+        applyFashion();
         renderControls();
+        renderFashionShop();
         feedback.textContent = `${state.customer.name} đang chờ một kiểu tóc mới.`;
         sparkle();
       }
@@ -2094,13 +2288,17 @@
           state.stars += earned;
           saveStars();
           feedback.textContent = result.percent === 100 ? "Tuyệt vời, khách rất thích kiểu tóc này!" : "Đẹp rồi, khách rất vui!";
-          document.getElementById("customer-face").textContent = result.percent === 100 ? "🤩" : "🥰";
+          if (!state.customer.portraitId) {
+            document.getElementById("customer-face").textContent = result.percent === 100 ? "🤩" : "🥰";
+          }
           renderFashionShop();
           sparkle();
           tone("yes");
         } else {
           feedback.textContent = "Gần được rồi, mình xem yêu cầu và chỉnh thêm nhé.";
-          document.getElementById("customer-face").textContent = "🙂";
+          if (!state.customer.portraitId) {
+            document.getElementById("customer-face").textContent = "🙂";
+          }
           tone("no");
         }
       }
