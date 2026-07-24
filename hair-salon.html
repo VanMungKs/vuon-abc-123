@@ -1306,10 +1306,6 @@
         background: #e9fff3;
       }
 
-      .fashion-item.is-locked {
-        background: rgba(255, 255, 255, 0.58);
-      }
-
       .fashion-icon {
         display: grid;
         place-items: center;
@@ -1495,9 +1491,9 @@
         </div>
         <div class="nav-actions">
           <a class="nav-btn" href="little-abc-123.html"><span>🏡</span>Vườn ABC</a>
-          <div class="score-card" aria-label="Điểm salon">
-            <span class="score-value" id="salon-stars">0</span>
-            <span>ngôi sao</span>
+          <div class="score-card" aria-label="Tủ đồ salon">
+            <span class="score-value">🎁</span>
+            <span>tủ đồ mở sẵn</span>
           </div>
         </div>
       </section>
@@ -1641,7 +1637,6 @@
       const resultScore = document.getElementById("result-score");
       const resultNotes = document.getElementById("result-notes");
       const gallery = document.getElementById("gallery");
-      const starsNode = document.getElementById("salon-stars");
       const mirror = document.querySelector(".mirror");
       const storyIcon = document.getElementById("story-icon");
       const storyLine = document.getElementById("story-line");
@@ -1878,22 +1873,22 @@
       };
 
       const fashionItems = [
-        { id: "outfit-aqua", type: "outfit", shape: "shirt", label: "Áo xanh biển", icon: "👚", price: 0, color: "#67d6c9" },
-        { id: "outfit-ice", type: "outfit", shape: "dress", label: "Váy băng tuyết", icon: "❄️", price: 4, color: "#49bfe5" },
-        { id: "outfit-rose", type: "outfit", shape: "dress", label: "Váy hồng", icon: "👗", price: 3, color: "#ff78a9" },
-        { id: "outfit-sun", type: "outfit", shape: "dress", label: "Váy nắng", icon: "🌼", price: 4, color: "#ffb238" },
-        { id: "outfit-mint", type: "outfit", shape: "shirt", label: "Áo bạc hà", icon: "🍃", price: 4, color: "#38a06f" },
-        { id: "outfit-star", type: "outfit", shape: "dress", label: "Đầm ngôi sao", icon: "⭐", price: 5, color: "#7a6df0" },
-        { id: "hat-none", type: "hat", label: "Không mũ", icon: "✨", price: 0, color: "#ffffff" },
-        { id: "hat-sun", type: "hat", label: "Mũ nắng", icon: "👒", price: 3, color: "#fff2a8" },
-        { id: "hat-crown", type: "hat", label: "Vương miện", icon: "👑", price: 5, color: "#ffe06b" },
-        { id: "hat-flower", type: "hat", label: "Mũ hoa", icon: "🌺", price: 4, color: "#ffd5e6" },
-        { id: "glasses-none", type: "glasses", label: "Không kính", icon: "✨", price: 0, color: "#ffffff" },
-        { id: "glasses-sun", type: "glasses", label: "Kính mát", icon: "🕶️", price: 3, color: "#dcefff" },
-        { id: "glasses-star", type: "glasses", label: "Kính sao", icon: "🤓", price: 4, color: "#fff2a8" },
-        { id: "shoes-white", type: "shoes", label: "Giày trắng", icon: "👟", price: 0, color: "#ffffff" },
-        { id: "shoes-red", type: "shoes", label: "Giày đỏ", icon: "👠", price: 3, color: "#ffd5e6" },
-        { id: "shoes-bow", type: "shoes", label: "Giày nơ", icon: "🎀", price: 4, color: "#ffe2ef" },
+        { id: "outfit-aqua", type: "outfit", shape: "shirt", label: "Áo xanh biển", icon: "👚", color: "#67d6c9" },
+        { id: "outfit-ice", type: "outfit", shape: "dress", label: "Váy băng tuyết", icon: "❄️", color: "#49bfe5" },
+        { id: "outfit-rose", type: "outfit", shape: "dress", label: "Váy hồng", icon: "👗", color: "#ff78a9" },
+        { id: "outfit-sun", type: "outfit", shape: "dress", label: "Váy nắng", icon: "🌼", color: "#ffb238" },
+        { id: "outfit-mint", type: "outfit", shape: "shirt", label: "Áo bạc hà", icon: "🍃", color: "#38a06f" },
+        { id: "outfit-star", type: "outfit", shape: "dress", label: "Đầm ngôi sao", icon: "⭐", color: "#7a6df0" },
+        { id: "hat-none", type: "hat", label: "Không mũ", icon: "✨", color: "#ffffff" },
+        { id: "hat-sun", type: "hat", label: "Mũ nắng", icon: "👒", color: "#fff2a8" },
+        { id: "hat-crown", type: "hat", label: "Vương miện", icon: "👑", color: "#ffe06b" },
+        { id: "hat-flower", type: "hat", label: "Mũ hoa", icon: "🌺", color: "#ffd5e6" },
+        { id: "glasses-none", type: "glasses", label: "Không kính", icon: "✨", color: "#ffffff" },
+        { id: "glasses-sun", type: "glasses", label: "Kính mát", icon: "🕶️", color: "#dcefff" },
+        { id: "glasses-star", type: "glasses", label: "Kính sao", icon: "🤓", color: "#fff2a8" },
+        { id: "shoes-white", type: "shoes", label: "Giày trắng", icon: "👟", color: "#ffffff" },
+        { id: "shoes-red", type: "shoes", label: "Giày đỏ", icon: "👠", color: "#ffd5e6" },
+        { id: "shoes-bow", type: "shoes", label: "Giày nơ", icon: "🎀", color: "#ffe2ef" },
       ];
 
       const state = {
@@ -1908,18 +1903,12 @@
           bangs: false,
           accessory: "none",
         },
-        stars: Number(localStorage.getItem("salon-stars") || "0"),
         savedLooks: JSON.parse(localStorage.getItem("salon-gallery") || "[]"),
-        ownedFashion: JSON.parse(localStorage.getItem("salon-owned-fashion") || JSON.stringify(Object.values(defaultFashion))),
         fashion: {
           ...defaultFashion,
           ...JSON.parse(localStorage.getItem("salon-fashion") || "{}"),
         },
       };
-
-      Object.values(defaultFashion).forEach((id) => {
-        if (!state.ownedFashion.includes(id)) state.ownedFashion.push(id);
-      });
 
       function colorName(value) {
         return hairColors.find((item) => item.value === value)?.name || "màu tóc";
@@ -1966,13 +1955,7 @@
       }
 
       function saveFashion() {
-        localStorage.setItem("salon-owned-fashion", JSON.stringify(state.ownedFashion));
         localStorage.setItem("salon-fashion", JSON.stringify(state.fashion));
-      }
-
-      function saveStars() {
-        localStorage.setItem("salon-stars", String(state.stars));
-        starsNode.textContent = state.stars;
       }
 
       function randomFrom(list) {
@@ -2008,9 +1991,6 @@
           washed: false,
           dried: false,
         };
-        Object.values(portrait.fashion).forEach((id) => {
-          if (!state.ownedFashion.includes(id)) state.ownedFashion.push(id);
-        });
         state.fashion = {
           ...state.fashion,
           ...portrait.fashion,
@@ -2037,9 +2017,9 @@
         storySteps.innerHTML = `
           <li><span>1</span><span>Đọc yêu cầu của khách.</span></li>
           <li><span>2</span><span>Gội, sấy, cắt, nhuộm và gắn phụ kiện đúng ý.</span></li>
-          <li><span>3</span><span>Hoàn thành kiểu tóc để nhận sao mua đồ.</span></li>
+          <li><span>3</span><span>Hoàn thành kiểu tóc để mở đoạn kết vui.</span></li>
         `;
-        storyGoal.textContent = "✨ Làm đúng yêu cầu để nhận sao mua đồ";
+        storyGoal.textContent = "✨ Làm đúng yêu cầu để mở đoạn kết";
       }
 
       function tone(kind) {
@@ -2222,11 +2202,10 @@
           <div class="fashion-slot" title="${escapeHtml(item.label)}">${escapeHtml(item.icon)}</div>
         `).join("");
         fashionShop.innerHTML = fashionItems.map((item) => {
-          const owned = state.ownedFashion.includes(item.id);
           const active = state.fashion[item.type] === item.id;
-          const label = owned ? (active ? "Đang mặc" : "Mặc ngay") : `${item.price} sao`;
+          const label = active ? "Đang mặc" : "Mặc ngay";
           return `
-            <button class="fashion-item ${active ? "is-active" : ""} ${owned ? "" : "is-locked"}" type="button" data-fashion="${escapeHtml(item.id)}">
+            <button class="fashion-item ${active ? "is-active" : ""}" type="button" data-fashion="${escapeHtml(item.id)}">
               <span class="fashion-icon" style="--item-color:${escapeHtml(item.color)}">${escapeHtml(item.icon)}</span>
               <span class="fashion-meta">
                 <span class="fashion-name">${escapeHtml(item.label)}</span>
@@ -2243,24 +2222,11 @@
       function buyOrWearFashion(id) {
         const item = fashionItem(id);
         if (!item) return;
-        const owned = state.ownedFashion.includes(item.id);
-        if (!owned && state.stars < item.price) {
-          feedback.textContent = `Cần thêm ${item.price - state.stars} sao để mua ${item.label}. Làm tóc đẹp sẽ có thêm sao nhé.`;
-          tone("no");
-          return;
-        }
-        if (!owned) {
-          state.stars -= item.price;
-          state.ownedFashion.push(item.id);
-          saveStars();
-          feedback.textContent = `Đã mua ${item.label}, khách mặc thử luôn!`;
-        } else {
-          feedback.textContent = `${item.label} đã được chọn cho khách.`;
-        }
         state.fashion[item.type] = item.id;
         saveFashion();
         applyFashion();
         renderFashionShop();
+        feedback.textContent = `${item.label} đã được chọn cho khách.`;
         sparkle();
         tone("sparkle");
       }
@@ -2473,9 +2439,6 @@
         `).join("");
         resultPanel.classList.add("is-open");
         if (result.percent >= 80) {
-          const earned = result.percent === 100 ? 4 : 2;
-          state.stars += earned;
-          saveStars();
           feedback.textContent = portrait ? portrait.reward : result.percent === 100 ? "Tuyệt vời, khách rất thích kiểu tóc này!" : "Đẹp rồi, khách rất vui!";
           if (!state.customer.portraitId) {
             document.getElementById("customer-face").textContent = result.percent === 100 ? "🤩" : "🥰";
@@ -2586,7 +2549,6 @@
         if (event.key === "Enter") applyCustomerName();
       });
 
-      starsNode.textContent = state.stars;
       renderCustomer();
       renderControls();
       renderGallery();
