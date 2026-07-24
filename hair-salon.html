@@ -916,11 +916,49 @@
 
       .shoes {
         left: 50%;
-        bottom: 16px;
-        width: 172px;
-        height: 36px;
-        font-size: 2rem;
+        bottom: 22px;
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        width: 176px;
+        height: 42px;
+        font-size: 1.08rem;
         transform: translateX(-50%);
+      }
+
+      .shoe {
+        position: relative;
+        display: grid;
+        place-items: center;
+        width: 58px;
+        height: 36px;
+        border: 5px solid #24324a;
+        border-radius: 20px 22px 16px 16px;
+        background:
+          radial-gradient(circle at 34% 24%, rgba(255, 255, 255, 0.72), transparent 0.7rem),
+          var(--shoe-color, #ffffff);
+        box-shadow: inset 0 -8px 0 rgba(0, 0, 0, 0.08);
+        line-height: 1;
+      }
+
+      .shoe::after {
+        content: "";
+        position: absolute;
+        bottom: -5px;
+        width: 62px;
+        height: 12px;
+        border: 4px solid #24324a;
+        border-top: 0;
+        border-radius: 0 0 999px 999px;
+        background: #24324a;
+      }
+
+      .shoe.left {
+        transform: rotate(-2deg);
+      }
+
+      .shoe.right {
+        transform: rotate(2deg);
       }
 
       .face {
@@ -1502,7 +1540,10 @@
               <div class="accessory" id="accessory" hidden></div>
               <div class="hat" id="hat" hidden></div>
               <div class="glasses" id="glasses" hidden></div>
-              <div class="shoes" id="shoes" hidden></div>
+              <div class="shoes" id="shoes" hidden>
+                <span class="shoe left"></span>
+                <span class="shoe right"></span>
+              </div>
               <div class="sparkles" id="sparkles"></div>
               <div class="hair-snips" id="hair-snips"></div>
               <div class="bubbles" id="bubbles"></div>
@@ -1993,7 +2034,6 @@
         [
           { node: hatNode, item: fashionItem(state.fashion.hat), empty: "hat-none" },
           { node: glassesNode, item: fashionItem(state.fashion.glasses), empty: "glasses-none" },
-          { node: shoesNode, item: fashionItem(state.fashion.shoes), empty: "" },
         ].forEach(({ node, item, empty }) => {
           if (!item || item.id === empty) {
             node.hidden = true;
@@ -2002,6 +2042,16 @@
           }
           node.hidden = false;
           node.textContent = item.icon;
+        });
+        const shoes = fashionItem(state.fashion.shoes);
+        if (!shoes) {
+          shoesNode.hidden = true;
+          return;
+        }
+        shoesNode.hidden = false;
+        shoesNode.style.setProperty("--shoe-color", shoes.color);
+        shoesNode.querySelectorAll(".shoe").forEach((node) => {
+          node.textContent = shoes.icon;
         });
       }
 
