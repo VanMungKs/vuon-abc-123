@@ -411,7 +411,7 @@
         position: relative;
         display: grid;
         place-items: end center;
-        min-height: 470px;
+        min-height: 600px;
         overflow: hidden;
         border: 8px solid rgba(255, 255, 255, 0.86);
         border-radius: 44px;
@@ -425,14 +425,15 @@
 
       .avatar {
         position: relative;
-        width: min(330px, 86%);
-        height: 410px;
+        width: min(350px, 88%);
+        height: 548px;
       }
 
       .neck {
         position: absolute;
         left: 50%;
-        bottom: 104px;
+        bottom: 292px;
+        z-index: 4;
         width: 58px;
         height: 78px;
         border: 5px solid #24324a;
@@ -445,32 +446,102 @@
       .shoulders {
         position: absolute;
         left: 50%;
-        bottom: 20px;
+        bottom: 174px;
+        z-index: 3;
         width: 240px;
-        height: 118px;
+        height: 132px;
         border: 5px solid #24324a;
-        border-radius: 54px 54px 38px 38px;
+        border-radius: 58px 58px 36px 36px;
         background: #7dd7cf;
         transform: translateX(-50%);
+      }
+
+      .arms,
+      .legs {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        pointer-events: none;
+      }
+
+      .arms {
+        bottom: 162px;
+        z-index: 2;
+        width: 302px;
+        height: 184px;
+      }
+
+      .arm {
+        position: absolute;
+        top: 18px;
+        width: 48px;
+        height: 160px;
+        border: 5px solid #24324a;
+        border-radius: 28px;
+        background: #ffcf9d;
+        box-shadow: inset 0 -14px 0 rgba(226, 137, 89, 0.14);
+      }
+
+      .arm.left {
+        left: 16px;
+        transform: rotate(12deg);
+      }
+
+      .arm.right {
+        right: 16px;
+        transform: rotate(-12deg);
+      }
+
+      .arm::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        bottom: -15px;
+        width: 50px;
+        height: 34px;
+        border: 5px solid #24324a;
+        border-radius: 50%;
+        background: #ffcf9d;
+        transform: translateX(-50%);
+      }
+
+      .legs {
+        bottom: 44px;
+        z-index: 1;
+        display: flex;
+        justify-content: center;
+        gap: 28px;
+        width: 170px;
+        height: 156px;
+      }
+
+      .leg {
+        width: 48px;
+        height: 152px;
+        border: 5px solid #24324a;
+        border-radius: 26px;
+        background: #ffcf9d;
+        box-shadow: inset 0 -16px 0 rgba(226, 137, 89, 0.14);
       }
 
       .outfit {
         position: absolute;
         left: 50%;
-        bottom: 18px;
+        bottom: 156px;
         z-index: 4;
         display: grid;
-        place-items: center;
+        place-items: start center;
         width: 224px;
-        height: 118px;
+        height: 148px;
         border: 5px solid #24324a;
-        border-radius: 58px 58px 38px 38px;
+        border-radius: 62px 62px 28px 28px;
         color: #ffffff;
         background:
           radial-gradient(circle at 38% 28%, rgba(255, 255, 255, 0.35), transparent 1.2rem),
           var(--outfit-color, #7dd7cf);
         box-shadow: inset 0 -18px 0 rgba(0, 0, 0, 0.08);
         font-size: 2.05rem;
+        padding-top: 44px;
         transform: translateX(-50%);
       }
 
@@ -488,6 +559,32 @@
         transform: translateX(-50%);
       }
 
+      .outfit::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        bottom: -54px;
+        display: none;
+        width: 270px;
+        height: 92px;
+        border: 5px solid #24324a;
+        border-top: 0;
+        border-radius: 16px 16px 82px 82px;
+        background:
+          linear-gradient(90deg, rgba(255, 255, 255, 0.22) 0 16%, transparent 16% 30%, rgba(255, 255, 255, 0.18) 30% 42%, transparent 42% 58%, rgba(255, 255, 255, 0.18) 58% 70%, transparent 70%),
+          var(--outfit-color, #7dd7cf);
+        transform: translateX(-50%);
+      }
+
+      .avatar[data-outfit-shape="dress"] .outfit {
+        height: 132px;
+        border-radius: 62px 62px 34px 34px;
+      }
+
+      .avatar[data-outfit-shape="dress"] .outfit::after {
+        display: block;
+      }
+
       .hat,
       .glasses,
       .shoes {
@@ -500,7 +597,7 @@
 
       .hat {
         left: 50%;
-        top: 24px;
+        top: 4px;
         width: 104px;
         height: 64px;
         font-size: 3rem;
@@ -509,7 +606,7 @@
 
       .glasses {
         left: 50%;
-        top: 188px;
+        top: 154px;
         width: 118px;
         height: 38px;
         font-size: 2.15rem;
@@ -518,8 +615,8 @@
 
       .shoes {
         left: 50%;
-        bottom: 0;
-        width: 148px;
+        bottom: 16px;
+        width: 172px;
         height: 36px;
         font-size: 2rem;
         transform: translateX(-50%);
@@ -528,7 +625,7 @@
       .face {
         position: absolute;
         left: 50%;
-        top: 118px;
+        top: 84px;
         z-index: 5;
         width: 176px;
         height: 192px;
@@ -584,7 +681,7 @@
       }
 
       .hair-back {
-        top: 54px;
+        top: 20px;
         width: 230px;
         height: var(--hair-height, 292px);
         border: 6px solid #24324a;
@@ -595,7 +692,7 @@
       }
 
       .hair-front {
-        top: 70px;
+        top: 36px;
         z-index: 7;
         width: 208px;
         height: 96px;
@@ -605,7 +702,7 @@
       }
 
       .bangs {
-        top: 108px;
+        top: 74px;
         z-index: 8;
         width: 148px;
         height: 46px;
@@ -616,15 +713,15 @@
       }
 
       .avatar[data-length="short"] {
-        --hair-height: 202px;
+        --hair-height: 198px;
       }
 
       .avatar[data-length="medium"] {
-        --hair-height: 254px;
+        --hair-height: 270px;
       }
 
       .avatar[data-length="long"] {
-        --hair-height: 318px;
+        --hair-height: 380px;
       }
 
       .avatar[data-style="wavy"] .hair-back,
@@ -916,7 +1013,7 @@
         }
 
         .salon-stage {
-          min-height: 620px;
+          min-height: 760px;
         }
       }
 
@@ -975,7 +1072,7 @@
         }
 
         .mirror {
-          min-height: 420px;
+          min-height: 560px;
           border-radius: 28px;
         }
 
@@ -1053,6 +1150,14 @@
             <div class="avatar" id="avatar" data-length="long" data-style="straight" style="--hair-color:#6f3f27; --bangs-opacity:0">
               <div class="hair-back"></div>
               <div class="neck"></div>
+              <div class="arms">
+                <span class="arm left"></span>
+                <span class="arm right"></span>
+              </div>
+              <div class="legs">
+                <span class="leg left"></span>
+                <span class="leg right"></span>
+              </div>
               <div class="shoulders"></div>
               <div class="outfit" id="outfit"></div>
               <div class="face">
@@ -1227,11 +1332,11 @@
       };
 
       const fashionItems = [
-        { id: "outfit-aqua", type: "outfit", label: "Áo xanh biển", icon: "👚", price: 0, color: "#67d6c9" },
-        { id: "outfit-rose", type: "outfit", label: "Váy hồng", icon: "👗", price: 3, color: "#ff78a9" },
-        { id: "outfit-sun", type: "outfit", label: "Váy nắng", icon: "🌼", price: 4, color: "#ffb238" },
-        { id: "outfit-mint", type: "outfit", label: "Áo bạc hà", icon: "🍃", price: 4, color: "#38a06f" },
-        { id: "outfit-star", type: "outfit", label: "Đầm ngôi sao", icon: "⭐", price: 5, color: "#7a6df0" },
+        { id: "outfit-aqua", type: "outfit", shape: "shirt", label: "Áo xanh biển", icon: "👚", price: 0, color: "#67d6c9" },
+        { id: "outfit-rose", type: "outfit", shape: "dress", label: "Váy hồng", icon: "👗", price: 3, color: "#ff78a9" },
+        { id: "outfit-sun", type: "outfit", shape: "dress", label: "Váy nắng", icon: "🌼", price: 4, color: "#ffb238" },
+        { id: "outfit-mint", type: "outfit", shape: "shirt", label: "Áo bạc hà", icon: "🍃", price: 4, color: "#38a06f" },
+        { id: "outfit-star", type: "outfit", shape: "dress", label: "Đầm ngôi sao", icon: "⭐", price: 5, color: "#7a6df0" },
         { id: "hat-none", type: "hat", label: "Không mũ", icon: "✨", price: 0, color: "#ffffff" },
         { id: "hat-sun", type: "hat", label: "Mũ nắng", icon: "👒", price: 3, color: "#fff2a8" },
         { id: "hat-crown", type: "hat", label: "Vương miện", icon: "👑", price: 5, color: "#ffe06b" },
@@ -1383,6 +1488,7 @@
 
       function applyFashion() {
         const outfit = fashionItem(state.fashion.outfit) || fashionItem(defaultFashion.outfit);
+        avatar.dataset.outfitShape = outfit.shape || "shirt";
         outfitNode.textContent = outfit.icon;
         outfitNode.style.setProperty("--outfit-color", outfit.color);
 
