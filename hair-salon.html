@@ -286,6 +286,51 @@
         line-height: 1.45;
       }
 
+      .story-scene {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        gap: 10px;
+        align-items: center;
+        min-height: 46px;
+        padding: 8px 10px;
+        border-radius: 16px;
+        color: #24324a;
+        background: rgba(255, 255, 255, 0.78);
+        font-weight: 900;
+      }
+
+      .story-icon {
+        display: grid;
+        place-items: center;
+        width: 34px;
+        height: 34px;
+        border-radius: 12px;
+        background: #fff2a8;
+        font-size: 1.35rem;
+      }
+
+      .story-steps {
+        display: grid;
+        gap: 7px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .story-steps li {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        gap: 8px;
+        align-items: start;
+        padding: 8px 10px;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.64);
+        color: #42627e;
+        font-size: 0.94rem;
+        font-weight: 900;
+        line-height: 1.35;
+      }
+
       .story-goal {
         display: inline-flex;
         align-items: center;
@@ -1483,7 +1528,11 @@
 
           <div class="story-card">
             <p class="eyebrow">Câu chuyện</p>
-            <p class="story-line" id="story-line">Xoài mở salon phép thuật để giúp khách tự tin trước buổi biểu diễn.</p>
+            <div class="story-scene">
+              <span class="story-icon" id="story-icon">✨</span>
+              <p class="story-line" id="story-line">Xoài mở salon phép thuật để giúp khách tự tin trước buổi biểu diễn.</p>
+            </div>
+            <ul class="story-steps" id="story-steps"></ul>
             <span class="story-goal" id="story-goal">✨ Hoàn thành kiểu tóc và bộ đồ phù hợp</span>
           </div>
 
@@ -1594,7 +1643,9 @@
       const gallery = document.getElementById("gallery");
       const starsNode = document.getElementById("salon-stars");
       const mirror = document.querySelector(".mirror");
+      const storyIcon = document.getElementById("story-icon");
       const storyLine = document.getElementById("story-line");
+      const storySteps = document.getElementById("story-steps");
       const storyGoal = document.getElementById("story-goal");
       const customerNameInput = document.getElementById("customer-name-input");
       const portraitPicker = document.getElementById("portrait-picker");
@@ -1664,8 +1715,11 @@
           cape: "#b9f2ff",
           look: { length: "long", color: "#cfd9e6", style: "wavy", bangs: false, accessory: "crown" },
           fashion: { outfit: "outfit-ice", hat: "hat-crown", glasses: "glasses-none", shoes: "shoes-white" },
-          story: "Công chúa Tuyết chuẩn bị mở vũ hội băng. Bé giúp bạn ấy có mái tóc lấp lánh và bộ đồ xanh băng thật tự tin.",
-          goal: "❄️ Mái tóc bạc sáng, vương miện và váy xanh băng",
+          scene: "Chuông băng trong lâu đài sắp ngân, nhưng tóc của Công chúa Tuyết bị gió tuyết làm rối trước vũ hội.",
+          mission: ["Gội sạch bụi tuyết và sấy khô để tóc không lạnh.", "Làm tóc bạc dài lượn sóng, đội vương miện và mặc váy băng tuyết.", "Khi hoàn thành, cánh cửa vũ hội sẽ sáng lên."],
+          reward: "Cánh cửa băng mở ra, Công chúa Tuyết bước vào vũ hội và cảm ơn Xoài vì đã cứu buổi tối.",
+          retry: "Chuông băng vẫn chưa ngân. Bé xem lại yêu cầu để giúp Công chúa Tuyết kịp tới vũ hội nhé.",
+          goal: "❄️ Cứu vũ hội băng",
           mirror: { a: "#d8f7ff", b: "#eef7ff", glow: "rgba(120, 216, 255, 0.58)" },
         },
         {
@@ -1679,8 +1733,11 @@
           cape: "#ffd66b",
           look: { length: "long", color: "#d99a28", style: "curly", bangs: true, accessory: "star" },
           fashion: { outfit: "outfit-star", hat: "hat-crown", glasses: "glasses-star", shoes: "shoes-white" },
-          story: "Công chúa Sao đi diễn trên sân khấu đêm. Bé phối tóc xoăn, kính sao và đầm ngôi sao để ánh đèn sáng lên.",
-          goal: "⭐ Tóc xoăn, kẹp sao, kính sao và đầm ngôi sao",
+          scene: "Sân khấu đêm bị tắt đèn, chỉ sáng lại khi Công chúa Sao có đủ ánh lấp lánh.",
+          mission: ["Tạo tóc xoăn bồng để bắt ánh đèn.", "Gắn kẹp sao, chọn kính sao và đầm ngôi sao.", "Mỗi lựa chọn đúng làm một ngôi sao trên sân khấu sáng hơn."],
+          reward: "Sân khấu bừng sáng, Công chúa Sao hát bài mở màn và gửi bé một ngôi sao may mắn.",
+          retry: "Một vài ngôi sao còn ngủ quên. Bé chỉnh lại tóc và phụ kiện để sân khấu sáng đủ nhé.",
+          goal: "⭐ Thắp sáng sân khấu sao",
           mirror: { a: "#e8ddff", b: "#fff0a8", glow: "rgba(255, 216, 96, 0.55)" },
         },
         {
@@ -1694,8 +1751,11 @@
           cape: "#ffd1e3",
           look: { length: "medium", color: "#6f3f27", style: "wavy", bangs: true, accessory: "flower" },
           fashion: { outfit: "outfit-rose", hat: "hat-flower", glasses: "glasses-none", shoes: "shoes-bow" },
-          story: "Công chúa Hoa tới lễ hội khu vườn. Bé chọn tóc mềm, hoa cài tóc và váy hồng để bạn ấy chào mọi người.",
-          goal: "🌸 Tóc mềm, hoa cài, váy hồng và giày nơ",
+          scene: "Khu vườn chuẩn bị nở hoa, nhưng Công chúa Hoa cần một diện mạo thật dịu để đánh thức các nụ hoa.",
+          mission: ["Chăm tóc mềm, có tóc mái và cài hoa thơm.", "Chọn váy hồng, mũ hoa và giày nơ.", "Khi khách vui, các bông hoa sẽ mở ra quanh salon."],
+          reward: "Cả khu vườn nở rộ, Công chúa Hoa mời bé làm nhà tạo mẫu chính của lễ hội.",
+          retry: "Một vài nụ hoa còn khép lại. Bé nhìn lại bảng yêu cầu để khu vườn nở rộ nhé.",
+          goal: "🌸 Đánh thức lễ hội hoa",
           mirror: { a: "#dff9ec", b: "#ffe2ef", glow: "rgba(255, 154, 194, 0.52)" },
         },
         {
@@ -1709,8 +1769,11 @@
           cape: "#dfe7ff",
           look: { length: "medium", color: "#9b5bd6", style: "straight", bangs: false, accessory: "heart" },
           fashion: { outfit: "outfit-star", hat: "hat-none", glasses: "glasses-star", shoes: "shoes-white" },
-          story: "Công chúa Trăng kể chuyện trước giờ ngủ. Bé làm tóc gọn và phối đồ dịu nhẹ để câu chuyện thật êm.",
-          goal: "🌙 Tóc gọn, màu tím dịu và trang phục lấp lánh",
+          scene: "Thư viện Mặt Trăng sắp kể chuyện cho các bạn nhỏ, nhưng trang sách chỉ mở khi Công chúa Trăng thật gọn gàng.",
+          mission: ["Làm tóc tím thẳng mượt và không để tóc mái che mắt.", "Chọn trang phục lấp lánh nhẹ, kính sao nếu bé thích.", "Hoàn thành để quyển sách trăng tự mở ra."],
+          reward: "Quyển sách trăng mở trang mới, Công chúa Trăng kể một câu chuyện êm như mây.",
+          retry: "Quyển sách vẫn khép lại. Bé chỉnh thêm để Công chúa Trăng đọc truyện thật rõ nhé.",
+          goal: "🌙 Mở thư viện Mặt Trăng",
           mirror: { a: "#dfe7ff", b: "#f7f0ff", glow: "rgba(185, 200, 255, 0.56)" },
         },
         {
@@ -1724,8 +1787,11 @@
           cape: "#fff0a8",
           look: { length: "short", color: "#f28b45", style: "curly", bangs: true, accessory: "bow" },
           fashion: { outfit: "outfit-sun", hat: "hat-sun", glasses: "glasses-sun", shoes: "shoes-red" },
-          story: "Công chúa Cầu Vồng chuẩn bị nhảy múa sau cơn mưa. Bé chọn màu tươi để bạn ấy chạy ra sân khấu.",
-          goal: "🌈 Tóc cam vui, nơ, váy nắng và kính mát",
+          scene: "Sau cơn mưa, cây cầu vồng bị nhạt màu. Công chúa Cầu Vồng cần một bộ thật vui để gọi màu trở lại.",
+          mission: ["Cắt tóc ngắn xoăn cam để bạn ấy nhảy múa dễ hơn.", "Thêm nơ, váy nắng, kính mát và giày đỏ.", "Mỗi bước đúng làm một vạch cầu vồng hiện lên."],
+          reward: "Cầu vồng hiện đủ bảy màu, Công chúa Cầu Vồng nhảy một điệu thật vui trên bầu trời.",
+          retry: "Cầu vồng còn thiếu màu. Bé thử phối lại để bầu trời sáng hơn nhé.",
+          goal: "🌈 Gọi lại bảy màu cầu vồng",
           mirror: { a: "#c9f7ff", b: "#fff0c2", glow: "rgba(255, 192, 203, 0.54)" },
         },
         {
@@ -1739,8 +1805,11 @@
           cape: "#ffffff",
           look: { length: "long", color: "#2c2530", style: "straight", bangs: false, accessory: "flower" },
           fashion: { outfit: "outfit-mint", hat: "hat-flower", glasses: "glasses-none", shoes: "shoes-white" },
-          story: "Công chúa Ngọc Trai tới buổi triển lãm đại dương. Bé làm tóc thẳng óng và phối màu xanh ngọc thật sạch sẽ.",
-          goal: "💎 Tóc đen óng, hoa nhỏ và áo xanh ngọc",
+          scene: "Triển lãm đại dương sắp mở, nhưng viên ngọc trai chính chưa phát sáng vì Công chúa Ngọc Trai chưa sẵn sàng.",
+          mission: ["Gội và sấy để tóc đen dài thẳng óng.", "Cài hoa nhỏ và chọn áo xanh ngọc thật sạch.", "Khi đúng kiểu, viên ngọc trai sẽ sáng trong gương."],
+          reward: "Viên ngọc trai phát sáng, cả đại dương vỗ tay vì bé đã giúp buổi triển lãm bắt đầu.",
+          retry: "Viên ngọc trai còn mờ. Bé chỉnh lại tóc và trang phục để biển sáng lên nhé.",
+          goal: "💎 Thắp sáng viên ngọc biển",
           mirror: { a: "#c8fbff", b: "#e9fff3", glow: "rgba(14, 111, 130, 0.28)" },
         },
       ];
@@ -1955,11 +2024,21 @@
       function renderStory() {
         const portrait = portraitById(state.customer.portraitId);
         if (portrait) {
-          storyLine.textContent = portrait.story;
+          storyIcon.textContent = portrait.icon;
+          storyLine.textContent = portrait.scene;
+          storySteps.innerHTML = portrait.mission.map((step, index) => `
+            <li><span>${index + 1}</span><span>${escapeHtml(step)}</span></li>
+          `).join("");
           storyGoal.textContent = portrait.goal;
           return;
         }
+        storyIcon.textContent = "✨";
         storyLine.textContent = `${state.customer.name} tới salon của Xoài để chuẩn bị cho một ngày đặc biệt. Bé đọc yêu cầu, chăm tóc và phối đồ để khách tự tin hơn.`;
+        storySteps.innerHTML = `
+          <li><span>1</span><span>Đọc yêu cầu của khách.</span></li>
+          <li><span>2</span><span>Gội, sấy, cắt, nhuộm và gắn phụ kiện đúng ý.</span></li>
+          <li><span>3</span><span>Hoàn thành kiểu tóc để nhận sao mua đồ.</span></li>
+        `;
         storyGoal.textContent = "✨ Làm đúng yêu cầu để nhận sao mua đồ";
       }
 
@@ -2387,6 +2466,7 @@
 
       function finishStyle() {
         const result = scoreLook();
+        const portrait = portraitById(state.customer.portraitId);
         resultScore.textContent = `${result.percent}%`;
         resultNotes.innerHTML = result.checks.map(([label, ok]) => `
           <div class="summary-row"><span>${ok ? "✅" : "🔁"} ${label}</span><span>${ok ? "đúng" : "chỉnh lại"}</span></div>
@@ -2396,7 +2476,7 @@
           const earned = result.percent === 100 ? 4 : 2;
           state.stars += earned;
           saveStars();
-          feedback.textContent = result.percent === 100 ? "Tuyệt vời, khách rất thích kiểu tóc này!" : "Đẹp rồi, khách rất vui!";
+          feedback.textContent = portrait ? portrait.reward : result.percent === 100 ? "Tuyệt vời, khách rất thích kiểu tóc này!" : "Đẹp rồi, khách rất vui!";
           if (!state.customer.portraitId) {
             document.getElementById("customer-face").textContent = result.percent === 100 ? "🤩" : "🥰";
           }
@@ -2404,7 +2484,7 @@
           sparkle();
           tone("yes");
         } else {
-          feedback.textContent = "Gần được rồi, mình xem yêu cầu và chỉnh thêm nhé.";
+          feedback.textContent = portrait ? portrait.retry : "Gần được rồi, mình xem yêu cầu và chỉnh thêm nhé.";
           if (!state.customer.portraitId) {
             document.getElementById("customer-face").textContent = "🙂";
           }
