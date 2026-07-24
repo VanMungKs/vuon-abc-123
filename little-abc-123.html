@@ -597,6 +597,134 @@
         animation: answer-shake 420ms ease both;
       }
 
+      .sword-arena {
+        display: grid;
+        gap: 18px;
+      }
+
+      .sword-stage {
+        position: relative;
+        display: grid;
+        grid-template-columns: minmax(90px, 1fr) minmax(120px, 0.8fr) minmax(90px, 1fr);
+        align-items: end;
+        min-height: 250px;
+        overflow: hidden;
+        border: 6px solid rgba(36, 50, 74, 0.1);
+        border-radius: 32px;
+        background:
+          linear-gradient(0deg, rgba(255, 214, 90, 0.42) 0 20%, transparent 20%),
+          radial-gradient(circle at 50% 22%, rgba(255, 255, 255, 0.76), transparent 9rem),
+          linear-gradient(180deg, #dff8ff, #fff4c2);
+      }
+
+      .sword-fighter {
+        position: relative;
+        display: grid;
+        justify-items: center;
+        gap: 8px;
+        padding-bottom: 24px;
+        font-weight: 900;
+      }
+
+      .fighter-face {
+        display: grid;
+        place-items: center;
+        width: clamp(74px, 18vw, 112px);
+        height: clamp(74px, 18vw, 112px);
+        border: 5px solid #24324a;
+        border-radius: 50%;
+        background: #ffcf9d;
+        font-size: clamp(2rem, 8vw, 3rem);
+        box-shadow: 0 14px 24px rgba(52, 87, 112, 0.16);
+      }
+
+      .sword-fighter::after {
+        width: clamp(74px, 20vw, 126px);
+        height: 64px;
+        border: 5px solid #24324a;
+        border-radius: 28px 28px 38px 38px;
+        background: var(--fighter-color, #67d6c9);
+        content: "";
+      }
+
+      .sword-blade {
+        position: absolute;
+        top: 46%;
+        width: clamp(76px, 16vw, 124px);
+        height: 14px;
+        border-radius: 999px;
+        background: linear-gradient(90deg, #ffffff, #ffd65a);
+        box-shadow: 0 0 20px rgba(255, 214, 90, 0.8);
+        transform-origin: center;
+      }
+
+      .sword-fighter.player .sword-blade {
+        right: 8%;
+        transform: rotate(-24deg);
+      }
+
+      .sword-fighter.partner {
+        --fighter-color: #9ed7ff;
+      }
+
+      .sword-fighter.partner .sword-blade {
+        left: 8%;
+        transform: rotate(204deg);
+      }
+
+      .sword-fighter.is-strike {
+        animation: sword-strike 520ms ease both;
+      }
+
+      .sword-fighter.is-block {
+        animation: answer-shake 420ms ease both;
+      }
+
+      .sword-score {
+        align-self: center;
+        display: grid;
+        gap: 10px;
+        justify-items: center;
+        color: #42627e;
+        font-weight: 900;
+        text-align: center;
+      }
+
+      .sword-score strong {
+        color: #24324a;
+        font-size: clamp(2.2rem, 8vw, 4rem);
+      }
+
+      .sword-meter {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(26px, 1fr));
+        gap: 6px;
+        width: min(180px, 100%);
+      }
+
+      .sword-meter span {
+        min-height: 18px;
+        border-radius: 999px;
+        background: rgba(36, 50, 74, 0.13);
+      }
+
+      .sword-meter span.is-on {
+        background: linear-gradient(90deg, #24a86a, #ffd65a);
+        box-shadow: 0 8px 16px rgba(36, 168, 106, 0.18);
+      }
+
+      .sword-question {
+        display: grid;
+        place-items: center;
+        min-height: 110px;
+        border: 4px dashed rgba(70, 103, 137, 0.2);
+        border-radius: 26px;
+        background: rgba(255, 255, 255, 0.78);
+        color: #24324a;
+        font-size: clamp(2.8rem, 12vw, 5.8rem);
+        font-weight: 900;
+      }
+
       .tile.is-selected {
         color: #ffffff;
         border-color: rgba(255, 255, 255, 0.96);
@@ -942,6 +1070,17 @@
         }
       }
 
+      @keyframes sword-strike {
+        0%,
+        100% {
+          transform: translateX(0);
+        }
+
+        48% {
+          transform: translateX(var(--strike-move, 22px));
+        }
+      }
+
       @keyframes target-drop {
         from {
           transform: translateY(0) rotate(-12deg);
@@ -1167,6 +1306,17 @@
           gap: 8px;
         }
 
+        .sword-stage {
+          min-height: 210px;
+          border-width: 4px;
+          border-radius: 24px;
+        }
+
+        .sword-question {
+          min-height: 92px;
+          border-radius: 22px;
+        }
+
         .tile,
         .memory-card {
           min-height: 86px;
@@ -1299,6 +1449,26 @@
 
         .memory-board {
           grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+
+        .sword-stage {
+          grid-template-columns: 1fr;
+          gap: 8px;
+          min-height: auto;
+          padding: 14px;
+        }
+
+        .sword-fighter {
+          padding-bottom: 8px;
+        }
+
+        .sword-fighter::after,
+        .sword-blade {
+          display: none;
+        }
+
+        .sword-score {
+          order: -1;
         }
 
         .train-slots,
@@ -1452,6 +1622,7 @@
         { common: { icon: "⚽", name: "quả bóng" }, odd: { icon: "🎈", name: "quả bóng bay" } },
         { common: { icon: "🌸", name: "bông hoa" }, odd: { icon: "🍄", name: "cây nấm" } },
       ];
+      const swordNumbers = Array.from({ length: 10 }, (_, index) => index + 1);
       const correctNextDelayMs = 3200;
       const retryDelayMs = 2300;
       const bonusGames = [
@@ -1497,6 +1668,9 @@
         nextTaskTimer: null,
         soundReady: false,
         bonusGame: "birds",
+        swordPhase: "gate",
+        swordPower: 0,
+        swordBlocks: 0,
         currentAudio: null,
       };
 
@@ -1663,6 +1837,7 @@
                   <button class="mode-btn play-btn" type="button" data-mode="fruit-memory"><span>🍓🍎</span>Quả giống nhau</button>
                   <button class="mode-btn play-btn" type="button" data-mode="number-memory"><span>7 7</span>Số giống nhau</button>
                   <button class="mode-btn play-btn" type="button" data-mode="odd-one"><span>🔎</span>Hình khác biệt</button>
+                  <button class="mode-btn play-btn" type="button" data-mode="sword-numbers"><span>⚔️</span>Đấu kiếm số</button>
                 </div>
               </div>
               <div class="bonus-card">
@@ -1701,6 +1876,7 @@
         if (state.mode === "fruit-memory") renderMemoryGame("fruit");
         if (state.mode === "number-memory") renderMemoryGame("number");
         if (state.mode === "odd-one") renderOddOne();
+        if (state.mode === "sword-numbers") renderSwordGate();
       }
 
       function renderShell(title, body, actions = "") {
@@ -2191,6 +2367,143 @@
         tone("no");
         speak("Chưa đúng, thử lại nhé");
         state.nextTaskTimer = setTimeout(drawOddOne, retryDelayMs);
+      }
+
+      function makeSwordQuestion(phase) {
+        const answer = randomItem(swordNumbers);
+        return {
+          kind: "sword",
+          phase,
+          answer: String(answer),
+          choices: buildChoices(String(answer), swordNumbers.map(String), 4),
+          speech: phase === "gate"
+            ? `Muốn vào sân đấu kiếm, Bi và Xoài hãy chọn số ${numberSpeech(answer)}`
+            : `Ra đòn ánh sáng số ${numberSpeech(answer)}`,
+        };
+      }
+
+      function renderSwordGate() {
+        clearTaskTimer();
+        clearBonusTimers();
+        state.swordPhase = "gate";
+        state.swordPower = 0;
+        state.swordBlocks = 0;
+        state.feedback = "";
+        state.task = makeSwordQuestion("gate");
+        renderSwordScreen();
+        speak(state.task.speech);
+      }
+
+      function renderSwordRound(forceNew = true) {
+        clearTaskTimer();
+        clearBonusTimers();
+        state.swordPhase = "fight";
+        if (forceNew) state.task = makeSwordQuestion("fight");
+        renderSwordScreen();
+        speak(state.task.speech);
+      }
+
+      function swordMeterMarkup(value) {
+        return `<div class="sword-meter" aria-label="${value} trên 3 điểm">${Array.from({ length: 3 }).map((_, index) => `<span class="${index < value ? "is-on" : ""}"></span>`).join("")}</div>`;
+      }
+
+      function renderSwordScreen() {
+        const isGate = state.swordPhase === "gate";
+        const playerClass = state.feedback.includes("Ra đòn") || state.feedback.includes("Thắng") ? "is-strike" : "";
+        const partnerClass = state.feedback.includes("Đỡ kiếm") ? "is-block" : "";
+        renderShell(
+          isGate ? "Vào sân đấu kiếm số" : "Đấu kiếm ánh sáng",
+          `
+            <div class="sword-arena">
+              <div class="sword-stage" aria-label="Sân đấu kiếm ánh sáng">
+                <div class="sword-fighter player ${playerClass}" style="--strike-move:24px">
+                  <div class="fighter-face" aria-hidden="true">🙂</div>
+                  <span>Bi</span>
+                  <i class="sword-blade" aria-hidden="true"></i>
+                </div>
+                <div class="sword-score">
+                  <span>${isGate ? "Cửa vào" : "Kiếm sáng"}</span>
+                  <strong>${state.swordPower}/3</strong>
+                  ${swordMeterMarkup(state.swordPower)}
+                </div>
+                <div class="sword-fighter partner ${partnerClass}" style="--strike-move:-24px">
+                  <div class="fighter-face" aria-hidden="true">😊</div>
+                  <span>Xoài</span>
+                  <i class="sword-blade" aria-hidden="true"></i>
+                </div>
+              </div>
+              <div class="sword-question">${numberSpeech(Number(state.task.answer))}</div>
+              <div class="choices">
+                ${state.task.choices.map((choice) => `<button class="choice" type="button" data-sword="${choice}" aria-label="Số ${numberSpeech(Number(choice))}">${choice}</button>`).join("")}
+              </div>
+            </div>
+          `,
+        );
+        screen.querySelectorAll("[data-sword]").forEach((button) => {
+          button.addEventListener("click", () => chooseSwordNumber(button));
+        });
+        document.getElementById("listen").addEventListener("click", () => { enableSound(); speak(state.task.speech); });
+      }
+
+      function chooseSwordNumber(button) {
+        const selected = button.dataset.sword;
+        const isCorrect = selected === state.task.answer;
+        const feedback = screen.querySelector(".feedback");
+        screen.querySelectorAll("[data-sword]").forEach((item) => {
+          item.disabled = true;
+          item.classList.remove("is-correct", "is-wrong");
+        });
+
+        if (isCorrect && state.swordPhase === "gate") {
+          button.classList.add("is-correct");
+          state.swordPower = 1;
+          state.feedback = `Đúng rồi! Số ${numberSpeech(Number(selected))} mở cửa sân kiếm.`;
+          if (feedback) feedback.textContent = state.feedback;
+          screen.querySelector(".sword-fighter.player")?.classList.add("is-strike");
+          const score = screen.querySelector(".sword-score strong");
+          if (score) score.textContent = `${state.swordPower}/3`;
+          tone("yes");
+          speak(`Đúng rồi. Số ${numberSpeech(Number(selected))} mở cửa sân kiếm`);
+          state.nextTaskTimer = setTimeout(() => renderSwordRound(true), correctNextDelayMs);
+          return;
+        }
+
+        if (isCorrect) {
+          button.classList.add("is-correct");
+          state.swordPower += 1;
+          state.feedback = `Ra đòn ánh sáng số ${numberSpeech(Number(selected))}!`;
+          if (feedback) feedback.textContent = state.feedback;
+          screen.querySelector(".sword-fighter.player")?.classList.add("is-strike");
+          const score = screen.querySelector(".sword-score strong");
+          if (score) score.textContent = `${Math.min(state.swordPower, 3)}/3`;
+          tone("yes");
+          if (state.swordPower >= 3) {
+            awardLearningPoint();
+            state.feedback = "Thắng rồi, bé nhớ số rất tốt!";
+            if (feedback) feedback.textContent = state.feedback;
+            speak("Thắng rồi, bé nhớ số rất tốt");
+            state.nextTaskTimer = setTimeout(nextTask, correctNextDelayMs);
+            return;
+          }
+          speak(`Đúng rồi. Ra đòn ánh sáng số ${numberSpeech(Number(selected))}`);
+          state.nextTaskTimer = setTimeout(() => renderSwordRound(true), correctNextDelayMs);
+          return;
+        }
+
+        button.classList.add("is-wrong");
+        state.swordBlocks += 1;
+        state.feedback = `Đỡ kiếm nhé. Con chọn số ${numberSpeech(Number(selected))}, mình thử lại.`;
+        if (feedback) feedback.textContent = state.feedback;
+        screen.querySelector(".sword-fighter.partner")?.classList.add("is-block");
+        tone("no");
+        speak(`Con chọn số ${numberSpeech(Number(selected))}. Chưa đúng, thử lại nhé`);
+        state.nextTaskTimer = setTimeout(() => {
+          if (state.swordBlocks >= 3) {
+            state.swordBlocks = 0;
+            state.swordPower = Math.max(0, state.swordPower - 1);
+          }
+          renderSwordRound(false);
+        }, retryDelayMs);
       }
 
       function bindAnswerButtons() {
