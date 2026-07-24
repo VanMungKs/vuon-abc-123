@@ -695,9 +695,27 @@
         font-size: clamp(2.2rem, 8vw, 4rem);
       }
 
+      .sword-stats {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .sword-pill {
+        display: inline-grid;
+        place-items: center;
+        min-height: 38px;
+        padding: 0 12px;
+        border-radius: 999px;
+        color: #24324a;
+        background: rgba(255, 255, 255, 0.88);
+        font-weight: 900;
+      }
+
       .sword-meter {
         display: grid;
-        grid-template-columns: repeat(3, minmax(26px, 1fr));
+        grid-template-columns: repeat(5, minmax(22px, 1fr));
         gap: 6px;
         width: min(180px, 100%);
       }
@@ -723,6 +741,40 @@
         color: #24324a;
         font-size: clamp(2.8rem, 12vw, 5.8rem);
         font-weight: 900;
+      }
+
+      .sword-number {
+        position: absolute;
+        left: var(--sword-left, 50%);
+        top: var(--sword-top, 40%);
+        z-index: 2;
+        display: grid;
+        place-items: center;
+        width: clamp(58px, 13vw, 82px);
+        height: clamp(58px, 13vw, 82px);
+        border: 4px solid rgba(36, 50, 74, 0.14);
+        border-radius: 50%;
+        color: #24324a;
+        background: #ffffff;
+        box-shadow:
+          0 16px 28px rgba(52, 87, 112, 0.18),
+          inset 0 0 0 5px rgba(255, 214, 90, 0.18);
+        font-size: clamp(2rem, 7vw, 3rem);
+        font-weight: 900;
+        animation: sword-number-pop 2.8s ease-in-out forwards;
+      }
+
+      .sword-number.is-hit {
+        pointer-events: none;
+        color: #ffffff;
+        background: #24a86a;
+        animation: target-hit 260ms ease forwards;
+      }
+
+      .sword-number.is-wrong {
+        color: #ffffff;
+        background: #f15c45;
+        animation: answer-shake 420ms ease both;
       }
 
       .tile.is-selected {
@@ -1078,6 +1130,24 @@
 
         48% {
           transform: translateX(var(--strike-move, 22px));
+        }
+      }
+
+      @keyframes sword-number-pop {
+        0% {
+          opacity: 0;
+          transform: translateY(16px) scale(0.78);
+        }
+
+        14%,
+        82% {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+
+        100% {
+          opacity: 0;
+          transform: translateY(-16px) scale(0.9);
         }
       }
 
@@ -1671,6 +1741,9 @@
         swordPhase: "gate",
         swordPower: 0,
         swordBlocks: 0,
+        swordTimeLeft: 0,
+        swordTimer: null,
+        swordSpawnTimer: null,
         currentAudio: null,
       };
 
@@ -1720,8 +1793,12 @@
       function clearBonusTimers() {
         clearInterval(state.bonusTimer);
         clearInterval(state.bonusSpawnTimer);
+        clearInterval(state.swordTimer);
+        clearInterval(state.swordSpawnTimer);
         state.bonusTimer = null;
         state.bonusSpawnTimer = null;
+        state.swordTimer = null;
+        state.swordSpawnTimer = null;
       }
 
       function clearTaskTimer() {
@@ -2394,39 +2471,48 @@
         speak(state.task.speech);
       }
 
-      function renderSwordRound(forceNew = true) {
+      function startSwordPlay() {
         clearTaskTimer();
         clearBonusTimers();
-        state.swordPhase = "fight";
-        if (forceNew) state.task = makeSwordQuestion("fight");
-        renderSwordScreen();
-        speak(state.task.speech);
+        state.swordPhase = "play";
+        state.swordPower = 0;
+        state.swordBlocks = 0;
+        state.swordTimeLeft = 24;
+        state.feedback = "Chạm đúng số đang hiện trong sân để ra đòn ánh sáng!";
+        state.task = makeSwordQuestion("fight");
+        renderSwordPlayScreen();
+        speak("Vào sân đấu kiếm rồi. Chạm số đúng để ra đòn ánh sáng nhé.");
+        spawnSwordNumber(true);
+        state.swordSpawnTimer = setInterval(() => spawnSwordNumber(false), 780);
+        state.swordTimer = setInterval(() => {
+          state.swordTimeLeft -= 1;
+          const timeNode = document.getElementById("sword-time");
+          if (timeNode) timeNode.textContent = state.swordTimeLeft;
+          if (state.swordTimeLeft <= 0) finishSwordPlay(false);
+        }, 1000);
       }
 
       function swordMeterMarkup(value) {
-        return `<div class="sword-meter" aria-label="${value} trên 3 điểm">${Array.from({ length: 3 }).map((_, index) => `<span class="${index < value ? "is-on" : ""}"></span>`).join("")}</div>`;
+        return `<div class="sword-meter" aria-label="${value} trên 5 điểm">${Array.from({ length: 5 }).map((_, index) => `<span class="${index < value ? "is-on" : ""}"></span>`).join("")}</div>`;
       }
 
       function renderSwordScreen() {
-        const isGate = state.swordPhase === "gate";
-        const playerClass = state.feedback.includes("Ra đòn") || state.feedback.includes("Thắng") ? "is-strike" : "";
-        const partnerClass = state.feedback.includes("Đỡ kiếm") ? "is-block" : "";
         renderShell(
-          isGate ? "Vào sân đấu kiếm số" : "Đấu kiếm ánh sáng",
+          "Vào sân đấu kiếm số",
           `
             <div class="sword-arena">
               <div class="sword-stage" aria-label="Sân đấu kiếm ánh sáng">
-                <div class="sword-fighter player ${playerClass}" style="--strike-move:24px">
+                <div class="sword-fighter player" style="--strike-move:24px">
                   <div class="fighter-face" aria-hidden="true">🙂</div>
                   <span>Bi</span>
                   <i class="sword-blade" aria-hidden="true"></i>
                 </div>
                 <div class="sword-score">
-                  <span>${isGate ? "Cửa vào" : "Kiếm sáng"}</span>
-                  <strong>${state.swordPower}/3</strong>
+                  <span>Cửa vào</span>
+                  <strong>?</strong>
                   ${swordMeterMarkup(state.swordPower)}
                 </div>
-                <div class="sword-fighter partner ${partnerClass}" style="--strike-move:-24px">
+                <div class="sword-fighter partner" style="--strike-move:-24px">
                   <div class="fighter-face" aria-hidden="true">😊</div>
                   <span>Xoài</span>
                   <i class="sword-blade" aria-hidden="true"></i>
@@ -2440,12 +2526,96 @@
           `,
         );
         screen.querySelectorAll("[data-sword]").forEach((button) => {
-          button.addEventListener("click", () => chooseSwordNumber(button));
+          button.addEventListener("click", () => chooseSwordGateNumber(button));
         });
         document.getElementById("listen").addEventListener("click", () => { enableSound(); speak(state.task.speech); });
       }
 
-      function chooseSwordNumber(button) {
+      function renderSwordPlayScreen() {
+        updateHud();
+        screen.innerHTML = `
+          <section class="screen game">
+            <div class="game-head">
+              <div>
+                <p class="eyebrow">Đấu kiếm ánh sáng</p>
+                <h2>Chạm đúng số để ra đòn</h2>
+              </div>
+              <button class="small-btn" type="button" id="home" aria-label="Về vườn">
+                <span class="button-icon" aria-hidden="true">🏡</span>
+                <span>Về vườn</span>
+              </button>
+            </div>
+            <div class="prompt-card">
+              <div class="sword-arena">
+                <div class="sword-stats" aria-label="Thông tin đấu kiếm">
+                  <span class="sword-pill">⏱️ <span id="sword-time">${state.swordTimeLeft}</span> giây</span>
+                  <span class="sword-pill">⚔️ <span id="sword-hits">${state.swordPower}</span>/5 đòn</span>
+                </div>
+                <div class="sword-stage" id="sword-stage" aria-label="Sân đấu kiếm ánh sáng">
+                  <div class="sword-fighter player" style="--strike-move:24px">
+                    <div class="fighter-face" aria-hidden="true">🙂</div>
+                    <span>Bi</span>
+                    <i class="sword-blade" aria-hidden="true"></i>
+                  </div>
+                  <div class="sword-score">
+                    <span>Tìm số</span>
+                    <strong id="sword-word">${numberSpeech(Number(state.task.answer))}</strong>
+                    <div id="sword-meter">${swordMeterMarkup(state.swordPower)}</div>
+                  </div>
+                  <div class="sword-fighter partner" style="--strike-move:-24px">
+                    <div class="fighter-face" aria-hidden="true">😊</div>
+                    <span>Xoài</span>
+                    <i class="sword-blade" aria-hidden="true"></i>
+                  </div>
+                </div>
+              </div>
+              <p class="feedback" id="sword-feedback">${escapeHtml(state.feedback)}</p>
+              <div class="footer-actions">
+                <button class="small-btn" type="button" id="listen" aria-label="Nghe lại">
+                  <span class="button-icon" aria-hidden="true">🔊</span>
+                  <span>Nghe lại</span>
+                </button>
+                <button class="small-btn" type="button" id="next" aria-label="Chơi lại">
+                  <span class="button-icon" aria-hidden="true">🔄</span>
+                  <span>Chơi lại</span>
+                </button>
+              </div>
+            </div>
+          </section>
+        `;
+        document.getElementById("home").addEventListener("click", renderHome);
+        document.getElementById("next").addEventListener("click", renderSwordGate);
+        document.getElementById("listen").addEventListener("click", () => { enableSound(); speak(`Ra đòn ánh sáng số ${numberSpeech(Number(state.task.answer))}`); });
+      }
+
+      function updateSwordPlayHud() {
+        const hits = document.getElementById("sword-hits");
+        const word = document.getElementById("sword-word");
+        const meter = document.getElementById("sword-meter");
+        if (hits) hits.textContent = state.swordPower;
+        if (word) word.textContent = numberSpeech(Number(state.task.answer));
+        if (meter) meter.innerHTML = swordMeterMarkup(state.swordPower);
+      }
+
+      function spawnSwordNumber(forceTarget = false) {
+        const stage = document.getElementById("sword-stage");
+        if (!stage || state.swordPhase !== "play" || state.swordTimeLeft <= 0) return;
+        const targetValue = Number(state.task.answer);
+        const value = forceTarget || Math.random() < 0.42 ? targetValue : randomItem(swordNumbers);
+        const numberButton = document.createElement("button");
+        numberButton.type = "button";
+        numberButton.className = "sword-number";
+        numberButton.dataset.swordOrb = String(value);
+        numberButton.textContent = value;
+        numberButton.setAttribute("aria-label", `Số ${numberSpeech(value)}`);
+        numberButton.style.setProperty("--sword-left", `${Math.floor(Math.random() * 62) + 18}%`);
+        numberButton.style.setProperty("--sword-top", `${Math.floor(Math.random() * 44) + 18}%`);
+        numberButton.addEventListener("click", () => chooseSwordOrb(numberButton));
+        stage.appendChild(numberButton);
+        setTimeout(() => numberButton.remove(), 2900);
+      }
+
+      function chooseSwordGateNumber(button) {
         const selected = button.dataset.sword;
         const isCorrect = selected === state.task.answer;
         const feedback = screen.querySelector(".feedback");
@@ -2460,50 +2630,73 @@
           state.feedback = `Đúng rồi! Số ${numberSpeech(Number(selected))} mở cửa sân kiếm.`;
           if (feedback) feedback.textContent = state.feedback;
           screen.querySelector(".sword-fighter.player")?.classList.add("is-strike");
-          const score = screen.querySelector(".sword-score strong");
-          if (score) score.textContent = `${state.swordPower}/3`;
           tone("yes");
           speak(`Đúng rồi. Số ${numberSpeech(Number(selected))} mở cửa sân kiếm`);
-          state.nextTaskTimer = setTimeout(() => renderSwordRound(true), correctNextDelayMs);
-          return;
-        }
-
-        if (isCorrect) {
-          button.classList.add("is-correct");
-          state.swordPower += 1;
-          state.feedback = `Ra đòn ánh sáng số ${numberSpeech(Number(selected))}!`;
-          if (feedback) feedback.textContent = state.feedback;
-          screen.querySelector(".sword-fighter.player")?.classList.add("is-strike");
-          const score = screen.querySelector(".sword-score strong");
-          if (score) score.textContent = `${Math.min(state.swordPower, 3)}/3`;
-          tone("yes");
-          if (state.swordPower >= 3) {
-            awardLearningPoint();
-            state.feedback = "Thắng rồi, bé nhớ số rất tốt!";
-            if (feedback) feedback.textContent = state.feedback;
-            speak("Thắng rồi, bé nhớ số rất tốt");
-            state.nextTaskTimer = setTimeout(nextTask, correctNextDelayMs);
-            return;
-          }
-          speak(`Đúng rồi. Ra đòn ánh sáng số ${numberSpeech(Number(selected))}`);
-          state.nextTaskTimer = setTimeout(() => renderSwordRound(true), correctNextDelayMs);
+          state.nextTaskTimer = setTimeout(startSwordPlay, 1500);
           return;
         }
 
         button.classList.add("is-wrong");
-        state.swordBlocks += 1;
         state.feedback = `Đỡ kiếm nhé. Con chọn số ${numberSpeech(Number(selected))}, mình thử lại.`;
         if (feedback) feedback.textContent = state.feedback;
         screen.querySelector(".sword-fighter.partner")?.classList.add("is-block");
         tone("no");
         speak(`Con chọn số ${numberSpeech(Number(selected))}. Chưa đúng, thử lại nhé`);
-        state.nextTaskTimer = setTimeout(() => {
-          if (state.swordBlocks >= 3) {
-            state.swordBlocks = 0;
-            state.swordPower = Math.max(0, state.swordPower - 1);
+        state.nextTaskTimer = setTimeout(renderSwordGate, retryDelayMs);
+      }
+
+      function chooseSwordOrb(button) {
+        if (button.classList.contains("is-hit") || button.classList.contains("is-wrong")) return;
+        const selected = Number(button.dataset.swordOrb);
+        const target = Number(state.task.answer);
+        const feedback = document.getElementById("sword-feedback");
+        if (selected === target) {
+          button.classList.add("is-hit");
+          state.swordPower += 1;
+          state.feedback = `Đúng số ${numberSpeech(selected)}! Kiếm sáng lên rồi.`;
+          if (feedback) feedback.textContent = state.feedback;
+          screen.querySelector(".sword-fighter.player")?.classList.remove("is-strike");
+          void screen.querySelector(".sword-fighter.player")?.offsetWidth;
+          screen.querySelector(".sword-fighter.player")?.classList.add("is-strike");
+          tone("yes");
+          speak(`Đúng rồi. Ra đòn ánh sáng số ${numberSpeech(selected)}`);
+          setTimeout(() => button.remove(), 240);
+          if (state.swordPower >= 5) {
+            finishSwordPlay(true);
+            return;
           }
-          renderSwordRound(false);
-        }, retryDelayMs);
+          state.task = makeSwordQuestion("fight");
+          updateSwordPlayHud();
+          spawnSwordNumber(true);
+          return;
+        }
+        button.classList.add("is-wrong");
+        state.swordBlocks += 1;
+        state.feedback = `Con chọn số ${numberSpeech(selected)}. Chưa đúng, tìm số ${numberSpeech(target)} nhé.`;
+        if (feedback) feedback.textContent = state.feedback;
+        screen.querySelector(".sword-fighter.partner")?.classList.remove("is-block");
+        void screen.querySelector(".sword-fighter.partner")?.offsetWidth;
+        screen.querySelector(".sword-fighter.partner")?.classList.add("is-block");
+        tone("no");
+        speak(`Con chọn số ${numberSpeech(selected)}. Chưa đúng, thử lại nhé`);
+        setTimeout(() => button.remove(), 520);
+      }
+
+      function finishSwordPlay(won) {
+        clearBonusTimers();
+        document.querySelectorAll(".sword-number").forEach((item) => item.remove());
+        const feedback = document.getElementById("sword-feedback");
+        if (won) {
+          awardLearningPoint();
+          state.feedback = "Thắng rồi, bé nhớ số rất tốt!";
+          if (feedback) feedback.textContent = state.feedback;
+          speak("Thắng rồi, bé nhớ số rất tốt");
+          state.nextTaskTimer = setTimeout(nextTask, correctNextDelayMs);
+          return;
+        }
+        state.feedback = "Hết giờ rồi. Mình luyện lại nhé.";
+        if (feedback) feedback.textContent = state.feedback;
+        speak("Hết giờ rồi. Mình luyện lại nhé.");
       }
 
       function bindAnswerButtons() {
