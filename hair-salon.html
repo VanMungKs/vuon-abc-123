@@ -32,6 +32,23 @@
         font: inherit;
       }
 
+      input {
+        width: 100%;
+        min-height: 48px;
+        border: 2px solid rgba(36, 50, 74, 0.14);
+        border-radius: 16px;
+        padding: 0 14px;
+        color: #24324a;
+        background: rgba(255, 255, 255, 0.86);
+        font-weight: 900;
+        outline: 0;
+      }
+
+      input:focus {
+        border-color: rgba(241, 92, 69, 0.5);
+        box-shadow: 0 0 0 4px rgba(241, 92, 69, 0.12);
+      }
+
       button {
         cursor: pointer;
       }
@@ -247,6 +264,46 @@
         font-weight: 900;
       }
 
+      .customer-maker {
+        display: grid;
+        gap: 10px;
+        padding: 14px;
+        border: 3px solid rgba(103, 214, 201, 0.2);
+        border-radius: 22px;
+        background: rgba(235, 255, 251, 0.78);
+      }
+
+      .name-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 8px;
+      }
+
+      .avatar-picker {
+        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .avatar-choice {
+        display: grid;
+        place-items: center;
+        aspect-ratio: 1;
+        min-height: 46px;
+        border: 2px solid rgba(36, 50, 74, 0.12);
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.82);
+        box-shadow: 0 10px 18px rgba(52, 87, 112, 0.1);
+        font-size: 1.65rem;
+      }
+
+      .avatar-choice.is-active {
+        border-color: rgba(241, 92, 69, 0.56);
+        background: #fff2a8;
+        box-shadow: 0 14px 24px rgba(241, 92, 69, 0.16);
+        transform: translateY(-2px);
+      }
+
       .tool-grid,
       .option-grid,
       .accessory-grid {
@@ -394,6 +451,77 @@
         border: 5px solid #24324a;
         border-radius: 54px 54px 38px 38px;
         background: #7dd7cf;
+        transform: translateX(-50%);
+      }
+
+      .outfit {
+        position: absolute;
+        left: 50%;
+        bottom: 18px;
+        z-index: 4;
+        display: grid;
+        place-items: center;
+        width: 224px;
+        height: 118px;
+        border: 5px solid #24324a;
+        border-radius: 58px 58px 38px 38px;
+        color: #ffffff;
+        background:
+          radial-gradient(circle at 38% 28%, rgba(255, 255, 255, 0.35), transparent 1.2rem),
+          var(--outfit-color, #7dd7cf);
+        box-shadow: inset 0 -18px 0 rgba(0, 0, 0, 0.08);
+        font-size: 2.05rem;
+        transform: translateX(-50%);
+      }
+
+      .outfit::before {
+        content: "";
+        position: absolute;
+        top: 8px;
+        left: 50%;
+        width: 64px;
+        height: 34px;
+        border: 4px solid #24324a;
+        border-top: 0;
+        border-radius: 0 0 999px 999px;
+        background: rgba(255, 255, 255, 0.82);
+        transform: translateX(-50%);
+      }
+
+      .hat,
+      .glasses,
+      .shoes {
+        position: absolute;
+        z-index: 14;
+        display: grid;
+        place-items: center;
+        pointer-events: none;
+      }
+
+      .hat {
+        left: 50%;
+        top: 24px;
+        width: 104px;
+        height: 64px;
+        font-size: 3rem;
+        transform: translateX(-50%) rotate(-3deg);
+      }
+
+      .glasses {
+        left: 50%;
+        top: 188px;
+        width: 118px;
+        height: 38px;
+        font-size: 2.15rem;
+        transform: translateX(-50%);
+      }
+
+      .shoes {
+        left: 50%;
+        bottom: 0;
+        width: 148px;
+        height: 36px;
+        font-size: 2rem;
         transform: translateX(-50%);
       }
 
@@ -640,6 +768,90 @@
         font-weight: 900;
       }
 
+      .shop-panel {
+        display: grid;
+        gap: 12px;
+        padding: 16px;
+        border: 3px solid rgba(255, 178, 56, 0.22);
+        border-radius: 24px;
+        background: rgba(255, 248, 218, 0.82);
+      }
+
+      .fashion-selected {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .fashion-slot {
+        display: grid;
+        place-items: center;
+        min-height: 58px;
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.82);
+        color: #42627e;
+        font-size: 1.55rem;
+        font-weight: 900;
+        text-align: center;
+      }
+
+      .fashion-shop {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .fashion-item {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        align-items: center;
+        gap: 8px;
+        min-height: 74px;
+        padding: 9px;
+        border: 2px solid rgba(36, 50, 74, 0.12);
+        border-radius: 18px;
+        color: #24324a;
+        background: rgba(255, 255, 255, 0.84);
+        box-shadow: 0 12px 22px rgba(52, 87, 112, 0.1);
+        text-align: left;
+      }
+
+      .fashion-item.is-active {
+        border-color: rgba(36, 168, 106, 0.56);
+        background: #e9fff3;
+      }
+
+      .fashion-item.is-locked {
+        background: rgba(255, 255, 255, 0.58);
+      }
+
+      .fashion-icon {
+        display: grid;
+        place-items: center;
+        width: 44px;
+        height: 44px;
+        border-radius: 14px;
+        background: var(--item-color, #fff2a8);
+        font-size: 1.75rem;
+      }
+
+      .fashion-meta {
+        display: grid;
+        gap: 3px;
+        min-width: 0;
+      }
+
+      .fashion-name,
+      .fashion-price {
+        overflow-wrap: anywhere;
+        font-weight: 900;
+      }
+
+      .fashion-price {
+        color: #f15c45;
+        font-size: 0.86rem;
+      }
+
       .feedback {
         min-height: 42px;
         color: #42627e;
@@ -745,6 +957,15 @@
           grid-template-columns: repeat(2, minmax(0, 1fr));
         }
 
+        .avatar-picker {
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+
+        .name-row,
+        .fashion-shop {
+          grid-template-columns: 1fr;
+        }
+
         .service-strip {
           grid-template-columns: 1fr;
         }
@@ -796,6 +1017,15 @@
             <ul class="wish-list" id="wish-list"></ul>
           </div>
 
+          <div class="customer-maker">
+            <p class="eyebrow">Tạo khách riêng</p>
+            <div class="name-row">
+              <input id="customer-name-input" type="text" maxlength="14" value="Mai" aria-label="Tên khách hàng" />
+              <button class="nav-btn" type="button" id="apply-customer-name"><span>🏷️</span>Đặt tên</button>
+            </div>
+            <div class="avatar-picker" id="avatar-picker" aria-label="Chọn hình đại diện khách hàng"></div>
+          </div>
+
           <div>
             <p class="eyebrow">Dụng cụ</p>
             <div class="tool-grid">
@@ -824,6 +1054,7 @@
               <div class="hair-back"></div>
               <div class="neck"></div>
               <div class="shoulders"></div>
+              <div class="outfit" id="outfit"></div>
               <div class="face">
                 <span class="eye left"></span>
                 <span class="eye right"></span>
@@ -832,6 +1063,9 @@
               <div class="hair-front"></div>
               <div class="bangs"></div>
               <div class="accessory" id="accessory" hidden></div>
+              <div class="hat" id="hat" hidden></div>
+              <div class="glasses" id="glasses" hidden></div>
+              <div class="shoes" id="shoes" hidden></div>
               <div class="sparkles" id="sparkles"></div>
               <div class="hair-snips" id="hair-snips"></div>
               <div class="bubbles" id="bubbles"></div>
@@ -844,6 +1078,12 @@
 
         <aside class="panel">
           <div id="controls"></div>
+
+          <section class="shop-panel">
+            <p class="eyebrow">Cửa hàng thời trang</p>
+            <div class="fashion-selected" id="fashion-selected"></div>
+            <div class="fashion-shop" id="fashion-shop"></div>
+          </section>
 
           <section class="result-panel" id="result-panel">
             <p class="eyebrow">Kết quả</p>
@@ -871,6 +1111,24 @@
       const resultNotes = document.getElementById("result-notes");
       const gallery = document.getElementById("gallery");
       const starsNode = document.getElementById("salon-stars");
+      const customerNameInput = document.getElementById("customer-name-input");
+      const avatarPicker = document.getElementById("avatar-picker");
+      const outfitNode = document.getElementById("outfit");
+      const hatNode = document.getElementById("hat");
+      const glassesNode = document.getElementById("glasses");
+      const shoesNode = document.getElementById("shoes");
+      const fashionSelected = document.getElementById("fashion-selected");
+      const fashionShop = document.getElementById("fashion-shop");
+
+      function escapeHtml(value) {
+        return String(value).replace(/[&<>"']/g, (char) => ({
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#039;",
+        })[char]);
+      }
 
       const hairColors = [
         { name: "nâu hạt dẻ", value: "#6f3f27" },
@@ -906,6 +1164,8 @@
         { id: "heart", label: "Tim", icon: "💖", left: "34%", top: "96px" },
       ];
 
+      const avatarChoices = ["😊", "😄", "🙂", "🥰", "🤩", "😎", "😍", "😇", "😋", "😁", "🤗", "😉", "😌", "😃", "☺️", "😆", "👧", "👦", "🧒", "👩", "👱‍♀️", "👩‍🦱", "👩‍🦰", "👩‍🦳", "👸", "🧑", "👨", "👵", "👶", "🧕"];
+
       const customers = [
         {
           name: "Mai",
@@ -932,6 +1192,56 @@
           face: "🤩",
           target: { washed: true, dried: true, length: "medium", color: "#d99a28", style: "straight", bangs: true, accessory: "heart" },
         },
+        {
+          name: "Bông",
+          face: "😎",
+          target: { washed: true, dried: true, length: "short", color: "#f28b45", style: "curly", bangs: false, accessory: "star" },
+        },
+        {
+          name: "Cherry",
+          face: "😍",
+          target: { washed: true, dried: true, length: "long", color: "#c73f4d", style: "curly", bangs: true, accessory: "flower" },
+        },
+        {
+          name: "Mây",
+          face: "😇",
+          target: { washed: true, dried: true, length: "medium", color: "#cfd9e6", style: "wavy", bangs: false, accessory: "crown" },
+        },
+        {
+          name: "Kem",
+          face: "😋",
+          target: { washed: true, dried: true, length: "short", color: "#38a06f", style: "straight", bangs: true, accessory: "bow" },
+        },
+        {
+          name: "Su",
+          face: "😁",
+          target: { washed: true, dried: true, length: "long", color: "#6f3f27", style: "wavy", bangs: true, accessory: "heart" },
+        },
+      ];
+
+      const defaultFashion = {
+        outfit: "outfit-aqua",
+        hat: "hat-none",
+        glasses: "glasses-none",
+        shoes: "shoes-white",
+      };
+
+      const fashionItems = [
+        { id: "outfit-aqua", type: "outfit", label: "Áo xanh biển", icon: "👚", price: 0, color: "#67d6c9" },
+        { id: "outfit-rose", type: "outfit", label: "Váy hồng", icon: "👗", price: 3, color: "#ff78a9" },
+        { id: "outfit-sun", type: "outfit", label: "Váy nắng", icon: "🌼", price: 4, color: "#ffb238" },
+        { id: "outfit-mint", type: "outfit", label: "Áo bạc hà", icon: "🍃", price: 4, color: "#38a06f" },
+        { id: "outfit-star", type: "outfit", label: "Đầm ngôi sao", icon: "⭐", price: 5, color: "#7a6df0" },
+        { id: "hat-none", type: "hat", label: "Không mũ", icon: "✨", price: 0, color: "#ffffff" },
+        { id: "hat-sun", type: "hat", label: "Mũ nắng", icon: "👒", price: 3, color: "#fff2a8" },
+        { id: "hat-crown", type: "hat", label: "Vương miện", icon: "👑", price: 5, color: "#ffe06b" },
+        { id: "hat-flower", type: "hat", label: "Mũ hoa", icon: "🌺", price: 4, color: "#ffd5e6" },
+        { id: "glasses-none", type: "glasses", label: "Không kính", icon: "✨", price: 0, color: "#ffffff" },
+        { id: "glasses-sun", type: "glasses", label: "Kính mát", icon: "🕶️", price: 3, color: "#dcefff" },
+        { id: "glasses-star", type: "glasses", label: "Kính sao", icon: "🤓", price: 4, color: "#fff2a8" },
+        { id: "shoes-white", type: "shoes", label: "Giày trắng", icon: "👟", price: 0, color: "#ffffff" },
+        { id: "shoes-red", type: "shoes", label: "Giày đỏ", icon: "👠", price: 3, color: "#ffd5e6" },
+        { id: "shoes-bow", type: "shoes", label: "Giày nơ", icon: "🎀", price: 4, color: "#ffe2ef" },
       ];
 
       const state = {
@@ -948,7 +1258,16 @@
         },
         stars: Number(localStorage.getItem("salon-stars") || "0"),
         savedLooks: JSON.parse(localStorage.getItem("salon-gallery") || "[]"),
+        ownedFashion: JSON.parse(localStorage.getItem("salon-owned-fashion") || JSON.stringify(Object.values(defaultFashion))),
+        fashion: {
+          ...defaultFashion,
+          ...JSON.parse(localStorage.getItem("salon-fashion") || "{}"),
+        },
       };
+
+      Object.values(defaultFashion).forEach((id) => {
+        if (!state.ownedFashion.includes(id)) state.ownedFashion.push(id);
+      });
 
       function colorName(value) {
         return hairColors.find((item) => item.value === value)?.name || "màu tóc";
@@ -964,6 +1283,36 @@
 
       function accessoryName(id) {
         return accessories.find((item) => item.id === id)?.label || "phụ kiện";
+      }
+
+      function fashionItem(id) {
+        return fashionItems.find((item) => item.id === id);
+      }
+
+      function saveFashion() {
+        localStorage.setItem("salon-owned-fashion", JSON.stringify(state.ownedFashion));
+        localStorage.setItem("salon-fashion", JSON.stringify(state.fashion));
+      }
+
+      function saveStars() {
+        localStorage.setItem("salon-stars", String(state.stars));
+        starsNode.textContent = state.stars;
+      }
+
+      function randomFrom(list) {
+        return list[Math.floor(Math.random() * list.length)];
+      }
+
+      function makeRandomTarget() {
+        return {
+          washed: true,
+          dried: true,
+          length: randomFrom(lengths).id,
+          color: randomFrom(hairColors).value,
+          style: randomFrom(styles).id,
+          bangs: Math.random() > 0.5,
+          accessory: randomFrom(accessories.filter((item) => item.id !== "none")).id,
+        };
       }
 
       function tone(kind) {
@@ -1029,7 +1378,117 @@
         accessoryNode.hidden = false;
         accessoryNode.textContent = accessory.icon;
         accessoryNode.style.setProperty("--accessory-left", accessory.left);
-          accessoryNode.style.setProperty("--accessory-top", accessory.top);
+        accessoryNode.style.setProperty("--accessory-top", accessory.top);
+      }
+
+      function applyFashion() {
+        const outfit = fashionItem(state.fashion.outfit) || fashionItem(defaultFashion.outfit);
+        outfitNode.textContent = outfit.icon;
+        outfitNode.style.setProperty("--outfit-color", outfit.color);
+
+        [
+          { node: hatNode, item: fashionItem(state.fashion.hat), empty: "hat-none" },
+          { node: glassesNode, item: fashionItem(state.fashion.glasses), empty: "glasses-none" },
+          { node: shoesNode, item: fashionItem(state.fashion.shoes), empty: "" },
+        ].forEach(({ node, item, empty }) => {
+          if (!item || item.id === empty) {
+            node.hidden = true;
+            node.textContent = "";
+            return;
+          }
+          node.hidden = false;
+          node.textContent = item.icon;
+        });
+      }
+
+      function renderAvatarPicker() {
+        avatarPicker.innerHTML = avatarChoices.map((face) => `
+          <button class="avatar-choice ${state.customer.face === face ? "is-active" : ""}" type="button" data-face="${escapeHtml(face)}" aria-label="Chọn mặt ${escapeHtml(face)}">${escapeHtml(face)}</button>
+        `).join("");
+        avatarPicker.querySelectorAll("[data-face]").forEach((button) => {
+          button.addEventListener("click", () => chooseAvatar(button.dataset.face));
+        });
+      }
+
+      function chooseAvatar(face) {
+        state.customer = {
+          ...state.customer,
+          face,
+        };
+        renderCustomer();
+        feedback.textContent = `${state.customer.name} đã có hình đại diện mới.`;
+        sparkle();
+        tone("sparkle");
+      }
+
+      function applyCustomerName() {
+        const cleanName = customerNameInput.value.trim().replace(/\s+/g, " ").slice(0, 14);
+        if (!cleanName) {
+          feedback.textContent = "Bé nhập tên khách trước nhé.";
+          tone("no");
+          return;
+        }
+        state.customer = {
+          ...state.customer,
+          name: cleanName,
+        };
+        renderCustomer();
+        feedback.textContent = `Xin chào khách hàng ${state.customer.name}!`;
+        tone("yes");
+      }
+
+      function renderFashionShop() {
+        const selectedItems = [
+          fashionItem(state.fashion.outfit),
+          fashionItem(state.fashion.hat),
+          fashionItem(state.fashion.glasses),
+          fashionItem(state.fashion.shoes),
+        ].filter(Boolean);
+        fashionSelected.innerHTML = selectedItems.map((item) => `
+          <div class="fashion-slot" title="${escapeHtml(item.label)}">${escapeHtml(item.icon)}</div>
+        `).join("");
+        fashionShop.innerHTML = fashionItems.map((item) => {
+          const owned = state.ownedFashion.includes(item.id);
+          const active = state.fashion[item.type] === item.id;
+          const label = owned ? (active ? "Đang mặc" : "Mặc ngay") : `${item.price} sao`;
+          return `
+            <button class="fashion-item ${active ? "is-active" : ""} ${owned ? "" : "is-locked"}" type="button" data-fashion="${escapeHtml(item.id)}">
+              <span class="fashion-icon" style="--item-color:${escapeHtml(item.color)}">${escapeHtml(item.icon)}</span>
+              <span class="fashion-meta">
+                <span class="fashion-name">${escapeHtml(item.label)}</span>
+                <span class="fashion-price">${escapeHtml(label)}</span>
+              </span>
+            </button>
+          `;
+        }).join("");
+        fashionShop.querySelectorAll("[data-fashion]").forEach((button) => {
+          button.addEventListener("click", () => buyOrWearFashion(button.dataset.fashion));
+        });
+      }
+
+      function buyOrWearFashion(id) {
+        const item = fashionItem(id);
+        if (!item) return;
+        const owned = state.ownedFashion.includes(item.id);
+        if (!owned && state.stars < item.price) {
+          feedback.textContent = `Cần thêm ${item.price - state.stars} sao để mua ${item.label}. Làm tóc đẹp sẽ có thêm sao nhé.`;
+          tone("no");
+          return;
+        }
+        if (!owned) {
+          state.stars -= item.price;
+          state.ownedFashion.push(item.id);
+          saveStars();
+          feedback.textContent = `Đã mua ${item.label}, khách mặc thử luôn!`;
+        } else {
+          feedback.textContent = `${item.label} đã được chọn cho khách.`;
+        }
+        state.fashion[item.type] = item.id;
+        saveFashion();
+        applyFashion();
+        renderFashionShop();
+        sparkle();
+        tone("sparkle");
       }
 
       function renderControls() {
@@ -1143,6 +1602,7 @@
       function renderCustomer() {
         document.getElementById("customer-name").textContent = state.customer.name;
         document.getElementById("customer-face").textContent = state.customer.face;
+        customerNameInput.value = state.customer.name;
         const wishList = document.getElementById("wish-list");
         const target = state.customer.target;
         wishList.innerHTML = `
@@ -1155,10 +1615,15 @@
           <li><span>Phụ kiện</span><span>${accessoryName(target.accessory)}</span></li>
         `;
         renderServiceStrip();
+        renderAvatarPicker();
       }
 
       function newCustomer() {
-        state.customer = customers[Math.floor(Math.random() * customers.length)];
+        const customer = customers[Math.floor(Math.random() * customers.length)];
+        state.customer = {
+          ...customer,
+          target: Math.random() > 0.35 ? customer.target : makeRandomTarget(),
+        };
         state.look = {
           washed: false,
           dried: false,
@@ -1214,10 +1679,10 @@
         if (result.percent >= 80) {
           const earned = result.percent === 100 ? 4 : 2;
           state.stars += earned;
-          localStorage.setItem("salon-stars", String(state.stars));
-          starsNode.textContent = state.stars;
+          saveStars();
           feedback.textContent = result.percent === 100 ? "Tuyệt vời, khách rất thích kiểu tóc này!" : "Đẹp rồi, khách rất vui!";
           document.getElementById("customer-face").textContent = result.percent === 100 ? "🤩" : "🥰";
+          renderFashionShop();
           sparkle();
           tone("yes");
         } else {
@@ -1229,10 +1694,11 @@
 
       function saveLook() {
         const accessory = accessories.find((item) => item.id === state.look.accessory)?.icon || "✨";
+        const outfit = fashionItem(state.fashion.outfit)?.icon || "👚";
         const card = {
-          icon: accessory,
+          icon: `${accessory}${outfit}`,
           color: state.look.color,
-          text: `${state.look.washed ? "đã gội" : "chưa gội"} · ${lengthName(state.look.length)} ${styleName(state.look.style)}`,
+          text: `${state.customer.name} · ${lengthName(state.look.length)} ${styleName(state.look.style)}`,
         };
         state.savedLooks.unshift(card);
         state.savedLooks = state.savedLooks.slice(0, 4);
@@ -1315,12 +1781,18 @@
       document.getElementById("finish-style").addEventListener("click", finishStyle);
       document.getElementById("new-customer").addEventListener("click", newCustomer);
       document.getElementById("save-look").addEventListener("click", saveLook);
+      document.getElementById("apply-customer-name").addEventListener("click", applyCustomerName);
+      customerNameInput.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") applyCustomerName();
+      });
 
       starsNode.textContent = state.stars;
       renderCustomer();
       renderControls();
       renderGallery();
       applyLook();
+      applyFashion();
+      renderFashionShop();
       renderServiceStrip();
     </script>
   </body>
