@@ -295,6 +295,97 @@
         color: #435064;
       }
 
+      .story-quest {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(260px, 0.42fr);
+        gap: 14px;
+        margin-bottom: 16px;
+        padding: 16px;
+        border: 2px solid rgba(35, 50, 74, 0.08);
+        border-radius: 22px;
+        background: rgba(255, 255, 255, 0.82);
+        box-shadow: 0 16px 42px rgba(35, 50, 74, 0.1);
+      }
+
+      .quest-main {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        gap: 12px;
+        align-items: start;
+      }
+
+      .quest-badge {
+        display: grid;
+        width: 62px;
+        height: 62px;
+        place-items: center;
+        border-radius: 20px;
+        background: #dbfff0;
+        box-shadow: inset 0 -8px 0 rgba(35, 50, 74, 0.06);
+        font-size: 2rem;
+      }
+
+      .quest-copy p {
+        margin-top: 6px;
+        color: #536071;
+        font-weight: 850;
+        line-height: 1.45;
+      }
+
+      .story-path {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 8px;
+        margin: 12px 0 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .story-path li {
+        min-height: 64px;
+        padding: 8px;
+        border-radius: 16px;
+        background: #f5f8ff;
+        border: 2px solid rgba(35, 50, 74, 0.06);
+        font-size: 0.9rem;
+        font-weight: 1000;
+        line-height: 1.25;
+      }
+
+      .story-path li.done {
+        color: #0d6d59;
+        background: #ddfff0;
+      }
+
+      .story-path li.active {
+        color: #7a4100;
+        background: #fff0c8;
+        border-color: #f0a928;
+      }
+
+      .story-log {
+        display: grid;
+        align-content: start;
+        gap: 8px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .story-log li {
+        padding: 9px 11px;
+        border-radius: 14px;
+        color: #435064;
+        background: #f6fbff;
+        font-weight: 850;
+        line-height: 1.34;
+      }
+
+      .story-log li:first-child {
+        color: #0d6d59;
+        background: #ddfff0;
+      }
+
       .workspace {
         display: grid;
         grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
@@ -645,6 +736,7 @@
         }
 
         .story-strip,
+        .story-quest,
         .result-panel {
           grid-template-columns: 1fr;
         }
@@ -657,6 +749,10 @@
 
         .answers {
           grid-template-columns: 1fr;
+        }
+
+        .story-path {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
         }
 
         .item-button,
@@ -712,6 +808,18 @@
         <button class="soft-button" id="new-task" type="button">🔄 Nhiệm vụ mới</button>
       </section>
 
+      <section class="story-quest" aria-label="Cốt chuyện tiệm tạp hoá">
+        <div class="quest-main">
+          <div class="quest-badge" id="quest-badge">🎒</div>
+          <div class="quest-copy">
+            <h2 id="quest-title">Chuyến hàng đầu ngày</h2>
+            <p id="quest-opening">Tiệm của Xoài vừa mở cửa. Bé giúp khách mua hàng để làm một việc thật vui.</p>
+            <ol class="story-path" id="story-path"></ol>
+          </div>
+        </div>
+        <ul class="story-log" id="story-log"></ul>
+      </section>
+
       <section class="workspace">
         <aside class="panel">
           <div class="panel-title">
@@ -764,6 +872,89 @@
         { name: "Chú Nam", face: "👨", line: "Chú Nam mua đồ rồi cần bé trả lại tiền thừa." },
       ];
 
+      const storyChapters = [
+        {
+          badge: "🎒",
+          title: "Chuẩn bị picnic của lớp",
+          opening: "Sáng nay lớp 3A đi picnic. Cô Lan nhờ bé chuẩn bị đồ ăn, tính tiền thật nhanh và xếp lại kệ trước khi xe tới.",
+          customerLine: "Cô Lan cần mua đồ cho chuyến picnic của lớp 3A.",
+          steps: ["Lấy đồ ăn", "Cộng hoá đơn", "Trả tiền thừa", "Xếp lại kệ"],
+          modeText: {
+            shopping: "Cô Lan đọc danh sách picnic. Bé lấy đúng từng món để cả lớp không bị thiếu đồ.",
+            total: "Đồ đã đủ rồi. Bé cộng giá các món để cô Lan biết cần trả bao nhiêu tiền.",
+            change: "Cô Lan đưa tiền lớn. Bé trả lại tiền thừa thật đúng để cô kịp ra xe.",
+            shelf: "Khách đông quá, kệ hơi lộn xộn. Bé xếp lại đúng nhóm để tiệm sạch đẹp.",
+          },
+          reward: {
+            shopping: "Giỏ picnic đã đủ món. Các bạn lớp 3A có đồ ăn sáng rồi.",
+            total: "Hoá đơn picnic đã tính xong. Cô Lan khen bé cộng tiền cẩn thận.",
+            change: "Bé trả tiền thừa chính xác. Cô Lan rất yên tâm.",
+            shelf: "Kệ hàng gọn lại. Xe picnic vừa tới và cả lớp vui vẻ lên đường.",
+          },
+          done: "Hoàn thành chuyến picnic. Tiệm của Xoài nổi tiếng là bán hàng nhanh và thật thà.",
+        },
+        {
+          badge: "📚",
+          title: "Mở góc đọc sách",
+          opening: "Bạn Xoài muốn làm một góc đọc sách nhỏ ở nhà. Bé giúp chọn đồ học tập, tính tiền và giữ tiệm thật ngăn nắp.",
+          customerLine: "Bạn Xoài đang chuẩn bị góc đọc sách mới.",
+          steps: ["Chọn đồ học", "Tính tiền", "Trả lại tiền", "Dọn kho"],
+          modeText: {
+            shopping: "Bạn Xoài cần vài món cho góc đọc sách. Bé nhìn đơn và lấy đúng đồ.",
+            total: "Các món đã nằm trên quầy. Bé cộng tiền để bạn Xoài tự kiểm tra hoá đơn.",
+            change: "Bạn Xoài đưa tiền tiết kiệm. Bé trả lại đúng tiền thừa nhé.",
+            shelf: "Khu học tập trong kho cần gọn hơn. Bé chọn đúng nhóm hàng để xếp lại.",
+          },
+          reward: {
+            shopping: "Góc đọc sách đã có đủ đồ cần thiết.",
+            total: "Bạn Xoài hiểu hoá đơn rồi. Bé giúp bạn học toán rất vui.",
+            change: "Tiền thừa trả đúng. Bạn Xoài cất lại vào heo đất.",
+            shelf: "Kệ học tập gọn gàng. Góc đọc sách đã sẵn sàng.",
+          },
+          done: "Góc đọc sách mở cửa. Bạn Xoài hứa mỗi ngày đọc một truyện hay.",
+        },
+        {
+          badge: "🎂",
+          title: "Bữa sinh nhật bất ngờ",
+          opening: "Bạn Bi muốn chuẩn bị sinh nhật cho em. Bé phải bán hàng thật khéo để bữa tiệc kịp bắt đầu.",
+          customerLine: "Bạn Bi đang mua đồ cho bữa sinh nhật bất ngờ.",
+          steps: ["Lấy đồ tiệc", "Cộng tiền", "Trả tiền thừa", "Trang trí kệ"],
+          modeText: {
+            shopping: "Bạn Bi thì thầm danh sách đồ tiệc. Bé lấy đúng món để giữ bí mật sinh nhật.",
+            total: "Bánh và nước đã đủ. Bé tính tổng tiền để bạn Bi không bị nhầm.",
+            change: "Bạn Bi cần tiền thừa để mua nến. Bé trả lại đúng số tiền nhé.",
+            shelf: "Sau giờ cao điểm, kệ hàng cần đẹp lại để khách sau dễ tìm đồ.",
+          },
+          reward: {
+            shopping: "Đồ tiệc đã đủ. Bí mật sinh nhật vẫn được giữ.",
+            total: "Bạn Bi biết chính xác cần trả bao nhiêu tiền.",
+            change: "Tiền thừa vừa đủ để mua nến sinh nhật.",
+            shelf: "Kệ tiệm sáng đẹp như có trang trí tiệc.",
+          },
+          done: "Bữa sinh nhật thành công. Bạn Bi cảm ơn bé vì đã giúp chuẩn bị rất nhanh.",
+        },
+        {
+          badge: "💚",
+          title: "Quầy hàng giúp bạn",
+          opening: "Tiệm của Xoài mở quầy bán hàng gây quỹ cho bạn nhỏ cần sách mới. Mỗi phép tính đúng giúp quỹ đầy hơn.",
+          customerLine: "Khách tới mua hàng để ủng hộ quầy sách mới.",
+          steps: ["Bán đúng hàng", "Tính quỹ", "Trả tiền", "Xếp hàng quyên góp"],
+          modeText: {
+            shopping: "Khách chọn hàng ủng hộ. Bé lấy đúng món để quầy bán thật nhanh.",
+            total: "Mỗi món đều góp vào quỹ sách. Bé cộng tiền để biết quỹ tăng bao nhiêu.",
+            change: "Khách đưa tiền lớn. Bé trả lại tiền thừa thật rõ ràng.",
+            shelf: "Quầy quyên góp cần gọn gàng. Bé xếp đúng nhóm hàng để nhiều khách ghé hơn.",
+          },
+          reward: {
+            shopping: "Khách đã nhận đúng hàng và vui vẻ ủng hộ.",
+            total: "Sổ quỹ ghi đúng số tiền. Bé tính toán rất chắc.",
+            change: "Khách nhận đúng tiền thừa và tin tưởng tiệm của Xoài.",
+            shelf: "Quầy hàng gọn gàng, nhiều khách mới bắt đầu ghé vào.",
+          },
+          done: "Quỹ sách đã đầy thêm. Bé vừa học toán vừa làm được việc tốt.",
+        },
+      ];
+
       const modes = {
         shopping: {
           icon: "🧺",
@@ -802,6 +993,8 @@
         score: Number(localStorage.getItem("grocery-score") || 0),
         coins: Number(localStorage.getItem("grocery-coins") || 0),
         day: Number(localStorage.getItem("grocery-day") || 1),
+        chapterIndex: Number(localStorage.getItem("grocery-chapter") || 0),
+        storyLog: readStoryLog(),
         customer: customers[0],
         taskItems: [],
         selected: new Set(),
@@ -825,6 +1018,11 @@
         taskTitle: document.getElementById("task-title"),
         taskText: document.getElementById("task-text"),
         storyIcon: document.getElementById("story-icon"),
+        questBadge: document.getElementById("quest-badge"),
+        questTitle: document.getElementById("quest-title"),
+        questOpening: document.getElementById("quest-opening"),
+        storyPath: document.getElementById("story-path"),
+        storyLog: document.getElementById("story-log"),
         leftTitle: document.getElementById("left-title"),
         hintBadge: document.getElementById("hint-badge"),
         taskList: document.getElementById("task-list"),
@@ -844,6 +1042,17 @@
         localStorage.setItem("grocery-score", String(state.score));
         localStorage.setItem("grocery-coins", String(state.coins));
         localStorage.setItem("grocery-day", String(state.day));
+        localStorage.setItem("grocery-chapter", String(state.chapterIndex));
+        localStorage.setItem("grocery-story-log", JSON.stringify(state.storyLog.slice(0, 5)));
+      }
+
+      function readStoryLog() {
+        try {
+          const value = JSON.parse(localStorage.getItem("grocery-story-log") || "[]");
+          return Array.isArray(value) ? value : [];
+        } catch {
+          return [];
+        }
       }
 
       function money(value) {
@@ -856,7 +1065,25 @@
       }
 
       function pickCustomer() {
-        state.customer = customers[Math.floor(Math.random() * customers.length)];
+        const chapter = currentChapter();
+        const base = customers[Math.floor(Math.random() * customers.length)];
+        state.customer = {
+          ...base,
+          line: chapter.customerLine,
+        };
+      }
+
+      function currentChapter() {
+        return storyChapters[state.chapterIndex % storyChapters.length];
+      }
+
+      function modeStepIndex(mode = state.mode) {
+        return ["shopping", "total", "change", "shelf"].indexOf(mode);
+      }
+
+      function addStoryLog(text) {
+        state.storyLog = [text, ...state.storyLog].slice(0, 5);
+        save();
       }
 
       function speak(text) {
@@ -946,7 +1173,8 @@
         }
         render();
         const m = modes[state.mode];
-        speak(`${m.title}. ${m.text}`);
+        const chapter = currentChapter();
+        speak(`${chapter.title}. ${chapter.modeText[state.mode] || m.text}`);
       }
 
       function renderHeader() {
@@ -956,11 +1184,27 @@
         updateScore();
       }
 
+      function renderStoryQuest() {
+        const chapter = currentChapter();
+        const activeIndex = Math.max(0, modeStepIndex());
+        els.questBadge.textContent = chapter.badge;
+        els.questTitle.textContent = chapter.title;
+        els.questOpening.textContent = chapter.opening;
+        els.storyPath.innerHTML = chapter.steps.map((step, index) => {
+          const status = index < activeIndex ? "done" : index === activeIndex ? "active" : "";
+          const mark = index < activeIndex ? "✓" : index + 1;
+          return `<li class="${status}"><span>${mark}</span> ${step}</li>`;
+        }).join("");
+        const log = state.storyLog.length ? state.storyLog : ["Tiệm vừa mở cửa. Bé hoàn thành nhiệm vụ để câu chuyện tiếp tục nhé."];
+        els.storyLog.innerHTML = log.map((item) => `<li>${item}</li>`).join("");
+      }
+
       function renderModeInfo() {
         const m = modes[state.mode];
+        const chapter = currentChapter();
         els.storyIcon.textContent = m.icon;
         els.taskTitle.textContent = m.title;
-        els.taskText.textContent = m.text;
+        els.taskText.textContent = chapter.modeText[state.mode] || m.text;
         els.leftTitle.textContent = m.left;
         document.querySelectorAll("[data-mode]").forEach((button) => {
           button.classList.toggle("is-active", button.dataset.mode === state.mode);
@@ -1173,6 +1417,7 @@
       function render() {
         renderHeader();
         renderModeInfo();
+        renderStoryQuest();
         renderTaskList();
         if (state.mode === "shopping") renderStoreGrid();
         if (state.mode === "total") renderTotalGame();
@@ -1180,10 +1425,11 @@
         if (state.mode === "shelf") renderShelfGame();
       }
 
-      function reward(points, text) {
+      function reward(points, text, logText = text) {
         state.score += points;
         state.coins += points;
         state.day += 1;
+        addStoryLog(logText);
         updateScore();
         celebrate();
         tone("yes");
@@ -1195,7 +1441,8 @@
         const selected = [...state.selected];
         const ok = selected.length === need.size && selected.every((id) => need.has(id));
         if (ok) {
-          reward(3, "Khách đã nhận đủ hàng. Bé được cộng 3 xu.");
+          const chapter = currentChapter();
+          reward(3, "Khách đã nhận đủ hàng. Bé được cộng 3 xu.", chapter.reward.shopping);
           setTimeout(() => makeTask("total"), 1200);
         } else {
           tone("no");
@@ -1205,7 +1452,8 @@
 
       function checkTotal() {
         if (state.answer === totalOf()) {
-          reward(4, `Tổng tiền là ${money(totalOf())}. Bé tính rất nhanh.`);
+          const chapter = currentChapter();
+          reward(4, `Tổng tiền là ${money(totalOf())}. Bé tính rất nhanh.`, chapter.reward.total);
           setTimeout(() => makeTask("change"), 1200);
         } else {
           tone("no");
@@ -1216,7 +1464,8 @@
       function checkChange() {
         const picked = state.pickedMoney.reduce((sum, item) => sum + item, 0);
         if (picked === state.changeTarget) {
-          reward(5, `Bé trả lại đúng ${money(state.changeTarget)} cho khách.`);
+          const chapter = currentChapter();
+          reward(5, `Bé trả lại đúng ${money(state.changeTarget)} cho khách.`, chapter.reward.change);
           setTimeout(() => makeTask("shelf"), 1200);
         } else {
           tone("no");
@@ -1230,8 +1479,12 @@
         const selected = [...state.selected];
         const ok = selected.length === need.size && selected.every((id) => need.has(id));
         if (ok) {
-          reward(4, `Kệ ${state.shelfType} đã gọn gàng. Tiệm của Xoài sáng hơn rồi.`);
-          setTimeout(() => makeTask("shopping"), 1200);
+          const chapter = currentChapter();
+          reward(4, `Kệ ${state.shelfType} đã gọn gàng. Tiệm của Xoài sáng hơn rồi.`, chapter.reward.shelf);
+          addStoryLog(chapter.done);
+          state.chapterIndex += 1;
+          save();
+          setTimeout(() => makeTask("shopping"), 1500);
         } else {
           tone("no");
           setFeedback("no", "Kệ chưa đúng nhóm", `Bé chỉ chọn các món thuộc nhóm ${state.shelfType} nhé.`, true);
@@ -1265,7 +1518,8 @@
       els.newTask.addEventListener("click", () => makeTask(state.mode === "bonus" ? "shopping" : state.mode));
       els.soundButton.addEventListener("click", () => {
         const m = modes[state.mode];
-        speak(`${m.title}. ${m.text}`);
+        const chapter = currentChapter();
+        speak(`${chapter.title}. ${chapter.modeText[state.mode] || m.text}`);
       });
       els.bonusButton.addEventListener("click", startBonus);
 
