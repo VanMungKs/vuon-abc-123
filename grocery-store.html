@@ -887,18 +887,18 @@
 
     <script>
       const products = [
-        { id: "milk", name: "Sữa", english: "Milk", emoji: "🥛", price: 8, type: "Đồ uống" },
-        { id: "bread", name: "Bánh mì", english: "Bread", emoji: "🥖", price: 5, type: "Đồ ăn" },
-        { id: "egg", name: "Trứng", english: "Egg", emoji: "🥚", price: 4, type: "Đồ ăn" },
-        { id: "apple", name: "Táo", english: "Apple", emoji: "🍎", price: 6, type: "Trái cây" },
-        { id: "banana", name: "Chuối", english: "Banana", emoji: "🍌", price: 7, type: "Trái cây" },
-        { id: "orange", name: "Cam", english: "Orange", emoji: "🍊", price: 9, type: "Trái cây" },
-        { id: "noodle", name: "Mì gói", english: "Noodles", emoji: "🍜", price: 10, type: "Đồ ăn" },
-        { id: "soap", name: "Xà phòng", english: "Soap", emoji: "🧼", price: 12, type: "Đồ dùng" },
-        { id: "book", name: "Vở", english: "Notebook", emoji: "📘", price: 15, type: "Học tập" },
-        { id: "pencil", name: "Bút chì", english: "Pencil", emoji: "✏️", price: 3, type: "Học tập" },
-        { id: "cookie", name: "Bim bim", english: "Snack", emoji: "🍿", price: 11, type: "Đồ ăn" },
-        { id: "juice", name: "Nước ép", english: "Juice", emoji: "🧃", price: 13, type: "Đồ uống" },
+        { id: "milk", name: "Sữa", english: "Milk", audio: "tts/en/milk.m4a", emoji: "🥛", price: 8, type: "Đồ uống" },
+        { id: "bread", name: "Bánh mì", english: "Bread", audio: "tts/en/bread.m4a", emoji: "🥖", price: 5, type: "Đồ ăn" },
+        { id: "egg", name: "Trứng", english: "Egg", audio: "tts/en/egg.m4a", emoji: "🥚", price: 4, type: "Đồ ăn" },
+        { id: "apple", name: "Táo", english: "Apple", audio: "tts/en/apple.m4a", emoji: "🍎", price: 6, type: "Trái cây" },
+        { id: "banana", name: "Chuối", english: "Banana", audio: "tts/en/banana.m4a", emoji: "🍌", price: 7, type: "Trái cây" },
+        { id: "orange", name: "Cam", english: "Orange", audio: "tts/en/orange.m4a", emoji: "🍊", price: 9, type: "Trái cây" },
+        { id: "noodle", name: "Mì gói", english: "Noodles", audio: "tts/en/noodles.m4a", emoji: "🍜", price: 10, type: "Đồ ăn" },
+        { id: "soap", name: "Xà phòng", english: "Soap", audio: "tts/en/soap.m4a", emoji: "🧼", price: 12, type: "Đồ dùng" },
+        { id: "book", name: "Vở", english: "Notebook", audio: "tts/en/notebook.m4a", emoji: "📘", price: 15, type: "Học tập" },
+        { id: "pencil", name: "Bút chì", english: "Pencil", audio: "tts/en/pencil.m4a", emoji: "✏️", price: 3, type: "Học tập" },
+        { id: "cookie", name: "Bim bim", english: "Snack", audio: "tts/en/snack.m4a", emoji: "🍿", price: 11, type: "Đồ ăn" },
+        { id: "juice", name: "Nước ép", english: "Juice", audio: "tts/en/juice.m4a", emoji: "🧃", price: 13, type: "Đồ uống" },
       ];
 
       const customers = [
@@ -1144,6 +1144,31 @@
         window.speechSynthesis.speak(utter);
       }
 
+      let englishAudio;
+
+      function speakEnglish(text, audioSrc = "") {
+        if (audioSrc && typeof Audio === "function") {
+          if (englishAudio) {
+            englishAudio.pause();
+            englishAudio.currentTime = 0;
+          }
+          englishAudio = new Audio(audioSrc);
+          englishAudio.play().catch(() => speakEnglishByVoice(text));
+          return;
+        }
+        speakEnglishByVoice(text);
+      }
+
+      function speakEnglishByVoice(text) {
+        if (!("speechSynthesis" in window)) return;
+        window.speechSynthesis.cancel();
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.lang = "en-US";
+        utter.rate = 0.82;
+        utter.pitch = 1.05;
+        window.speechSynthesis.speak(utter);
+      }
+
       function tone(kind) {
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         if (!AudioContext) return;
@@ -1328,11 +1353,13 @@
         els.gamePanel.querySelectorAll("[data-item]").forEach((button) => {
           button.addEventListener("click", () => {
             const id = button.dataset.item;
+            const item = products.find((product) => product.id === id);
             if (state.selected.has(id)) {
               state.selected.delete(id);
             } else {
               state.selected.add(id);
             }
+            if (item) speakEnglish(item.english, item.audio);
             render();
           });
         });
@@ -1405,11 +1432,13 @@
         els.gamePanel.querySelectorAll("[data-shelf]").forEach((button) => {
           button.addEventListener("click", () => {
             const id = button.dataset.shelf;
+            const item = products.find((product) => product.id === id);
             if (state.selected.has(id)) {
               state.selected.delete(id);
             } else {
               state.selected.add(id);
             }
+            if (item) speakEnglish(item.english, item.audio);
             render();
           });
         });
