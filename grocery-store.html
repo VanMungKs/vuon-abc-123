@@ -501,6 +501,25 @@
         font-size: 0.95rem;
       }
 
+      .quantity-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 28px;
+        padding: 4px 10px;
+        border-radius: 999px;
+        color: #7a4100;
+        background: #fff0c8;
+        font-size: 0.9rem;
+        font-weight: 1000;
+      }
+
+      .quantity-hint {
+        color: #536071;
+        font-size: 0.78rem;
+        font-weight: 900;
+      }
+
       .item-button.is-selected {
         background: #fff0c8;
         border-color: #f0a928;
@@ -887,18 +906,18 @@
 
     <script>
       const products = [
-        { id: "milk", name: "Sữa", english: "Milk", audio: "tts/en/milk.m4a", emoji: "🥛", price: 8, type: "Đồ uống" },
-        { id: "bread", name: "Bánh mì", english: "Bread", audio: "tts/en/bread.m4a", emoji: "🥖", price: 5, type: "Đồ ăn" },
-        { id: "egg", name: "Trứng", english: "Egg", audio: "tts/en/egg.m4a", emoji: "🥚", price: 4, type: "Đồ ăn" },
-        { id: "apple", name: "Táo", english: "Apple", audio: "tts/en/apple.m4a", emoji: "🍎", price: 6, type: "Trái cây" },
-        { id: "banana", name: "Chuối", english: "Banana", audio: "tts/en/banana.m4a", emoji: "🍌", price: 7, type: "Trái cây" },
-        { id: "orange", name: "Cam", english: "Orange", audio: "tts/en/orange.m4a", emoji: "🍊", price: 9, type: "Trái cây" },
-        { id: "noodle", name: "Mì gói", english: "Noodles", audio: "tts/en/noodles.m4a", emoji: "🍜", price: 10, type: "Đồ ăn" },
-        { id: "soap", name: "Xà phòng", english: "Soap", audio: "tts/en/soap.m4a", emoji: "🧼", price: 12, type: "Đồ dùng" },
-        { id: "book", name: "Vở", english: "Notebook", audio: "tts/en/notebook.m4a", emoji: "📘", price: 15, type: "Học tập" },
-        { id: "pencil", name: "Bút chì", english: "Pencil", audio: "tts/en/pencil.m4a", emoji: "✏️", price: 3, type: "Học tập" },
-        { id: "cookie", name: "Bim bim", english: "Snack", audio: "tts/en/snack.m4a", emoji: "🍿", price: 11, type: "Đồ ăn" },
-        { id: "juice", name: "Nước ép", english: "Juice", audio: "tts/en/juice.m4a", emoji: "🧃", price: 13, type: "Đồ uống" },
+        { id: "milk", name: "Sữa", english: "Milk", singular: "carton of milk", plural: "cartons of milk", audio: "tts/en/milk.m4a", emoji: "🥛", price: 8, type: "Đồ uống" },
+        { id: "bread", name: "Bánh mì", english: "Bread", singular: "loaf of bread", plural: "loaves of bread", audio: "tts/en/bread.m4a", emoji: "🥖", price: 5, type: "Đồ ăn" },
+        { id: "egg", name: "Trứng", english: "Egg", singular: "egg", plural: "eggs", audio: "tts/en/egg.m4a", emoji: "🥚", price: 4, type: "Đồ ăn" },
+        { id: "apple", name: "Táo", english: "Apple", singular: "apple", plural: "apples", audio: "tts/en/apple.m4a", emoji: "🍎", price: 6, type: "Trái cây" },
+        { id: "banana", name: "Chuối", english: "Banana", singular: "banana", plural: "bananas", audio: "tts/en/banana.m4a", emoji: "🍌", price: 7, type: "Trái cây" },
+        { id: "orange", name: "Cam", english: "Orange", singular: "orange", plural: "oranges", audio: "tts/en/orange.m4a", emoji: "🍊", price: 9, type: "Trái cây" },
+        { id: "noodle", name: "Mì gói", english: "Noodles", singular: "noodle pack", plural: "noodle packs", audio: "tts/en/noodles.m4a", emoji: "🍜", price: 10, type: "Đồ ăn" },
+        { id: "soap", name: "Xà phòng", english: "Soap", singular: "soap", plural: "soaps", audio: "tts/en/soap.m4a", emoji: "🧼", price: 12, type: "Đồ dùng" },
+        { id: "book", name: "Vở", english: "Notebook", singular: "notebook", plural: "notebooks", audio: "tts/en/notebook.m4a", emoji: "📘", price: 15, type: "Học tập" },
+        { id: "pencil", name: "Bút chì", english: "Pencil", singular: "pencil", plural: "pencils", audio: "tts/en/pencil.m4a", emoji: "✏️", price: 3, type: "Học tập" },
+        { id: "cookie", name: "Bim bim", english: "Snack", singular: "snack", plural: "snacks", audio: "tts/en/snack.m4a", emoji: "🍿", price: 11, type: "Đồ ăn" },
+        { id: "juice", name: "Nước ép", english: "Juice", singular: "juice box", plural: "juice boxes", audio: "tts/en/juice.m4a", emoji: "🧃", price: 13, type: "Đồ uống" },
       ];
 
       const customers = [
@@ -1035,7 +1054,7 @@
         storyLog: readStoryLog(),
         customer: customers[0],
         taskItems: [],
-        selected: new Set(),
+        selected: {},
         answer: null,
         changeTarget: 0,
         paid: 0,
@@ -1100,11 +1119,56 @@
       }
 
       function productText(item) {
-        return `${item.emoji} ${item.name} / ${item.english}`;
+        const qty = item.qty || 1;
+        return `${item.emoji} ${qty} x ${item.name} / ${quantityPhrase(item, qty)}`;
       }
 
       function productNameHtml(item) {
         return `<span class="product-name"><span>${item.name}</span><small>${item.english}</small></span>`;
+      }
+
+      function itemWithQuantity(item) {
+        return {
+          ...item,
+          qty: 1 + Math.floor(Math.random() * 3),
+        };
+      }
+
+      function selectedQty(id) {
+        return state.selected[id] || 0;
+      }
+
+      function selectedIds() {
+        return Object.keys(state.selected).filter((id) => state.selected[id] > 0);
+      }
+
+      function setSelectedQty(id, qty) {
+        if (qty > 0) {
+          state.selected[id] = qty;
+        } else {
+          delete state.selected[id];
+        }
+      }
+
+      function lineTotal(item) {
+        return item.price * (item.qty || 1);
+      }
+
+      function numberWord(value) {
+        return ["zero", "one", "two", "three", "four", "five"][value] || String(value);
+      }
+
+      function quantityPhrase(item, qty) {
+        const name = qty === 1 ? item.singular : item.plural;
+        return `${numberWord(qty)} ${name}`;
+      }
+
+      function selectedPhrase(item, qty) {
+        return `You chose ${quantityPhrase(item, qty)}`;
+      }
+
+      function phraseAudioSrc(item, qty) {
+        return `tts/en/phrases/${item.id}-${qty}.m4a`;
       }
 
       function sample(list, count) {
@@ -1219,7 +1283,7 @@
       }
 
       function totalOf(items = state.taskItems) {
-        return items.reduce((sum, item) => sum + item.price, 0);
+        return items.reduce((sum, item) => sum + lineTotal(item), 0);
       }
 
       function makeTask(mode = state.mode, options = {}) {
@@ -1228,14 +1292,14 @@
         const keepItems = Boolean(options.keepItems && state.taskItems.length);
         state.mode = mode;
         pickCustomer();
-        state.selected = new Set();
+        state.selected = {};
         state.answer = null;
         state.pickedMoney = [];
         state.currentAnswers = [];
         state.paid = 0;
         const count = mode === "shopping" ? 3 + Math.floor(Math.random() * 2) : 3;
         if (!keepItems) {
-          state.taskItems = sample(products, count);
+          state.taskItems = sample(products, count).map(itemWithQuantity);
         }
         if (mode === "change") {
           const total = totalOf();
@@ -1246,7 +1310,7 @@
         if (mode === "shelf") {
           const types = [...new Set(products.map((item) => item.type))];
           state.shelfType = types[Math.floor(Math.random() * types.length)];
-          state.taskItems = products.filter((item) => item.type === state.shelfType);
+          state.taskItems = products.filter((item) => item.type === state.shelfType).map((item) => ({ ...item, qty: 1 }));
         }
         render();
         const m = modes[state.mode];
@@ -1294,9 +1358,9 @@
         if (state.mode === "shopping") {
           els.hintBadge.textContent = `${state.taskItems.length} món`;
           els.taskList.innerHTML = state.taskItems.map((item) => `
-            <li class="${state.selected.has(item.id) ? "done" : ""}">
+            <li class="${selectedQty(item.id) === item.qty ? "done" : ""}">
               <span>${productText(item)}</span>
-              <span>${state.selected.has(item.id) ? "đã lấy" : "cần lấy"}</span>
+              <span>${selectedQty(item.id)}/${item.qty}</span>
             </li>
           `).join("");
           return;
@@ -1305,7 +1369,7 @@
         if (state.mode === "total") {
           els.hintBadge.textContent = money(totalOf());
           els.taskList.innerHTML = state.taskItems.map((item) => `
-            <li><span>${productText(item)}</span><span>${money(item.price)}</span></li>
+            <li><span>${productText(item)}</span><span>${item.qty} x ${money(item.price)} = ${money(lineTotal(item))}</span></li>
           `).join("");
           return;
         }
@@ -1325,7 +1389,7 @@
           els.taskList.innerHTML = `
             <li><span>Kệ cần xếp</span><span>${state.shelfType}</span></li>
             <li><span>Số món đúng</span><span>${state.taskItems.length} món</span></li>
-            <li><span>Đã chọn</span><span>${state.selected.size} món</span></li>
+            <li><span>Đã chọn</span><span>${selectedIds().length} món</span></li>
           `;
           return;
         }
@@ -1339,13 +1403,15 @@
 
       function renderStoreGrid() {
         els.gamePanel.innerHTML = `
-          <div class="panel-title"><h2>Kệ hàng</h2><strong>Chạm để chọn</strong></div>
+          <div class="panel-title"><h2>Kệ hàng</h2><strong>Chạm để tăng số lượng</strong></div>
           <div class="store-grid">
             ${products.map((item) => `
-              <button class="item-button ${state.selected.has(item.id) ? "is-selected" : ""}" type="button" data-item="${item.id}">
+              <button class="item-button ${selectedQty(item.id) ? "is-selected" : ""}" type="button" data-item="${item.id}">
                 <span class="product-art" aria-hidden="true">${item.emoji}</span>
                 ${productNameHtml(item)}
+                <span class="quantity-badge">Số lượng: ${selectedQty(item.id)}</span>
                 <span class="price">${money(item.price)}</span>
+                <span class="quantity-hint">Bấm để chọn 1-5</span>
               </button>
             `).join("")}
           </div>
@@ -1354,12 +1420,9 @@
           button.addEventListener("click", () => {
             const id = button.dataset.item;
             const item = products.find((product) => product.id === id);
-            if (state.selected.has(id)) {
-              state.selected.delete(id);
-            } else {
-              state.selected.add(id);
-            }
-            if (item) speakEnglish(item.english, item.audio);
+            const nextQty = selectedQty(id) >= 5 ? 0 : selectedQty(id) + 1;
+            setSelectedQty(id, nextQty);
+            if (item && nextQty > 0) speakEnglish(selectedPhrase(item, nextQty), phraseAudioSrc(item, nextQty));
             render();
           });
         });
@@ -1373,7 +1436,7 @@
         }
         els.gamePanel.innerHTML = `
           <div class="math-box">
-            <div class="big-question">${state.taskItems.map((item) => item.price).join(" + ")} = ?</div>
+            <div class="big-question">${state.taskItems.map((item) => `${item.qty} x ${item.price}`).join(" + ")} = ?</div>
             <div class="answers">
               ${state.currentAnswers.map((answer) => `
                 <button class="answer-button ${state.answer === answer ? "is-picked" : ""}" type="button" data-answer="${answer}">
@@ -1421,7 +1484,7 @@
           <div class="panel-title"><h2>Kho hàng</h2><strong>Chọn nhóm ${state.shelfType}</strong></div>
           <div class="shelf-board">
             ${products.map((item) => `
-              <button class="shelf-card ${state.selected.has(item.id) ? "is-active" : ""}" type="button" data-shelf="${item.id}">
+              <button class="shelf-card ${selectedQty(item.id) ? "is-active" : ""}" type="button" data-shelf="${item.id}">
                 <span class="product-art" aria-hidden="true">${item.emoji}</span>
                 ${productNameHtml(item)}
                 <small>${item.type}</small>
@@ -1433,12 +1496,9 @@
           button.addEventListener("click", () => {
             const id = button.dataset.shelf;
             const item = products.find((product) => product.id === id);
-            if (state.selected.has(id)) {
-              state.selected.delete(id);
-            } else {
-              state.selected.add(id);
-            }
-            if (item) speakEnglish(item.english, item.audio);
+            const nextQty = selectedQty(id) ? 0 : 1;
+            setSelectedQty(id, nextQty);
+            if (item && nextQty > 0) speakEnglish(selectedPhrase(item, nextQty), phraseAudioSrc(item, nextQty));
             render();
           });
         });
@@ -1518,16 +1578,16 @@
       }
 
       function checkShopping() {
-        const need = new Set(state.taskItems.map((item) => item.id));
-        const selected = [...state.selected];
-        const ok = selected.length === need.size && selected.every((id) => need.has(id));
+        const need = new Map(state.taskItems.map((item) => [item.id, item.qty]));
+        const selected = selectedIds();
+        const ok = selected.length === need.size && selected.every((id) => selectedQty(id) === need.get(id));
         if (ok) {
           const chapter = currentChapter();
           reward(3, "Khách đã nhận đủ hàng. Bé được cộng 3 xu.", chapter.reward.shopping);
           setTimeout(() => makeTask("total", { keepItems: true }), 1200);
         } else {
           tone("no");
-          setFeedback("no", "Chưa đúng rồi", "Bé nhìn lại đơn hàng và chọn đúng món nhé.", true);
+          setFeedback("no", "Chưa đúng rồi", "Bé nhìn lại đơn hàng và chọn đúng món, đúng số lượng nhé.", true);
         }
       }
 
@@ -1540,7 +1600,7 @@
           setTimeout(() => makeTask("change", { keepItems: true }), 1200);
         } else {
           tone("no");
-          setFeedback("no", "Chưa đúng rồi", `Bé thử cộng lại từng món: ${state.taskItems.map((item) => item.price).join(" cộng ")}.`, true);
+          setFeedback("no", "Chưa đúng rồi", `Bé thử tính lại: ${state.taskItems.map((item) => `${item.qty} lần ${item.price}`).join(" cộng ")}.`, true);
         }
       }
 
@@ -1559,7 +1619,7 @@
 
       function checkShelf() {
         const need = new Set(products.filter((item) => item.type === state.shelfType).map((item) => item.id));
-        const selected = [...state.selected];
+        const selected = selectedIds();
         const ok = selected.length === need.size && selected.every((id) => need.has(id));
         if (ok) {
           const chapter = currentChapter();
@@ -1582,7 +1642,7 @@
       }
 
       function clearCurrent() {
-        state.selected = new Set();
+        state.selected = {};
         state.answer = null;
         state.pickedMoney = [];
         render();
