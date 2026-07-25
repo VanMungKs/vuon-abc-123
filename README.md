@@ -8,6 +8,8 @@ Mở file `play-now.html` bằng trình duyệt. Bản này chạy độc lập,
 
 Trang riêng cho bé 5 tuổi học số và chữ cái: `little-abc-123.html`.
 
+Trang riêng cho bé lớp 3 luyện toán qua tiệm tạp hoá: `grocery-store.html`.
+
 Khi deploy GitHub Pages, URL gốc sẽ tự mở `little-abc-123.html`.
 
 ## Deploy GitHub Pages
@@ -19,6 +21,7 @@ Các file cần public:
 - `index.html`
 - `little-abc-123.html`
 - `play-now.html`
+- `grocery-store.html`
 - `tts/`
 
 ## Chạy theo stack Angular + NestJS
@@ -56,6 +59,7 @@ npm run dev
 - Vườn ABC 123: tab riêng cho bé 5 tuổi học số, chữ cái, đếm đồ vật, tìm cặp chữ-hình và tập tô chữ.
 - Cơ chế học để chơi: mỗi câu/cặp/nhiệm vụ đúng cộng 1 điểm, đủ 10 điểm mở game thưởng "Bắn chim giấy nhận sao".
 - Mini-game mới cho số và chữ: Tàu số tăng dần, Số còn thiếu, Bắt chữ bay.
+- Tiệm tạp hoá của Xoài: lấy hàng theo đơn, tính tổng tiền, trả tiền thừa, sắp xếp kệ và game thưởng hứng giỏ hàng.
 
 ## API scaffold theo RSD
 

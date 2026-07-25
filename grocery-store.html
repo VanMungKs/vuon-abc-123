@@ -1,0 +1,1276 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tiệm tạp hoá của Xoài - Game lớp 3</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        min-height: 100%;
+        margin: 0;
+        overflow-x: hidden;
+      }
+
+      body {
+        font-family:
+          ui-rounded, "Nunito", "Comic Sans MS", system-ui, -apple-system,
+          BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: #23324a;
+        background:
+          radial-gradient(circle at 12% 12%, rgba(255, 212, 86, 0.5), transparent 15rem),
+          radial-gradient(circle at 90% 10%, rgba(66, 190, 166, 0.28), transparent 16rem),
+          linear-gradient(135deg, #fff4d8 0%, #e9fff6 48%, #ffeef4 100%);
+      }
+
+      button,
+      input {
+        font: inherit;
+      }
+
+      button {
+        cursor: pointer;
+      }
+
+      button:disabled {
+        cursor: default;
+        opacity: 0.56;
+      }
+
+      [hidden] {
+        display: none !important;
+      }
+
+      .app {
+        width: min(1180px, calc(100% - 26px));
+        min-height: 100vh;
+        margin: 0 auto;
+        padding: 18px 0 32px;
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        margin-bottom: 12px;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin: 0;
+      }
+
+      h1 {
+        font-size: clamp(2rem, 5vw, 4.5rem);
+        line-height: 0.95;
+        letter-spacing: 0;
+      }
+
+      h2 {
+        font-size: clamp(1.25rem, 3vw, 2rem);
+        letter-spacing: 0;
+      }
+
+      h3 {
+        font-size: 1rem;
+        letter-spacing: 0;
+      }
+
+      .home-link,
+      .icon-button,
+      .primary-button,
+      .soft-button,
+      .mode-button,
+      .item-button,
+      .money-button,
+      .answer-button,
+      .shelf-card,
+      .falling-basket {
+        border: 0;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .home-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 48px;
+        height: 48px;
+        border-radius: 16px;
+        color: #23324a;
+        text-decoration: none;
+        background: rgba(255, 255, 255, 0.78);
+        box-shadow: 0 10px 24px rgba(35, 50, 74, 0.1);
+      }
+
+      .icon-button {
+        display: inline-grid;
+        width: 48px;
+        height: 48px;
+        place-items: center;
+        border-radius: 16px;
+        color: #23324a;
+        background: #ffffff;
+        box-shadow: 0 10px 24px rgba(35, 50, 74, 0.12);
+        font-size: 1.28rem;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(320px, 0.75fr);
+        gap: 18px;
+        align-items: stretch;
+        margin-bottom: 16px;
+      }
+
+      .hero-copy,
+      .score-board,
+      .panel,
+      .story-strip,
+      .result-panel {
+        border: 2px solid rgba(35, 50, 74, 0.08);
+        border-radius: 22px;
+        background: rgba(255, 255, 255, 0.82);
+        box-shadow: 0 16px 42px rgba(35, 50, 74, 0.1);
+      }
+
+      .hero-copy {
+        position: relative;
+        min-height: 250px;
+        padding: 24px;
+        overflow: hidden;
+        background:
+          linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 248, 224, 0.9)),
+          repeating-linear-gradient(90deg, rgba(241, 92, 69, 0.16) 0 18px, rgba(255, 255, 255, 0.1) 18px 36px);
+      }
+
+      .hero-copy::after {
+        content: "🧺";
+        position: absolute;
+        right: 24px;
+        bottom: 12px;
+        font-size: clamp(5rem, 15vw, 9rem);
+        filter: drop-shadow(0 18px 18px rgba(35, 50, 74, 0.14));
+        transform: rotate(-7deg);
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 12px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        font-weight: 900;
+        color: #175c4e;
+        background: #dff8ef;
+      }
+
+      .hero-copy p {
+        position: relative;
+        z-index: 1;
+        max-width: 620px;
+        margin-top: 12px;
+        font-size: clamp(1rem, 2.2vw, 1.18rem);
+        font-weight: 800;
+        line-height: 1.55;
+        color: #536071;
+      }
+
+      .score-board {
+        display: grid;
+        gap: 12px;
+        padding: 18px;
+      }
+
+      .score-row {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .score-tile {
+        min-height: 86px;
+        padding: 12px;
+        border-radius: 18px;
+        background: #fff8df;
+        border: 2px solid rgba(35, 50, 74, 0.08);
+      }
+
+      .score-tile strong {
+        display: block;
+        margin-top: 4px;
+        font-size: 1.7rem;
+      }
+
+      .customer {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        gap: 12px;
+        align-items: center;
+        padding: 14px;
+        border-radius: 18px;
+        background: #ecfbff;
+      }
+
+      .customer-face {
+        display: grid;
+        width: 74px;
+        height: 74px;
+        place-items: center;
+        border-radius: 22px;
+        background: #ffffff;
+        box-shadow: inset 0 -8px 0 rgba(35, 50, 74, 0.06);
+        font-size: 2.35rem;
+      }
+
+      .customer p {
+        margin-top: 4px;
+        font-weight: 800;
+        line-height: 1.35;
+        color: #536071;
+      }
+
+      .modes {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+        margin-bottom: 16px;
+      }
+
+      .mode-button {
+        min-height: 86px;
+        padding: 12px 10px;
+        border-radius: 18px;
+        color: #23324a;
+        background: rgba(255, 255, 255, 0.86);
+        box-shadow: 0 12px 30px rgba(35, 50, 74, 0.1);
+        border: 2px solid rgba(35, 50, 74, 0.08);
+        font-weight: 1000;
+      }
+
+      .mode-button span {
+        display: block;
+        margin-bottom: 4px;
+        font-size: 1.7rem;
+      }
+
+      .mode-button.is-active {
+        color: #0d4b40;
+        background: #dbfff0;
+        border-color: rgba(33, 166, 127, 0.45);
+        transform: translateY(-2px);
+      }
+
+      .story-strip {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        gap: 14px;
+        align-items: center;
+        margin-bottom: 16px;
+        padding: 14px;
+      }
+
+      .story-icon {
+        display: grid;
+        width: 58px;
+        height: 58px;
+        place-items: center;
+        border-radius: 18px;
+        background: #fff0c8;
+        font-size: 1.8rem;
+      }
+
+      .story-strip p {
+        font-weight: 900;
+        line-height: 1.42;
+        color: #435064;
+      }
+
+      .workspace {
+        display: grid;
+        grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+        gap: 16px;
+        align-items: start;
+      }
+
+      .panel {
+        padding: 16px;
+      }
+
+      .panel-title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+
+      .task-list,
+      .cart-list,
+      .receipt-list {
+        display: grid;
+        gap: 8px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .task-list li,
+      .cart-list li,
+      .receipt-list li {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        min-height: 44px;
+        padding: 9px 12px;
+        border-radius: 14px;
+        background: #f6fbff;
+        font-weight: 900;
+      }
+
+      .task-list li.done {
+        color: #12715c;
+        background: #dcfff1;
+      }
+
+      .store-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .item-button {
+        display: grid;
+        gap: 6px;
+        min-height: 128px;
+        padding: 10px;
+        border-radius: 18px;
+        color: #23324a;
+        background: #ffffff;
+        box-shadow: 0 10px 22px rgba(35, 50, 74, 0.08);
+        border: 2px solid rgba(35, 50, 74, 0.08);
+        font-weight: 1000;
+      }
+
+      .item-button .emoji {
+        display: grid;
+        min-height: 46px;
+        place-items: center;
+        font-size: 2.3rem;
+      }
+
+      .item-button .price {
+        color: #d54435;
+        font-size: 0.95rem;
+      }
+
+      .item-button.is-selected {
+        background: #fff0c8;
+        border-color: #f0a928;
+        transform: translateY(-3px) scale(1.02);
+      }
+
+      .item-button.is-correct {
+        background: #ddfff0;
+        border-color: #2ebc8d;
+      }
+
+      .controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 14px;
+      }
+
+      .primary-button,
+      .soft-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 50px;
+        padding: 0 16px;
+        border-radius: 16px;
+        font-weight: 1000;
+      }
+
+      .primary-button {
+        color: #ffffff;
+        background: #f15c45;
+        box-shadow: 0 12px 26px rgba(241, 92, 69, 0.28);
+      }
+
+      .soft-button {
+        color: #23324a;
+        background: #ffffff;
+        border: 2px solid rgba(35, 50, 74, 0.08);
+      }
+
+      .math-box {
+        display: grid;
+        gap: 14px;
+      }
+
+      .big-question {
+        display: grid;
+        min-height: 116px;
+        place-items: center;
+        padding: 14px;
+        border-radius: 20px;
+        text-align: center;
+        background: #fff5dc;
+        color: #23324a;
+        font-size: clamp(1.5rem, 5vw, 3.2rem);
+        font-weight: 1000;
+      }
+
+      .answers {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .answer-button,
+      .money-button {
+        min-height: 70px;
+        padding: 12px;
+        border-radius: 18px;
+        color: #23324a;
+        background: #ffffff;
+        border: 2px solid rgba(35, 50, 74, 0.08);
+        box-shadow: 0 10px 22px rgba(35, 50, 74, 0.08);
+        font-size: 1.18rem;
+        font-weight: 1000;
+      }
+
+      .answer-button.is-picked,
+      .money-button.is-picked {
+        color: #0d4b40;
+        background: #dcfff1;
+        border-color: #2ebc8d;
+        transform: scale(1.02);
+      }
+
+      .money-row {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .change-tray {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        min-height: 64px;
+        padding: 10px;
+        border-radius: 18px;
+        background: #eef8ff;
+      }
+
+      .coin {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 58px;
+        height: 44px;
+        padding: 0 10px;
+        border-radius: 999px;
+        background: #ffe48d;
+        border: 2px solid rgba(35, 50, 74, 0.08);
+        font-weight: 1000;
+      }
+
+      .shelf-board {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .shelf-card {
+        display: grid;
+        gap: 6px;
+        min-height: 112px;
+        padding: 10px;
+        border-radius: 18px;
+        color: #23324a;
+        background: #ffffff;
+        border: 2px solid rgba(35, 50, 74, 0.08);
+        box-shadow: 0 10px 22px rgba(35, 50, 74, 0.08);
+        font-weight: 1000;
+      }
+
+      .shelf-card .emoji {
+        font-size: 2rem;
+      }
+
+      .shelf-card.is-active {
+        background: #fff0c8;
+        border-color: #f0a928;
+      }
+
+      .shelf-card.is-ok {
+        background: #ddfff0;
+        border-color: #2ebc8d;
+      }
+
+      .result-panel {
+        position: sticky;
+        bottom: 14px;
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        gap: 12px;
+        align-items: center;
+        margin-top: 16px;
+        padding: 12px;
+        transform: translateY(0);
+      }
+
+      .result-face {
+        display: grid;
+        width: 56px;
+        height: 56px;
+        place-items: center;
+        border-radius: 18px;
+        background: #fff0c8;
+        font-size: 1.8rem;
+      }
+
+      .result-panel strong {
+        display: block;
+        margin-bottom: 2px;
+      }
+
+      .bonus-stage {
+        position: relative;
+        min-height: 310px;
+        overflow: hidden;
+        border-radius: 22px;
+        background:
+          linear-gradient(180deg, #dff8ff, #fff6df 70%),
+          repeating-linear-gradient(0deg, transparent 0 36px, rgba(255, 255, 255, 0.3) 36px 38px);
+      }
+
+      .falling-basket {
+        position: absolute;
+        display: grid;
+        width: 74px;
+        height: 74px;
+        place-items: center;
+        border-radius: 22px;
+        background: #ffffff;
+        box-shadow: 0 12px 26px rgba(35, 50, 74, 0.14);
+        font-size: 2.1rem;
+        transition: transform 0.1s ease;
+      }
+
+      .falling-basket:active {
+        transform: scale(0.9);
+      }
+
+      .confetti {
+        pointer-events: none;
+        position: fixed;
+        inset: 0;
+        overflow: hidden;
+        z-index: 20;
+      }
+
+      .confetti span {
+        position: absolute;
+        top: -24px;
+        width: 12px;
+        height: 18px;
+        border-radius: 4px;
+        animation: fall 1.2s linear forwards;
+      }
+
+      @keyframes fall {
+        to {
+          transform: translateY(110vh) rotate(360deg);
+          opacity: 0.1;
+        }
+      }
+
+      @media (max-width: 900px) {
+        .hero,
+        .workspace {
+          grid-template-columns: 1fr;
+        }
+
+        .modes {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .store-grid {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 620px) {
+        .app {
+          width: min(100% - 18px, 1180px);
+          padding-top: 12px;
+        }
+
+        .topbar {
+          align-items: flex-start;
+        }
+
+        .hero-copy {
+          min-height: 220px;
+          padding: 18px;
+        }
+
+        .hero-copy::after {
+          right: 8px;
+          bottom: 0;
+          opacity: 0.75;
+        }
+
+        .score-row,
+        .store-grid,
+        .money-row,
+        .shelf-board {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .story-strip,
+        .result-panel {
+          grid-template-columns: 1fr;
+        }
+
+        .story-icon,
+        .result-face {
+          width: 50px;
+          height: 50px;
+        }
+
+        .answers {
+          grid-template-columns: 1fr;
+        }
+
+        .item-button,
+        .shelf-card {
+          min-height: 108px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="app">
+      <div class="topbar">
+        <a class="home-link" href="little-abc-123.html" aria-label="Về Vườn ABC 123">🏠</a>
+        <button class="icon-button" id="sound-button" type="button" aria-label="Nghe hướng dẫn">🔊</button>
+      </div>
+
+      <section class="hero">
+        <div class="hero-copy">
+          <span class="eyebrow">🛒 Game toán lớp 3</span>
+          <h1>Tiệm tạp hoá của Xoài</h1>
+          <p>Bé làm chủ tiệm nhỏ: chọn đúng hàng, tính tổng tiền, trả tiền thừa và sắp xếp kệ thật gọn để khách vui.</p>
+        </div>
+
+        <aside class="score-board" aria-label="Bảng điểm">
+          <div class="score-row">
+            <div class="score-tile">Điểm<strong id="score">0</strong></div>
+            <div class="score-tile">Xu<strong id="coins">0</strong></div>
+            <div class="score-tile">Ngày<strong id="day">1</strong></div>
+          </div>
+          <div class="customer">
+            <div class="customer-face" id="customer-face">👩</div>
+            <div>
+              <h2 id="customer-name">Cô Lan</h2>
+              <p id="customer-line">Cô Lan ghé mua đồ ăn sáng. Bé giúp cô chọn đúng hàng nhé.</p>
+            </div>
+          </div>
+        </aside>
+      </section>
+
+      <nav class="modes" aria-label="Chọn trò chơi">
+        <button class="mode-button is-active" type="button" data-mode="shopping"><span>🧺</span>Lấy hàng</button>
+        <button class="mode-button" type="button" data-mode="total"><span>🧮</span>Tính tiền</button>
+        <button class="mode-button" type="button" data-mode="change"><span>💵</span>Trả tiền thừa</button>
+        <button class="mode-button" type="button" data-mode="shelf"><span>📦</span>Sắp xếp kệ</button>
+      </nav>
+
+      <section class="story-strip">
+        <div class="story-icon" id="story-icon">🧺</div>
+        <div>
+          <h2 id="task-title">Lấy đúng hàng cho khách</h2>
+          <p id="task-text">Nhìn đơn hàng bên trái, bấm chọn đúng món trên kệ bên phải.</p>
+        </div>
+        <button class="soft-button" id="new-task" type="button">🔄 Nhiệm vụ mới</button>
+      </section>
+
+      <section class="workspace">
+        <aside class="panel">
+          <div class="panel-title">
+            <h2 id="left-title">Đơn hàng</h2>
+            <strong id="hint-badge">3 món</strong>
+          </div>
+          <ul class="task-list" id="task-list"></ul>
+          <div class="controls">
+            <button class="primary-button" id="check-button" type="button">✅ Kiểm tra</button>
+            <button class="soft-button" id="clear-button" type="button">🧹 Làm lại</button>
+          </div>
+        </aside>
+
+        <section class="panel" id="game-panel" aria-live="polite"></section>
+      </section>
+
+      <section class="result-panel" aria-live="polite">
+        <div class="result-face" id="result-face">😊</div>
+        <div>
+          <strong id="feedback-title">Sẵn sàng mở tiệm!</strong>
+          <p id="feedback-text">Bấm vào hàng hoá để bắt đầu giúp khách.</p>
+        </div>
+        <button class="soft-button" id="bonus-button" type="button" disabled>🎁 Game thưởng</button>
+      </section>
+    </main>
+
+    <div class="confetti" id="confetti" hidden></div>
+
+    <script>
+      const products = [
+        { id: "milk", name: "Sữa", emoji: "🥛", price: 8, type: "Đồ uống" },
+        { id: "bread", name: "Bánh mì", emoji: "🥖", price: 5, type: "Đồ ăn" },
+        { id: "egg", name: "Trứng", emoji: "🥚", price: 4, type: "Đồ ăn" },
+        { id: "apple", name: "Táo", emoji: "🍎", price: 6, type: "Trái cây" },
+        { id: "banana", name: "Chuối", emoji: "🍌", price: 7, type: "Trái cây" },
+        { id: "orange", name: "Cam", emoji: "🍊", price: 9, type: "Trái cây" },
+        { id: "noodle", name: "Mì gói", emoji: "🍜", price: 10, type: "Đồ ăn" },
+        { id: "soap", name: "Xà phòng", emoji: "🧼", price: 12, type: "Đồ dùng" },
+        { id: "book", name: "Vở", emoji: "📘", price: 15, type: "Học tập" },
+        { id: "pencil", name: "Bút chì", emoji: "✏️", price: 3, type: "Học tập" },
+        { id: "cookie", name: "Bánh quy", emoji: "🍪", price: 11, type: "Đồ ăn" },
+        { id: "juice", name: "Nước ép", emoji: "🧃", price: 13, type: "Đồ uống" },
+      ];
+
+      const customers = [
+        { name: "Cô Lan", face: "👩", line: "Cô Lan ghé mua đồ ăn sáng. Bé giúp cô chọn đúng hàng nhé." },
+        { name: "Bạn Bi", face: "👦", line: "Bạn Bi mua đồ cho buổi dã ngoại của lớp." },
+        { name: "Bạn Xoài", face: "👧", line: "Bạn Xoài muốn tự tính tiền như người lớn." },
+        { name: "Bà Mai", face: "👵", line: "Bà Mai cần mua vài món trong danh sách." },
+        { name: "Chú Nam", face: "👨", line: "Chú Nam mua đồ rồi cần bé trả lại tiền thừa." },
+      ];
+
+      const modes = {
+        shopping: {
+          icon: "🧺",
+          title: "Lấy đúng hàng cho khách",
+          text: "Nhìn đơn hàng bên trái, bấm chọn đúng món trên kệ bên phải.",
+          left: "Đơn hàng",
+        },
+        total: {
+          icon: "🧮",
+          title: "Tính tổng tiền",
+          text: "Cộng giá các món trong hoá đơn rồi chọn đáp án đúng.",
+          left: "Hoá đơn",
+        },
+        change: {
+          icon: "💵",
+          title: "Trả tiền thừa",
+          text: "Khách đưa tiền. Bé chọn các tờ tiền để trả lại đúng số tiền thừa.",
+          left: "Cần trả lại",
+        },
+        shelf: {
+          icon: "📦",
+          title: "Sắp xếp kệ hàng",
+          text: "Chọn các món đúng nhóm để xếp lên kệ thật gọn.",
+          left: "Kệ cần xếp",
+        },
+        bonus: {
+          icon: "🎁",
+          title: "Game thưởng: Hứng giỏ hàng",
+          text: "Chạm vào các giỏ hàng đang xuất hiện để nhận thêm xu.",
+          left: "Game thưởng",
+        },
+      };
+
+      const state = {
+        mode: "shopping",
+        score: Number(localStorage.getItem("grocery-score") || 0),
+        coins: Number(localStorage.getItem("grocery-coins") || 0),
+        day: Number(localStorage.getItem("grocery-day") || 1),
+        customer: customers[0],
+        taskItems: [],
+        selected: new Set(),
+        answer: null,
+        changeTarget: 0,
+        paid: 0,
+        pickedMoney: [],
+        currentAnswers: [],
+        shelfType: "",
+        bonusTimer: null,
+        bonusLeft: 0,
+      };
+
+      const els = {
+        score: document.getElementById("score"),
+        coins: document.getElementById("coins"),
+        day: document.getElementById("day"),
+        customerFace: document.getElementById("customer-face"),
+        customerName: document.getElementById("customer-name"),
+        customerLine: document.getElementById("customer-line"),
+        taskTitle: document.getElementById("task-title"),
+        taskText: document.getElementById("task-text"),
+        storyIcon: document.getElementById("story-icon"),
+        leftTitle: document.getElementById("left-title"),
+        hintBadge: document.getElementById("hint-badge"),
+        taskList: document.getElementById("task-list"),
+        gamePanel: document.getElementById("game-panel"),
+        checkButton: document.getElementById("check-button"),
+        clearButton: document.getElementById("clear-button"),
+        newTask: document.getElementById("new-task"),
+        feedbackTitle: document.getElementById("feedback-title"),
+        feedbackText: document.getElementById("feedback-text"),
+        resultFace: document.getElementById("result-face"),
+        soundButton: document.getElementById("sound-button"),
+        bonusButton: document.getElementById("bonus-button"),
+        confetti: document.getElementById("confetti"),
+      };
+
+      function save() {
+        localStorage.setItem("grocery-score", String(state.score));
+        localStorage.setItem("grocery-coins", String(state.coins));
+        localStorage.setItem("grocery-day", String(state.day));
+      }
+
+      function money(value) {
+        return `${value} nghìn`;
+      }
+
+      function sample(list, count) {
+        const shuffled = [...list].sort(() => Math.random() - 0.5);
+        return shuffled.slice(0, count);
+      }
+
+      function pickCustomer() {
+        state.customer = customers[Math.floor(Math.random() * customers.length)];
+      }
+
+      function speak(text) {
+        if (!("speechSynthesis" in window)) return;
+        window.speechSynthesis.cancel();
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.lang = "vi-VN";
+        utter.rate = 0.92;
+        utter.pitch = 1.1;
+        window.speechSynthesis.speak(utter);
+      }
+
+      function tone(kind) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        const context = new AudioContext();
+        const osc = context.createOscillator();
+        const gain = context.createGain();
+        osc.type = "sine";
+        osc.frequency.value = kind === "yes" ? 760 : kind === "bonus" ? 980 : 220;
+        gain.gain.setValueAtTime(0.001, context.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.09, context.currentTime + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001, context.currentTime + 0.22);
+        osc.connect(gain);
+        gain.connect(context.destination);
+        osc.start();
+        osc.stop(context.currentTime + 0.24);
+      }
+
+      function celebrate() {
+        els.confetti.hidden = false;
+        els.confetti.innerHTML = "";
+        const colors = ["#f15c45", "#ffd45a", "#2ebc8d", "#4ca3ff", "#ff8ab3"];
+        for (let i = 0; i < 34; i += 1) {
+          const piece = document.createElement("span");
+          piece.style.left = `${Math.random() * 100}%`;
+          piece.style.background = colors[i % colors.length];
+          piece.style.animationDelay = `${Math.random() * 0.28}s`;
+          els.confetti.appendChild(piece);
+        }
+        setTimeout(() => {
+          els.confetti.hidden = true;
+        }, 1400);
+      }
+
+      function updateScore() {
+        els.score.textContent = state.score;
+        els.coins.textContent = state.coins;
+        els.day.textContent = state.day;
+        els.bonusButton.disabled = state.coins < 10;
+        save();
+      }
+
+      function setFeedback(kind, title, text, shouldSpeak = true) {
+        els.resultFace.textContent = kind === "yes" ? "🤩" : kind === "no" ? "🙂" : "😊";
+        els.feedbackTitle.textContent = title;
+        els.feedbackText.textContent = text;
+        if (shouldSpeak) speak(`${title}. ${text}`);
+      }
+
+      function totalOf(items = state.taskItems) {
+        return items.reduce((sum, item) => sum + item.price, 0);
+      }
+
+      function makeTask(mode = state.mode) {
+        window.clearInterval(state.bonusTimer);
+        state.bonusTimer = null;
+        state.mode = mode;
+        pickCustomer();
+        state.selected = new Set();
+        state.answer = null;
+        state.pickedMoney = [];
+        state.currentAnswers = [];
+        state.paid = 0;
+        const count = mode === "shopping" ? 3 + Math.floor(Math.random() * 2) : 3;
+        state.taskItems = sample(products, count);
+        if (mode === "change") {
+          const total = totalOf();
+          const paidOptions = [20, 30, 40, 50, 60, 70, 80, 100].filter((item) => item > total);
+          state.paid = paidOptions[Math.floor(Math.random() * paidOptions.length)];
+          state.changeTarget = state.paid - total;
+        }
+        if (mode === "shelf") {
+          const types = [...new Set(products.map((item) => item.type))];
+          state.shelfType = types[Math.floor(Math.random() * types.length)];
+          state.taskItems = products.filter((item) => item.type === state.shelfType);
+        }
+        render();
+        const m = modes[state.mode];
+        speak(`${m.title}. ${m.text}`);
+      }
+
+      function renderHeader() {
+        els.customerFace.textContent = state.customer.face;
+        els.customerName.textContent = state.customer.name;
+        els.customerLine.textContent = state.customer.line;
+        updateScore();
+      }
+
+      function renderModeInfo() {
+        const m = modes[state.mode];
+        els.storyIcon.textContent = m.icon;
+        els.taskTitle.textContent = m.title;
+        els.taskText.textContent = m.text;
+        els.leftTitle.textContent = m.left;
+        document.querySelectorAll("[data-mode]").forEach((button) => {
+          button.classList.toggle("is-active", button.dataset.mode === state.mode);
+        });
+        els.checkButton.hidden = state.mode === "bonus";
+        els.clearButton.hidden = state.mode === "bonus";
+      }
+
+      function renderTaskList() {
+        if (state.mode === "shopping") {
+          els.hintBadge.textContent = `${state.taskItems.length} món`;
+          els.taskList.innerHTML = state.taskItems.map((item) => `
+            <li class="${state.selected.has(item.id) ? "done" : ""}">
+              <span>${item.emoji} ${item.name}</span>
+              <span>${state.selected.has(item.id) ? "đã lấy" : "cần lấy"}</span>
+            </li>
+          `).join("");
+          return;
+        }
+
+        if (state.mode === "total") {
+          els.hintBadge.textContent = money(totalOf());
+          els.taskList.innerHTML = state.taskItems.map((item) => `
+            <li><span>${item.emoji} ${item.name}</span><span>${money(item.price)}</span></li>
+          `).join("");
+          return;
+        }
+
+        if (state.mode === "change") {
+          els.hintBadge.textContent = money(state.changeTarget);
+          els.taskList.innerHTML = `
+            <li><span>Tổng tiền hàng</span><span>${money(totalOf())}</span></li>
+            <li><span>Khách đưa</span><span>${money(state.paid)}</span></li>
+            <li><span>Phải trả lại</span><span>${money(state.changeTarget)}</span></li>
+          `;
+          return;
+        }
+
+        if (state.mode === "shelf") {
+          els.hintBadge.textContent = state.shelfType;
+          els.taskList.innerHTML = `
+            <li><span>Kệ cần xếp</span><span>${state.shelfType}</span></li>
+            <li><span>Số món đúng</span><span>${state.taskItems.length} món</span></li>
+            <li><span>Đã chọn</span><span>${state.selected.size} món</span></li>
+          `;
+          return;
+        }
+
+        els.hintBadge.textContent = "20 giây";
+        els.taskList.innerHTML = `
+          <li><span>Chạm giỏ hàng</span><span>+1 xu</span></li>
+          <li><span>Thời gian</span><span id="bonus-time">${state.bonusLeft}s</span></li>
+        `;
+      }
+
+      function renderStoreGrid() {
+        els.gamePanel.innerHTML = `
+          <div class="panel-title"><h2>Kệ hàng</h2><strong>Chạm để chọn</strong></div>
+          <div class="store-grid">
+            ${products.map((item) => `
+              <button class="item-button ${state.selected.has(item.id) ? "is-selected" : ""}" type="button" data-item="${item.id}">
+                <span class="emoji">${item.emoji}</span>
+                <span>${item.name}</span>
+                <span class="price">${money(item.price)}</span>
+              </button>
+            `).join("")}
+          </div>
+        `;
+        els.gamePanel.querySelectorAll("[data-item]").forEach((button) => {
+          button.addEventListener("click", () => {
+            const id = button.dataset.item;
+            if (state.selected.has(id)) {
+              state.selected.delete(id);
+            } else {
+              state.selected.add(id);
+            }
+            render();
+          });
+        });
+      }
+
+      function renderTotalGame() {
+        const correct = totalOf();
+        if (!state.currentAnswers.length) {
+          const answers = sample([correct, correct + 3, Math.max(1, correct - 4), correct + 8, correct - 2].filter((item, index, arr) => item > 0 && arr.indexOf(item) === index), 4).sort(() => Math.random() - 0.5);
+          state.currentAnswers = answers.includes(correct) ? answers : [correct, ...answers.slice(0, 3)].sort(() => Math.random() - 0.5);
+        }
+        els.gamePanel.innerHTML = `
+          <div class="math-box">
+            <div class="big-question">${state.taskItems.map((item) => item.price).join(" + ")} = ?</div>
+            <div class="answers">
+              ${state.currentAnswers.map((answer) => `
+                <button class="answer-button ${state.answer === answer ? "is-picked" : ""}" type="button" data-answer="${answer}">
+                  ${money(answer)}
+                </button>
+              `).join("")}
+            </div>
+          </div>
+        `;
+        els.gamePanel.querySelectorAll("[data-answer]").forEach((button) => {
+          button.addEventListener("click", () => {
+            state.answer = Number(button.dataset.answer);
+            render();
+          });
+        });
+      }
+
+      function renderChangeGame() {
+        const denominations = [1, 2, 5, 10, 20, 50];
+        const picked = state.pickedMoney.reduce((sum, item) => sum + item, 0);
+        els.gamePanel.innerHTML = `
+          <div class="math-box">
+            <div class="big-question">${money(state.paid)} - ${money(totalOf())} = ?</div>
+            <div class="change-tray">
+              ${state.pickedMoney.length ? state.pickedMoney.map((item) => `<span class="coin">${money(item)}</span>`).join("") : "<strong>Chọn tiền để trả lại cho khách</strong>"}
+            </div>
+            <div class="money-row">
+              ${denominations.map((value) => `
+                <button class="money-button" type="button" data-money="${value}">${money(value)}</button>
+              `).join("")}
+            </div>
+            <strong>Đã chọn: ${money(picked)}</strong>
+          </div>
+        `;
+        els.gamePanel.querySelectorAll("[data-money]").forEach((button) => {
+          button.addEventListener("click", () => {
+            state.pickedMoney.push(Number(button.dataset.money));
+            render();
+          });
+        });
+      }
+
+      function renderShelfGame() {
+        els.gamePanel.innerHTML = `
+          <div class="panel-title"><h2>Kho hàng</h2><strong>Chọn nhóm ${state.shelfType}</strong></div>
+          <div class="shelf-board">
+            ${products.map((item) => `
+              <button class="shelf-card ${state.selected.has(item.id) ? "is-active" : ""}" type="button" data-shelf="${item.id}">
+                <span class="emoji">${item.emoji}</span>
+                <span>${item.name}</span>
+                <small>${item.type}</small>
+              </button>
+            `).join("")}
+          </div>
+        `;
+        els.gamePanel.querySelectorAll("[data-shelf]").forEach((button) => {
+          button.addEventListener("click", () => {
+            const id = button.dataset.shelf;
+            if (state.selected.has(id)) {
+              state.selected.delete(id);
+            } else {
+              state.selected.add(id);
+            }
+            render();
+          });
+        });
+      }
+
+      function startBonus() {
+        state.mode = "bonus";
+        state.coins -= 10;
+        state.bonusLeft = 20;
+        updateScore();
+        renderModeInfo();
+        renderTaskList();
+        els.gamePanel.innerHTML = `
+          <div class="panel-title"><h2>Hứng giỏ hàng</h2><strong id="bonus-count">20s</strong></div>
+          <div class="bonus-stage" id="bonus-stage"></div>
+        `;
+        setFeedback("yes", "Game thưởng bắt đầu", "Chạm vào giỏ hàng để nhận thêm xu.", true);
+        const stage = document.getElementById("bonus-stage");
+        const tick = () => {
+          state.bonusLeft -= 1;
+          const timeNode = document.getElementById("bonus-time");
+          const countNode = document.getElementById("bonus-count");
+          if (timeNode) timeNode.textContent = `${state.bonusLeft}s`;
+          if (countNode) countNode.textContent = `${state.bonusLeft}s`;
+          spawnBasket(stage);
+          if (state.bonusLeft <= 0) {
+            window.clearInterval(state.bonusTimer);
+            state.bonusTimer = null;
+            setFeedback("yes", "Hết giờ rồi", "Bé quay lại bán hàng để kiếm thêm xu nhé.", true);
+            state.mode = "shopping";
+            makeTask("shopping");
+          }
+        };
+        spawnBasket(stage);
+        state.bonusTimer = window.setInterval(tick, 1000);
+      }
+
+      function spawnBasket(stage) {
+        if (!stage) return;
+        const basket = document.createElement("button");
+        basket.className = "falling-basket";
+        basket.type = "button";
+        basket.textContent = ["🧺", "🍎", "🧃", "🥖"][Math.floor(Math.random() * 4)];
+        basket.style.left = `${8 + Math.random() * 76}%`;
+        basket.style.top = `${10 + Math.random() * 62}%`;
+        basket.addEventListener("click", () => {
+          state.coins += 1;
+          state.score += 1;
+          updateScore();
+          tone("bonus");
+          basket.remove();
+        });
+        stage.appendChild(basket);
+        setTimeout(() => basket.remove(), 1200);
+      }
+
+      function render() {
+        renderHeader();
+        renderModeInfo();
+        renderTaskList();
+        if (state.mode === "shopping") renderStoreGrid();
+        if (state.mode === "total") renderTotalGame();
+        if (state.mode === "change") renderChangeGame();
+        if (state.mode === "shelf") renderShelfGame();
+      }
+
+      function reward(points, text) {
+        state.score += points;
+        state.coins += points;
+        state.day += 1;
+        updateScore();
+        celebrate();
+        tone("yes");
+        setFeedback("yes", "Đúng rồi, bé giỏi quá!", text, true);
+      }
+
+      function checkShopping() {
+        const need = new Set(state.taskItems.map((item) => item.id));
+        const selected = [...state.selected];
+        const ok = selected.length === need.size && selected.every((id) => need.has(id));
+        if (ok) {
+          reward(3, "Khách đã nhận đủ hàng. Bé được cộng 3 xu.");
+          setTimeout(() => makeTask("total"), 1200);
+        } else {
+          tone("no");
+          setFeedback("no", "Chưa đúng rồi", "Bé nhìn lại đơn hàng và chọn đúng món nhé.", true);
+        }
+      }
+
+      function checkTotal() {
+        if (state.answer === totalOf()) {
+          reward(4, `Tổng tiền là ${money(totalOf())}. Bé tính rất nhanh.`);
+          setTimeout(() => makeTask("change"), 1200);
+        } else {
+          tone("no");
+          setFeedback("no", "Chưa đúng rồi", `Bé thử cộng lại từng món: ${state.taskItems.map((item) => item.price).join(" cộng ")}.`, true);
+        }
+      }
+
+      function checkChange() {
+        const picked = state.pickedMoney.reduce((sum, item) => sum + item, 0);
+        if (picked === state.changeTarget) {
+          reward(5, `Bé trả lại đúng ${money(state.changeTarget)} cho khách.`);
+          setTimeout(() => makeTask("shelf"), 1200);
+        } else {
+          tone("no");
+          const direction = picked > state.changeTarget ? "Bé đang trả hơi nhiều tiền." : "Bé cần trả thêm tiền.";
+          setFeedback("no", "Chưa đúng tiền thừa", `${direction} Cần đúng ${money(state.changeTarget)}.`, true);
+        }
+      }
+
+      function checkShelf() {
+        const need = new Set(products.filter((item) => item.type === state.shelfType).map((item) => item.id));
+        const selected = [...state.selected];
+        const ok = selected.length === need.size && selected.every((id) => need.has(id));
+        if (ok) {
+          reward(4, `Kệ ${state.shelfType} đã gọn gàng. Tiệm của Xoài sáng hơn rồi.`);
+          setTimeout(() => makeTask("shopping"), 1200);
+        } else {
+          tone("no");
+          setFeedback("no", "Kệ chưa đúng nhóm", `Bé chỉ chọn các món thuộc nhóm ${state.shelfType} nhé.`, true);
+        }
+      }
+
+      function checkCurrent() {
+        if (state.mode === "shopping") checkShopping();
+        if (state.mode === "total") checkTotal();
+        if (state.mode === "change") checkChange();
+        if (state.mode === "shelf") checkShelf();
+      }
+
+      function clearCurrent() {
+        state.selected = new Set();
+        state.answer = null;
+        state.pickedMoney = [];
+        render();
+        setFeedback("idle", "Làm lại nhé", "Bé có thể chọn lại từ đầu.", true);
+      }
+
+      document.querySelectorAll("[data-mode]").forEach((button) => {
+        button.addEventListener("click", () => {
+          state.mode = button.dataset.mode;
+          makeTask(state.mode);
+        });
+      });
+
+      els.checkButton.addEventListener("click", checkCurrent);
+      els.clearButton.addEventListener("click", clearCurrent);
+      els.newTask.addEventListener("click", () => makeTask(state.mode === "bonus" ? "shopping" : state.mode));
+      els.soundButton.addEventListener("click", () => {
+        const m = modes[state.mode];
+        speak(`${m.title}. ${m.text}`);
+      });
+      els.bonusButton.addEventListener("click", startBonus);
+
+      updateScore();
+      makeTask("shopping");
+    </script>
+  </body>
+</html>
