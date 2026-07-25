@@ -193,7 +193,7 @@
 
       .score-row {
         display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns: repeat(4, minmax(0, 1fr));
         gap: 10px;
       }
 
@@ -209,6 +209,15 @@
         display: block;
         margin-top: 4px;
         font-size: 1.7rem;
+      }
+
+      .score-tile.revenue {
+        background: #ddfff0;
+      }
+
+      .score-tile.revenue strong {
+        color: #0d6d59;
+        font-size: 1.35rem;
       }
 
       .customer {
@@ -453,11 +462,38 @@
         font-weight: 1000;
       }
 
-      .item-button .emoji {
+      .product-art {
         display: grid;
-        min-height: 46px;
+        min-height: 54px;
         place-items: center;
+        border-radius: 16px;
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(255, 240, 200, 0.72));
         font-size: 2.3rem;
+      }
+
+      .english-name {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 24px;
+        padding: 2px 8px;
+        border-radius: 999px;
+        color: #175c4e;
+        background: #dbfff0;
+        font-size: 0.82rem;
+        font-weight: 1000;
+      }
+
+      .product-name {
+        display: grid;
+        gap: 2px;
+      }
+
+      .product-name small {
+        color: #175c4e;
+        font-size: 0.82rem;
+        font-weight: 1000;
       }
 
       .item-button .price {
@@ -773,7 +809,7 @@
         <div class="hero-copy">
           <span class="eyebrow">🛒 Game toán lớp 3</span>
           <h1>Tiệm tạp hoá của Xoài</h1>
-          <p>Bé làm chủ tiệm nhỏ: chọn đúng hàng, tính tổng tiền, trả tiền thừa và sắp xếp kệ thật gọn để khách vui.</p>
+          <p>Bé làm chủ tiệm nhỏ: chọn đúng hàng, học tên tiếng Anh của từng món, tính tổng tiền, theo dõi doanh thu và trả tiền thừa cho khách.</p>
         </div>
 
         <aside class="score-board" aria-label="Bảng điểm">
@@ -781,6 +817,7 @@
             <div class="score-tile">Điểm<strong id="score">0</strong></div>
             <div class="score-tile">Xu<strong id="coins">0</strong></div>
             <div class="score-tile">Ngày<strong id="day">1</strong></div>
+            <div class="score-tile revenue">Tổng doanh thu<strong id="revenue">0 nghìn</strong></div>
           </div>
           <div class="customer">
             <div class="customer-face" id="customer-face">👩</div>
@@ -850,18 +887,18 @@
 
     <script>
       const products = [
-        { id: "milk", name: "Sữa", emoji: "🥛", price: 8, type: "Đồ uống" },
-        { id: "bread", name: "Bánh mì", emoji: "🥖", price: 5, type: "Đồ ăn" },
-        { id: "egg", name: "Trứng", emoji: "🥚", price: 4, type: "Đồ ăn" },
-        { id: "apple", name: "Táo", emoji: "🍎", price: 6, type: "Trái cây" },
-        { id: "banana", name: "Chuối", emoji: "🍌", price: 7, type: "Trái cây" },
-        { id: "orange", name: "Cam", emoji: "🍊", price: 9, type: "Trái cây" },
-        { id: "noodle", name: "Mì gói", emoji: "🍜", price: 10, type: "Đồ ăn" },
-        { id: "soap", name: "Xà phòng", emoji: "🧼", price: 12, type: "Đồ dùng" },
-        { id: "book", name: "Vở", emoji: "📘", price: 15, type: "Học tập" },
-        { id: "pencil", name: "Bút chì", emoji: "✏️", price: 3, type: "Học tập" },
-        { id: "cookie", name: "Bánh quy", emoji: "🍪", price: 11, type: "Đồ ăn" },
-        { id: "juice", name: "Nước ép", emoji: "🧃", price: 13, type: "Đồ uống" },
+        { id: "milk", name: "Sữa", english: "Milk", emoji: "🥛", price: 8, type: "Đồ uống" },
+        { id: "bread", name: "Bánh mì", english: "Bread", emoji: "🥖", price: 5, type: "Đồ ăn" },
+        { id: "egg", name: "Trứng", english: "Egg", emoji: "🥚", price: 4, type: "Đồ ăn" },
+        { id: "apple", name: "Táo", english: "Apple", emoji: "🍎", price: 6, type: "Trái cây" },
+        { id: "banana", name: "Chuối", english: "Banana", emoji: "🍌", price: 7, type: "Trái cây" },
+        { id: "orange", name: "Cam", english: "Orange", emoji: "🍊", price: 9, type: "Trái cây" },
+        { id: "noodle", name: "Mì gói", english: "Noodles", emoji: "🍜", price: 10, type: "Đồ ăn" },
+        { id: "soap", name: "Xà phòng", english: "Soap", emoji: "🧼", price: 12, type: "Đồ dùng" },
+        { id: "book", name: "Vở", english: "Notebook", emoji: "📘", price: 15, type: "Học tập" },
+        { id: "pencil", name: "Bút chì", english: "Pencil", emoji: "✏️", price: 3, type: "Học tập" },
+        { id: "cookie", name: "Bim bim", english: "Snack", emoji: "🍿", price: 11, type: "Đồ ăn" },
+        { id: "juice", name: "Nước ép", english: "Juice", emoji: "🧃", price: 13, type: "Đồ uống" },
       ];
 
       const customers = [
@@ -993,6 +1030,7 @@
         score: Number(localStorage.getItem("grocery-score") || 0),
         coins: Number(localStorage.getItem("grocery-coins") || 0),
         day: Number(localStorage.getItem("grocery-day") || 1),
+        revenue: Number(localStorage.getItem("grocery-revenue") || 0),
         chapterIndex: Number(localStorage.getItem("grocery-chapter") || 0),
         storyLog: readStoryLog(),
         customer: customers[0],
@@ -1012,6 +1050,7 @@
         score: document.getElementById("score"),
         coins: document.getElementById("coins"),
         day: document.getElementById("day"),
+        revenue: document.getElementById("revenue"),
         customerFace: document.getElementById("customer-face"),
         customerName: document.getElementById("customer-name"),
         customerLine: document.getElementById("customer-line"),
@@ -1042,6 +1081,7 @@
         localStorage.setItem("grocery-score", String(state.score));
         localStorage.setItem("grocery-coins", String(state.coins));
         localStorage.setItem("grocery-day", String(state.day));
+        localStorage.setItem("grocery-revenue", String(state.revenue));
         localStorage.setItem("grocery-chapter", String(state.chapterIndex));
         localStorage.setItem("grocery-story-log", JSON.stringify(state.storyLog.slice(0, 5)));
       }
@@ -1057,6 +1097,14 @@
 
       function money(value) {
         return `${value} nghìn`;
+      }
+
+      function productText(item) {
+        return `${item.emoji} ${item.name} / ${item.english}`;
+      }
+
+      function productNameHtml(item) {
+        return `<span class="product-name"><span>${item.name}</span><small>${item.english}</small></span>`;
       }
 
       function sample(list, count) {
@@ -1133,6 +1181,7 @@
         els.score.textContent = state.score;
         els.coins.textContent = state.coins;
         els.day.textContent = state.day;
+        els.revenue.textContent = money(state.revenue);
         els.bonusButton.disabled = state.coins < 10;
         save();
       }
@@ -1148,9 +1197,10 @@
         return items.reduce((sum, item) => sum + item.price, 0);
       }
 
-      function makeTask(mode = state.mode) {
+      function makeTask(mode = state.mode, options = {}) {
         window.clearInterval(state.bonusTimer);
         state.bonusTimer = null;
+        const keepItems = Boolean(options.keepItems && state.taskItems.length);
         state.mode = mode;
         pickCustomer();
         state.selected = new Set();
@@ -1159,7 +1209,9 @@
         state.currentAnswers = [];
         state.paid = 0;
         const count = mode === "shopping" ? 3 + Math.floor(Math.random() * 2) : 3;
-        state.taskItems = sample(products, count);
+        if (!keepItems) {
+          state.taskItems = sample(products, count);
+        }
         if (mode === "change") {
           const total = totalOf();
           const paidOptions = [20, 30, 40, 50, 60, 70, 80, 100].filter((item) => item > total);
@@ -1218,7 +1270,7 @@
           els.hintBadge.textContent = `${state.taskItems.length} món`;
           els.taskList.innerHTML = state.taskItems.map((item) => `
             <li class="${state.selected.has(item.id) ? "done" : ""}">
-              <span>${item.emoji} ${item.name}</span>
+              <span>${productText(item)}</span>
               <span>${state.selected.has(item.id) ? "đã lấy" : "cần lấy"}</span>
             </li>
           `).join("");
@@ -1228,7 +1280,7 @@
         if (state.mode === "total") {
           els.hintBadge.textContent = money(totalOf());
           els.taskList.innerHTML = state.taskItems.map((item) => `
-            <li><span>${item.emoji} ${item.name}</span><span>${money(item.price)}</span></li>
+            <li><span>${productText(item)}</span><span>${money(item.price)}</span></li>
           `).join("");
           return;
         }
@@ -1266,8 +1318,8 @@
           <div class="store-grid">
             ${products.map((item) => `
               <button class="item-button ${state.selected.has(item.id) ? "is-selected" : ""}" type="button" data-item="${item.id}">
-                <span class="emoji">${item.emoji}</span>
-                <span>${item.name}</span>
+                <span class="product-art" aria-hidden="true">${item.emoji}</span>
+                ${productNameHtml(item)}
                 <span class="price">${money(item.price)}</span>
               </button>
             `).join("")}
@@ -1343,8 +1395,8 @@
           <div class="shelf-board">
             ${products.map((item) => `
               <button class="shelf-card ${state.selected.has(item.id) ? "is-active" : ""}" type="button" data-shelf="${item.id}">
-                <span class="emoji">${item.emoji}</span>
-                <span>${item.name}</span>
+                <span class="product-art" aria-hidden="true">${item.emoji}</span>
+                ${productNameHtml(item)}
                 <small>${item.type}</small>
               </button>
             `).join("")}
@@ -1443,7 +1495,7 @@
         if (ok) {
           const chapter = currentChapter();
           reward(3, "Khách đã nhận đủ hàng. Bé được cộng 3 xu.", chapter.reward.shopping);
-          setTimeout(() => makeTask("total"), 1200);
+          setTimeout(() => makeTask("total", { keepItems: true }), 1200);
         } else {
           tone("no");
           setFeedback("no", "Chưa đúng rồi", "Bé nhìn lại đơn hàng và chọn đúng món nhé.", true);
@@ -1453,8 +1505,10 @@
       function checkTotal() {
         if (state.answer === totalOf()) {
           const chapter = currentChapter();
-          reward(4, `Tổng tiền là ${money(totalOf())}. Bé tính rất nhanh.`, chapter.reward.total);
-          setTimeout(() => makeTask("change"), 1200);
+          const saleTotal = totalOf();
+          state.revenue += saleTotal;
+          reward(4, `Tổng tiền là ${money(saleTotal)}. Doanh thu của tiệm tăng thêm ${money(saleTotal)}.`, chapter.reward.total);
+          setTimeout(() => makeTask("change", { keepItems: true }), 1200);
         } else {
           tone("no");
           setFeedback("no", "Chưa đúng rồi", `Bé thử cộng lại từng món: ${state.taskItems.map((item) => item.price).join(" cộng ")}.`, true);
