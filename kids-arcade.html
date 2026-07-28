@@ -222,6 +222,100 @@
         line-height: 1.4;
       }
 
+      .story-quest {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(260px, 0.54fr);
+        gap: 14px;
+        margin: 0 0 16px;
+        padding: 16px;
+        border: 2px solid rgba(36, 50, 74, 0.08);
+        border-radius: 22px;
+        background: rgba(255, 255, 255, 0.86);
+        box-shadow: 0 16px 42px rgba(36, 50, 74, 0.1);
+      }
+
+      .quest-main {
+        display: grid;
+        gap: 10px;
+      }
+
+      .quest-badge {
+        display: inline-flex;
+        width: fit-content;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        color: #744100;
+        background: #fff0c8;
+        font-weight: 1000;
+      }
+
+      .quest-main p,
+      .story-log p {
+        color: #536071;
+        font-weight: 850;
+        line-height: 1.45;
+      }
+
+      .story-path {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .path-step {
+        min-height: 78px;
+        padding: 10px;
+        border-radius: 16px;
+        background: #f6fbff;
+        border: 2px solid rgba(36, 50, 74, 0.08);
+        font-weight: 1000;
+      }
+
+      .path-step span {
+        display: block;
+        margin-bottom: 4px;
+        font-size: 1.35rem;
+      }
+
+      .path-step.is-active {
+        color: #0d6d59;
+        background: #ddfff0;
+        border-color: rgba(46, 188, 141, 0.55);
+      }
+
+      .path-step.is-done {
+        color: #744100;
+        background: #fff0c8;
+        border-color: rgba(240, 169, 40, 0.6);
+      }
+
+      .story-log {
+        display: grid;
+        gap: 8px;
+        padding: 12px;
+        border-radius: 18px;
+        background: #ecfbff;
+      }
+
+      .story-log ul {
+        display: grid;
+        gap: 7px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .story-log li {
+        padding: 8px 10px;
+        border-radius: 12px;
+        background: #ffffff;
+        color: #3e4b5f;
+        font-weight: 900;
+        line-height: 1.35;
+      }
+
       .game-tabs {
         margin-bottom: 14px;
       }
@@ -474,6 +568,7 @@
 
       @media (max-width: 900px) {
         .hero,
+        .story-quest,
         .workspace {
           grid-template-columns: 1fr;
         }
@@ -486,6 +581,7 @@
         }
 
         .status-row,
+        .story-path,
         .choices,
         .answers,
         .memory-shelf {
@@ -532,6 +628,20 @@
         </aside>
       </section>
 
+      <section class="story-quest" aria-live="polite">
+        <div class="quest-main">
+          <span class="quest-badge" id="chapter-badge">🏫 Ca trực 1</span>
+          <h2 id="chapter-title">Học viện Siêu Chủ Tiệm</h2>
+          <p id="chapter-opening">Xoài mở lớp huấn luyện chủ tiệm nhí. Bé cần vượt qua từng chặng để giúp tiệm tạp hoá phục vụ khách thật vui.</p>
+          <div class="story-path" id="chapter-path"></div>
+        </div>
+        <aside class="story-log">
+          <h2>Sổ nhiệm vụ</h2>
+          <p id="chapter-goal">Hoàn thành đủ 4 huy hiệu để kết thúc một ca trực.</p>
+          <ul id="chapter-log"></ul>
+        </aside>
+      </section>
+
       <nav class="game-tabs" aria-label="Chọn mini game">
         <button class="tab-button is-active" type="button" data-game="english"><span>🔤</span>Ghép tiếng Anh</button>
         <button class="tab-button" type="button" data-game="memory"><span>🧠</span>Nhớ kệ hàng</button>
@@ -548,7 +658,7 @@
           <p class="instruction" id="instruction">Chọn đúng món theo từ tiếng Anh.</p>
           <ul class="task-list" id="task-list"></ul>
           <div class="action-row">
-            <button class="primary-button" id="new-round" type="button">🔄 Vòng mới</button>
+            <button class="primary-button" id="new-round" type="button">➡️ Nhiệm vụ tiếp</button>
             <button class="soft-button" id="hint-button" type="button">💡 Gợi ý</button>
           </div>
         </aside>
@@ -607,12 +717,79 @@
         },
       };
 
+      const storyOrder = ["english", "memory", "delivery", "quantity"];
+
+      const storyChapters = [
+        {
+          badge: "🏫 Ca trực 1",
+          title: "Học viện Siêu Chủ Tiệm",
+          opening: "Cô chủ Xoài mở lớp huấn luyện đầu tiên. Bé là trợ lý nhí, cần học tên hàng, nhớ kệ, tính tiền và đóng gói để tiệm đón khách thật chỉn chu.",
+          goal: "Mục tiêu: nhận đủ 4 huy hiệu để hoàn thành ca trực đầu tiên.",
+          missionText: {
+            english: "Chặng 1: mở khóa tên tiếng Anh của món hàng để biết khách đang hỏi gì.",
+            memory: "Chặng 2: kiểm tra kệ hàng. Chủ tiệm giỏi phải nhớ món vừa được xếp lên kệ.",
+            delivery: "Chặng 3: tính tiền đơn giao hàng để bạn shipper không bị nhầm.",
+            quantity: "Chặng 4: đóng gói đúng số lượng trước khi đưa đơn cho khách.",
+          },
+          rewards: {
+            english: "Huy hiệu Từ vựng đã sáng lên.",
+            memory: "Huy hiệu Trí nhớ đã được đóng dấu.",
+            delivery: "Huy hiệu Tính tiền đã vào sổ.",
+            quantity: "Huy hiệu Đóng gói đã hoàn thành.",
+          },
+          ending: "Ca trực đầu tiên hoàn tất. Xoài trao cho bé thẻ Trợ lý siêu chủ tiệm!",
+        },
+        {
+          badge: "🚚 Ca trực 2",
+          title: "Đơn hàng buổi sáng",
+          opening: "Một lớp học đặt đồ ăn nhẹ cho giờ ra chơi. Bé cần giúp Xoài chuẩn bị nhanh, đúng và vẫn nhớ được từ tiếng Anh của từng món.",
+          goal: "Mục tiêu: chuẩn bị đơn lớp học không thiếu món nào.",
+          missionText: {
+            english: "Chặng 1: nghe tên món bằng tiếng Anh để lấy đúng đồ cho lớp học.",
+            memory: "Chặng 2: nhớ kệ hàng vừa kiểm tra để tìm món nhanh hơn.",
+            delivery: "Chặng 3: cộng tiền các món để ghi hóa đơn rõ ràng.",
+            quantity: "Chặng 4: bấm đúng số lượng để đóng gói phần quà cho cả nhóm.",
+          },
+          rewards: {
+            english: "Danh sách tiếng Anh của đơn lớp học đã rõ ràng.",
+            memory: "Kệ hàng được bé nhớ chính xác.",
+            delivery: "Hóa đơn buổi sáng đã tính xong.",
+            quantity: "Túi hàng của lớp học đã đủ số lượng.",
+          },
+          ending: "Đơn hàng buổi sáng giao thành công. Cả lớp gửi lời cảm ơn bé!",
+        },
+        {
+          badge: "🎉 Ca trực 3",
+          title: "Ngày hội tạp hoá vui",
+          opening: "Tiệm của Xoài tổ chức ngày hội nhỏ. Khách ghé liên tục, nên bé cần quan sát tinh, nhớ nhanh và tính thật chắc.",
+          goal: "Mục tiêu: giúp ngày hội diễn ra gọn gàng, vui vẻ và không nhầm đơn.",
+          missionText: {
+            english: "Chặng 1: nhận diện từ tiếng Anh để chào khách thật tự tin.",
+            memory: "Chặng 2: nhớ các món nổi bật trên kệ ngày hội.",
+            delivery: "Chặng 3: tính tổng tiền cho combo khách chọn.",
+            quantity: "Chặng 4: chuẩn bị đúng số món cho quầy quà tặng.",
+          },
+          rewards: {
+            english: "Góc từ vựng ngày hội đã được mở.",
+            memory: "Bé đã nhớ đúng kệ hàng đông khách.",
+            delivery: "Combo ngày hội đã được tính tiền chuẩn.",
+            quantity: "Quầy quà tặng đã đủ phần.",
+          },
+          ending: "Ngày hội kết thúc rực rỡ. Bé trở thành Siêu Chủ Tiệm của Xoài!",
+        },
+      ];
+
+      const nextRoundDelay = 2000;
+
       const state = {
         game: "english",
         score: Number(localStorage.getItem("arcade-score") || 0),
         coins: Number(localStorage.getItem("arcade-coins") || 0),
         streak: Number(localStorage.getItem("arcade-streak") || 0),
         round: Number(localStorage.getItem("arcade-round") || 1),
+        chapterIndex: Number(localStorage.getItem("arcade-chapter") || 0),
+        completedSteps: JSON.parse(localStorage.getItem("arcade-steps") || "[]"),
+        storyLog: JSON.parse(localStorage.getItem("arcade-story-log") || "[]"),
         target: null,
         choices: [],
         memoryItems: [],
@@ -632,6 +809,12 @@
         missionIcon: document.getElementById("mission-icon"),
         missionTitle: document.getElementById("mission-title"),
         missionText: document.getElementById("mission-text"),
+        chapterBadge: document.getElementById("chapter-badge"),
+        chapterTitle: document.getElementById("chapter-title"),
+        chapterOpening: document.getElementById("chapter-opening"),
+        chapterGoal: document.getElementById("chapter-goal"),
+        chapterPath: document.getElementById("chapter-path"),
+        chapterLog: document.getElementById("chapter-log"),
         sideTitle: document.getElementById("side-title"),
         instruction: document.getElementById("instruction"),
         taskList: document.getElementById("task-list"),
@@ -650,6 +833,9 @@
         localStorage.setItem("arcade-coins", String(state.coins));
         localStorage.setItem("arcade-streak", String(state.streak));
         localStorage.setItem("arcade-round", String(state.round));
+        localStorage.setItem("arcade-chapter", String(state.chapterIndex));
+        localStorage.setItem("arcade-steps", JSON.stringify(state.completedSteps));
+        localStorage.setItem("arcade-story-log", JSON.stringify(state.storyLog.slice(-5)));
       }
 
       function money(value) {
@@ -729,20 +915,90 @@
         `;
       }
 
+      function currentChapter() {
+        return storyChapters[state.chapterIndex % storyChapters.length];
+      }
+
+      function stepIndex(game = state.game) {
+        return storyOrder.indexOf(game);
+      }
+
+      function nextStoryGame() {
+        const index = stepIndex();
+        return storyOrder[(index + 1) % storyOrder.length];
+      }
+
+      function storyMissionText() {
+        const chapter = currentChapter();
+        return chapter.missionText[state.game] || gameInfo[state.game].instruction;
+      }
+
+      function renderStoryQuest() {
+        const chapter = currentChapter();
+        const activeIndex = stepIndex();
+        els.chapterBadge.textContent = chapter.badge;
+        els.chapterTitle.textContent = chapter.title;
+        els.chapterOpening.textContent = chapter.opening;
+        els.chapterGoal.textContent = chapter.goal;
+        els.chapterPath.innerHTML = storyOrder.map((game, index) => {
+          const info = gameInfo[game];
+          const done = state.completedSteps.includes(game);
+          const classes = [
+            "path-step",
+            index === activeIndex ? "is-active" : "",
+            done ? "is-done" : "",
+          ].filter(Boolean).join(" ");
+          const status = done ? "Đã xong" : index === activeIndex ? "Đang làm" : "Sắp tới";
+          return `
+            <div class="${classes}">
+              <span>${info.icon}</span>
+              ${info.title}
+              <small>${status}</small>
+            </div>
+          `;
+        }).join("");
+        const logs = state.storyLog.length
+          ? state.storyLog.slice(-4)
+          : ["Xoài đã mở sổ nhiệm vụ. Bé bắt đầu từ chặng đầu tiên nhé."];
+        els.chapterLog.innerHTML = logs.map((log) => `<li>${log}</li>`).join("");
+      }
+
+      function addStoryLog(text) {
+        state.storyLog = [...state.storyLog, text].slice(-5);
+        save();
+        renderStoryQuest();
+      }
+
+      function finishStoryStep() {
+        const chapter = currentChapter();
+        if (!state.completedSteps.includes(state.game)) {
+          state.completedSteps.push(state.game);
+        }
+        addStoryLog(`${gameInfo[state.game].icon} ${chapter.rewards[state.game]}`);
+        if (state.completedSteps.length >= storyOrder.length) {
+          addStoryLog(`🏅 ${chapter.ending}`);
+          state.chapterIndex = (state.chapterIndex + 1) % storyChapters.length;
+          state.completedSteps = [];
+          save();
+        }
+      }
+
       function updateHeader() {
         const info = gameInfo[state.game];
+        const missionText = storyMissionText();
         els.score.textContent = state.score;
         els.coins.textContent = state.coins;
         els.streak.textContent = state.streak;
         els.roundBadge.textContent = `Vòng ${state.round}`;
         els.missionIcon.textContent = info.icon;
         els.missionTitle.textContent = info.title;
-        els.missionText.textContent = info.instruction;
+        els.missionText.textContent = missionText;
         els.sideTitle.textContent = info.title;
-        els.instruction.textContent = info.instruction;
+        els.instruction.textContent = missionText;
         document.querySelectorAll("[data-game]").forEach((button) => {
           button.classList.toggle("is-active", button.dataset.game === state.game);
         });
+        renderStoryQuest();
         save();
       }
 
@@ -773,6 +1029,7 @@
         state.coins += points;
         state.streak += 1;
         state.round += 1;
+        finishStoryStep();
         updateHeader();
         celebrate();
         setFeedback("yes", title, text);
@@ -821,7 +1078,7 @@
           if (item.id === state.target.id) {
             award(3, "Đúng rồi!", `${item.english} là ${item.name}.`);
             playAudio(item.audio, item.english);
-            setTimeout(() => newRound("english"), 1000);
+            setTimeout(() => newRound(nextStoryGame()), nextRoundDelay);
           } else {
             miss("Chưa đúng rồi", `Bé cần tìm ${state.target.english}.`);
             playAudio(state.target.audio, state.target.english);
@@ -862,7 +1119,7 @@
           if (!state.memoryHidden) return;
           if (item.id === state.target.id) {
             award(4, "Nhớ giỏi quá!", `${item.english} đúng là món trên kệ.`);
-            setTimeout(() => newRound("memory"), 1000);
+            setTimeout(() => newRound(nextStoryGame()), nextRoundDelay);
           } else {
             miss("Gần đúng rồi", `Món cần nhớ là ${state.target.english}.`);
           }
@@ -895,7 +1152,7 @@
             if (answer === total) {
               button.classList.add("is-good");
               award(5, "Tính tiền đúng!", `Đơn giao hàng là ${money(total)}.`);
-              setTimeout(() => newRound("delivery"), 1000);
+              setTimeout(() => newRound(nextStoryGame()), nextRoundDelay);
             } else {
               miss("Chưa đúng tổng", `Bé thử nhân số lượng với giá từng món nhé.`);
             }
@@ -926,7 +1183,7 @@
           playAudio(sentenceAudio(state.target, Math.min(state.quantityCount, 5)), `You chose ${numberWord(Math.min(state.quantityCount, 5))} ${pluralPhrase(state.target, Math.min(state.quantityCount, 5))}`);
           if (state.quantityCount === state.quantityTarget) {
             award(4, "Đủ số lượng rồi!", `Bé đã bấm đúng ${state.quantityTarget} ${state.target.name}.`);
-            setTimeout(() => newRound("quantity"), 1000);
+            setTimeout(() => newRound(nextStoryGame()), nextRoundDelay);
             return;
           }
           if (state.quantityCount > state.quantityTarget) {
@@ -978,7 +1235,7 @@
         button.addEventListener("click", () => newRound(button.dataset.game));
       });
 
-      els.newRound.addEventListener("click", () => newRound(state.game));
+      els.newRound.addEventListener("click", () => newRound(nextStoryGame()));
       els.hintButton.addEventListener("click", showHint);
       els.soundButton.addEventListener("click", () => {
         const info = gameInfo[state.game];
