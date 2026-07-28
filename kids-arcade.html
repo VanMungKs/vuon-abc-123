@@ -1,0 +1,992 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Khu trò chơi của Xoài</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        min-height: 100%;
+        margin: 0;
+      }
+
+      body {
+        font-family:
+          ui-rounded, "Nunito", "Comic Sans MS", system-ui, -apple-system,
+          BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: #24324a;
+        background:
+          radial-gradient(circle at 12% 12%, rgba(255, 216, 86, 0.42), transparent 15rem),
+          radial-gradient(circle at 90% 10%, rgba(80, 199, 179, 0.32), transparent 16rem),
+          linear-gradient(135deg, #fff6df 0%, #e7fff6 50%, #fff0f6 100%);
+      }
+
+      button,
+      input {
+        font: inherit;
+      }
+
+      button {
+        cursor: pointer;
+      }
+
+      button:disabled {
+        cursor: default;
+        opacity: 0.58;
+      }
+
+      [hidden] {
+        display: none !important;
+      }
+
+      .app {
+        width: min(1180px, calc(100% - 24px));
+        min-height: 100vh;
+        margin: 0 auto;
+        padding: 16px 0 34px;
+      }
+
+      .topbar,
+      .status-row,
+      .game-tabs,
+      .action-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .topbar {
+        justify-content: space-between;
+        margin-bottom: 14px;
+      }
+
+      .home-link,
+      .icon-button,
+      .tab-button,
+      .primary-button,
+      .soft-button,
+      .choice-button,
+      .answer-button,
+      .tap-target {
+        border: 0;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .home-link,
+      .icon-button {
+        display: inline-grid;
+        width: 48px;
+        height: 48px;
+        place-items: center;
+        border-radius: 16px;
+        color: #24324a;
+        text-decoration: none;
+        background: rgba(255, 255, 255, 0.85);
+        box-shadow: 0 12px 26px rgba(36, 50, 74, 0.12);
+        font-size: 1.24rem;
+      }
+
+      .hero,
+      .panel,
+      .feedback-card {
+        border: 2px solid rgba(36, 50, 74, 0.08);
+        border-radius: 22px;
+        background: rgba(255, 255, 255, 0.84);
+        box-shadow: 0 16px 42px rgba(36, 50, 74, 0.1);
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(280px, 0.52fr);
+        gap: 16px;
+        align-items: stretch;
+        margin-bottom: 16px;
+        overflow: hidden;
+      }
+
+      .hero-copy {
+        position: relative;
+        min-height: 240px;
+        padding: 22px;
+        overflow: hidden;
+      }
+
+      .hero-copy::after {
+        content: "🎮";
+        position: absolute;
+        right: 18px;
+        bottom: 4px;
+        font-size: clamp(5rem, 15vw, 9rem);
+        filter: drop-shadow(0 16px 18px rgba(36, 50, 74, 0.13));
+        transform: rotate(-8deg);
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 12px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        color: #175c4e;
+        background: #ddfff0;
+        font-weight: 1000;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin: 0;
+      }
+
+      h1 {
+        max-width: 650px;
+        font-size: clamp(2rem, 6vw, 4.8rem);
+        line-height: 0.96;
+        letter-spacing: 0;
+      }
+
+      h2 {
+        font-size: clamp(1.35rem, 3vw, 2rem);
+        letter-spacing: 0;
+      }
+
+      .hero-copy p {
+        position: relative;
+        z-index: 1;
+        max-width: 660px;
+        margin-top: 12px;
+        color: #536071;
+        font-size: clamp(1rem, 2vw, 1.16rem);
+        font-weight: 850;
+        line-height: 1.5;
+      }
+
+      .score-panel {
+        display: grid;
+        gap: 10px;
+        padding: 16px;
+      }
+
+      .status-row {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .status-tile {
+        min-height: 82px;
+        padding: 12px;
+        border-radius: 18px;
+        background: #fff6df;
+        font-weight: 900;
+      }
+
+      .status-tile strong {
+        display: block;
+        margin-top: 4px;
+        font-size: 1.65rem;
+      }
+
+      .mission-card {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        gap: 12px;
+        align-items: center;
+        padding: 12px;
+        border-radius: 18px;
+        background: #ecfbff;
+      }
+
+      .mission-icon {
+        display: grid;
+        width: 64px;
+        height: 64px;
+        place-items: center;
+        border-radius: 20px;
+        background: #ffffff;
+        font-size: 2rem;
+      }
+
+      .mission-card p {
+        margin-top: 4px;
+        color: #536071;
+        font-weight: 850;
+        line-height: 1.4;
+      }
+
+      .game-tabs {
+        margin-bottom: 14px;
+      }
+
+      .tab-button {
+        flex: 1 1 190px;
+        min-height: 72px;
+        padding: 10px;
+        border-radius: 18px;
+        color: #24324a;
+        background: #ffffff;
+        border: 2px solid rgba(36, 50, 74, 0.08);
+        box-shadow: 0 12px 28px rgba(36, 50, 74, 0.1);
+        font-weight: 1000;
+      }
+
+      .tab-button span {
+        display: block;
+        margin-bottom: 2px;
+        font-size: 1.55rem;
+      }
+
+      .tab-button.is-active {
+        color: #0d6d59;
+        background: #ddfff0;
+        border-color: rgba(46, 188, 141, 0.45);
+        transform: translateY(-2px);
+      }
+
+      .workspace {
+        display: grid;
+        grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.22fr);
+        gap: 16px;
+        align-items: start;
+      }
+
+      .panel {
+        padding: 16px;
+      }
+
+      .panel-title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+
+      .instruction {
+        color: #536071;
+        font-weight: 900;
+        line-height: 1.45;
+      }
+
+      .task-list {
+        display: grid;
+        gap: 8px;
+        margin: 12px 0 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .task-list li {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        min-height: 46px;
+        padding: 9px 12px;
+        border-radius: 14px;
+        background: #f6fbff;
+        font-weight: 900;
+      }
+
+      .big-question {
+        display: grid;
+        min-height: 128px;
+        place-items: center;
+        margin-bottom: 12px;
+        padding: 14px;
+        border-radius: 20px;
+        text-align: center;
+        color: #24324a;
+        background: #fff2cb;
+        font-size: clamp(1.4rem, 5vw, 3rem);
+        font-weight: 1000;
+      }
+
+      .choices,
+      .answers,
+      .memory-shelf {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .choice-button,
+      .answer-button {
+        display: grid;
+        gap: 5px;
+        min-height: 116px;
+        padding: 10px;
+        border-radius: 18px;
+        color: #24324a;
+        background: #ffffff;
+        border: 2px solid rgba(36, 50, 74, 0.08);
+        box-shadow: 0 10px 22px rgba(36, 50, 74, 0.08);
+        font-weight: 1000;
+      }
+
+      .choice-button.is-picked,
+      .answer-button.is-picked {
+        background: #fff0c8;
+        border-color: #f0a928;
+        transform: translateY(-2px);
+      }
+
+      .choice-button.is-good,
+      .answer-button.is-good {
+        color: #0d6d59;
+        background: #ddfff0;
+        border-color: #2ebc8d;
+      }
+
+      .product-emoji {
+        font-size: 2.35rem;
+      }
+
+      .english {
+        color: #175c4e;
+        font-size: 0.88rem;
+      }
+
+      .memory-card {
+        display: grid;
+        min-height: 98px;
+        place-items: center;
+        border-radius: 18px;
+        background: #ffffff;
+        border: 2px solid rgba(36, 50, 74, 0.08);
+        font-size: 2.2rem;
+        font-weight: 1000;
+      }
+
+      .memory-card.hidden-card {
+        color: #7a4100;
+        background: #fff0c8;
+        font-size: 1rem;
+      }
+
+      .tap-target {
+        display: grid;
+        width: min(280px, 100%);
+        aspect-ratio: 1;
+        place-items: center;
+        margin: 0 auto 12px;
+        border-radius: 34px;
+        color: #24324a;
+        background: #ffffff;
+        border: 3px solid rgba(240, 169, 40, 0.45);
+        box-shadow: 0 16px 38px rgba(36, 50, 74, 0.12);
+        font-size: 5rem;
+      }
+
+      .tap-counter {
+        text-align: center;
+        color: #0d6d59;
+        font-size: clamp(1.4rem, 5vw, 2.4rem);
+        font-weight: 1000;
+      }
+
+      .action-row {
+        margin-top: 14px;
+      }
+
+      .primary-button,
+      .soft-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 50px;
+        padding: 0 16px;
+        border-radius: 16px;
+        font-weight: 1000;
+      }
+
+      .primary-button {
+        color: #ffffff;
+        background: #f15c45;
+        box-shadow: 0 12px 26px rgba(241, 92, 69, 0.28);
+      }
+
+      .soft-button {
+        color: #24324a;
+        background: #ffffff;
+        border: 2px solid rgba(36, 50, 74, 0.08);
+      }
+
+      .feedback-card {
+        position: sticky;
+        bottom: 12px;
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        gap: 12px;
+        align-items: center;
+        margin-top: 16px;
+        padding: 12px;
+      }
+
+      .feedback-face {
+        display: grid;
+        width: 56px;
+        height: 56px;
+        place-items: center;
+        border-radius: 18px;
+        background: #fff0c8;
+        font-size: 1.75rem;
+      }
+
+      .feedback-card p {
+        color: #536071;
+        font-weight: 850;
+        line-height: 1.35;
+      }
+
+      .confetti {
+        pointer-events: none;
+        position: fixed;
+        inset: 0;
+        overflow: hidden;
+        z-index: 20;
+      }
+
+      .confetti span {
+        position: absolute;
+        top: -24px;
+        width: 12px;
+        height: 18px;
+        border-radius: 4px;
+        animation: fall 1.15s linear forwards;
+      }
+
+      @keyframes fall {
+        to {
+          transform: translateY(110vh) rotate(360deg);
+          opacity: 0.1;
+        }
+      }
+
+      @media (max-width: 900px) {
+        .hero,
+        .workspace {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 620px) {
+        .app {
+          width: min(100% - 18px, 1180px);
+          padding-top: 10px;
+        }
+
+        .status-row,
+        .choices,
+        .answers,
+        .memory-shelf {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .feedback-card {
+          grid-template-columns: 1fr;
+        }
+
+        .choice-button,
+        .answer-button {
+          min-height: 104px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="app">
+      <div class="topbar">
+        <a class="home-link" href="grocery-store.html" aria-label="Về tiệm tạp hoá">🏪</a>
+        <button class="icon-button" id="sound-button" type="button" aria-label="Nghe hướng dẫn">🔊</button>
+      </div>
+
+      <section class="hero">
+        <div class="hero-copy">
+          <span class="eyebrow">🎮 Khu luyện trí nhớ, toán và tiếng Anh</span>
+          <h1>Khu trò chơi của Xoài</h1>
+          <p>Bé chơi các thử thách ngắn: ghép tiếng Anh với món hàng, nhớ kệ tạp hoá, tính tiền giao hàng và bấm đúng số lượng.</p>
+        </div>
+        <aside class="score-panel">
+          <div class="status-row">
+            <div class="status-tile">Điểm<strong id="score">0</strong></div>
+            <div class="status-tile">Xu<strong id="coins">0</strong></div>
+            <div class="status-tile">Chuỗi đúng<strong id="streak">0</strong></div>
+          </div>
+          <div class="mission-card">
+            <div class="mission-icon" id="mission-icon">🛒</div>
+            <div>
+              <h2 id="mission-title">Chọn trò chơi</h2>
+              <p id="mission-text">Bé chọn một trò bên dưới để bắt đầu thử thách mới.</p>
+            </div>
+          </div>
+        </aside>
+      </section>
+
+      <nav class="game-tabs" aria-label="Chọn mini game">
+        <button class="tab-button is-active" type="button" data-game="english"><span>🔤</span>Ghép tiếng Anh</button>
+        <button class="tab-button" type="button" data-game="memory"><span>🧠</span>Nhớ kệ hàng</button>
+        <button class="tab-button" type="button" data-game="delivery"><span>🛵</span>Giao hàng tính tiền</button>
+        <button class="tab-button" type="button" data-game="quantity"><span>👆</span>Bấm đúng số lượng</button>
+      </nav>
+
+      <section class="workspace">
+        <aside class="panel">
+          <div class="panel-title">
+            <h2 id="side-title">Nhiệm vụ</h2>
+            <strong id="round-badge">Vòng 1</strong>
+          </div>
+          <p class="instruction" id="instruction">Chọn đúng món theo từ tiếng Anh.</p>
+          <ul class="task-list" id="task-list"></ul>
+          <div class="action-row">
+            <button class="primary-button" id="new-round" type="button">🔄 Vòng mới</button>
+            <button class="soft-button" id="hint-button" type="button">💡 Gợi ý</button>
+          </div>
+        </aside>
+
+        <section class="panel" id="game-panel" aria-live="polite"></section>
+      </section>
+
+      <section class="feedback-card" aria-live="polite">
+        <div class="feedback-face" id="feedback-face">😊</div>
+        <div>
+          <h2 id="feedback-title">Sẵn sàng chơi!</h2>
+          <p id="feedback-text">Mỗi câu đúng bé được cộng điểm và xu.</p>
+        </div>
+        <a class="soft-button" href="grocery-store.html">🏪 Về tiệm</a>
+      </section>
+    </main>
+
+    <div class="confetti" id="confetti" hidden></div>
+
+    <script>
+      const products = [
+        { id: "milk", name: "Sữa", english: "Milk", phrase: "carton of milk", emoji: "🥛", price: 8, audio: "tts/en/milk.m4a" },
+        { id: "bread", name: "Bánh mì", english: "Bread", phrase: "loaf of bread", emoji: "🥖", price: 5, audio: "tts/en/bread.m4a" },
+        { id: "egg", name: "Trứng", english: "Egg", phrase: "egg", emoji: "🥚", price: 4, audio: "tts/en/egg.m4a" },
+        { id: "apple", name: "Táo", english: "Apple", phrase: "apple", emoji: "🍎", price: 6, audio: "tts/en/apple.m4a" },
+        { id: "banana", name: "Chuối", english: "Banana", phrase: "banana", emoji: "🍌", price: 7, audio: "tts/en/banana.m4a" },
+        { id: "orange", name: "Cam", english: "Orange", phrase: "orange", emoji: "🍊", price: 9, audio: "tts/en/orange.m4a" },
+        { id: "noodle", name: "Mì gói", english: "Noodles", phrase: "noodle pack", emoji: "🍜", price: 10, audio: "tts/en/noodles.m4a" },
+        { id: "soap", name: "Xà phòng", english: "Soap", phrase: "soap", emoji: "🧼", price: 12, audio: "tts/en/soap.m4a" },
+        { id: "book", name: "Vở", english: "Notebook", phrase: "notebook", emoji: "📘", price: 15, audio: "tts/en/notebook.m4a" },
+        { id: "pencil", name: "Bút chì", english: "Pencil", phrase: "pencil", emoji: "✏️", price: 3, audio: "tts/en/pencil.m4a" },
+        { id: "cookie", name: "Bim bim", english: "Snack", phrase: "snack", emoji: "🍿", price: 11, audio: "tts/en/snack.m4a" },
+        { id: "juice", name: "Nước ép", english: "Juice", phrase: "juice box", emoji: "🧃", price: 13, audio: "tts/en/juice.m4a" },
+      ];
+
+      const gameInfo = {
+        english: {
+          icon: "🔤",
+          title: "Ghép tiếng Anh",
+          instruction: "Nghe và nhìn từ tiếng Anh, rồi chọn đúng món hàng.",
+        },
+        memory: {
+          icon: "🧠",
+          title: "Nhớ kệ hàng",
+          instruction: "Nhìn kệ trong vài giây, sau đó chọn món vừa xuất hiện.",
+        },
+        delivery: {
+          icon: "🛵",
+          title: "Giao hàng tính tiền",
+          instruction: "Tính tổng tiền đơn giao hàng rồi chọn đáp án đúng.",
+        },
+        quantity: {
+          icon: "👆",
+          title: "Bấm đúng số lượng",
+          instruction: "Bấm vào món hàng đúng số lần theo yêu cầu.",
+        },
+      };
+
+      const state = {
+        game: "english",
+        score: Number(localStorage.getItem("arcade-score") || 0),
+        coins: Number(localStorage.getItem("arcade-coins") || 0),
+        streak: Number(localStorage.getItem("arcade-streak") || 0),
+        round: Number(localStorage.getItem("arcade-round") || 1),
+        target: null,
+        choices: [],
+        memoryItems: [],
+        memoryHidden: false,
+        deliveryItems: [],
+        answers: [],
+        quantityTarget: 0,
+        quantityCount: 0,
+        timer: null,
+      };
+
+      const els = {
+        score: document.getElementById("score"),
+        coins: document.getElementById("coins"),
+        streak: document.getElementById("streak"),
+        roundBadge: document.getElementById("round-badge"),
+        missionIcon: document.getElementById("mission-icon"),
+        missionTitle: document.getElementById("mission-title"),
+        missionText: document.getElementById("mission-text"),
+        sideTitle: document.getElementById("side-title"),
+        instruction: document.getElementById("instruction"),
+        taskList: document.getElementById("task-list"),
+        gamePanel: document.getElementById("game-panel"),
+        feedbackFace: document.getElementById("feedback-face"),
+        feedbackTitle: document.getElementById("feedback-title"),
+        feedbackText: document.getElementById("feedback-text"),
+        soundButton: document.getElementById("sound-button"),
+        newRound: document.getElementById("new-round"),
+        hintButton: document.getElementById("hint-button"),
+        confetti: document.getElementById("confetti"),
+      };
+
+      function save() {
+        localStorage.setItem("arcade-score", String(state.score));
+        localStorage.setItem("arcade-coins", String(state.coins));
+        localStorage.setItem("arcade-streak", String(state.streak));
+        localStorage.setItem("arcade-round", String(state.round));
+      }
+
+      function money(value) {
+        return `${value} nghìn`;
+      }
+
+      function sample(list, count) {
+        return [...list].sort(() => Math.random() - 0.5).slice(0, count);
+      }
+
+      function randomItem(list) {
+        return list[Math.floor(Math.random() * list.length)];
+      }
+
+      let currentAudio;
+
+      function playAudio(src, fallback = "") {
+        if (src && typeof Audio === "function") {
+          if (currentAudio) {
+            currentAudio.pause();
+            currentAudio.currentTime = 0;
+          }
+          currentAudio = new Audio(src);
+          currentAudio.play().catch(() => speakEnglish(fallback));
+          return;
+        }
+        speakEnglish(fallback);
+      }
+
+      function speakEnglish(text) {
+        if (!text || !("speechSynthesis" in window)) return;
+        window.speechSynthesis.cancel();
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.lang = "en-US";
+        utter.rate = 0.86;
+        utter.pitch = 1.06;
+        window.speechSynthesis.speak(utter);
+      }
+
+      function speakVietnamese(text) {
+        if (!text || !("speechSynthesis" in window)) return;
+        window.speechSynthesis.cancel();
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.lang = "vi-VN";
+        utter.rate = 0.92;
+        utter.pitch = 1.08;
+        window.speechSynthesis.speak(utter);
+      }
+
+      function sentenceAudio(item, qty) {
+        return `tts/en/phrases/${item.id}-${qty}.m4a`;
+      }
+
+      function numberWord(value) {
+        return ["zero", "one", "two", "three", "four", "five"][value] || String(value);
+      }
+
+      function pluralPhrase(item, qty) {
+        if (qty === 1) return item.phrase;
+        const map = {
+          milk: "cartons of milk",
+          bread: "loaves of bread",
+          juice: "juice boxes",
+          noodle: "noodle packs",
+        };
+        return map[item.id] || `${item.phrase}s`;
+      }
+
+      function productButton(item, className = "choice-button", extra = "") {
+        return `
+          <button class="${className}" type="button" data-id="${item.id}">
+            <span class="product-emoji">${item.emoji}</span>
+            <span>${item.name}</span>
+            <span class="english">${item.english}</span>
+            ${extra}
+          </button>
+        `;
+      }
+
+      function updateHeader() {
+        const info = gameInfo[state.game];
+        els.score.textContent = state.score;
+        els.coins.textContent = state.coins;
+        els.streak.textContent = state.streak;
+        els.roundBadge.textContent = `Vòng ${state.round}`;
+        els.missionIcon.textContent = info.icon;
+        els.missionTitle.textContent = info.title;
+        els.missionText.textContent = info.instruction;
+        els.sideTitle.textContent = info.title;
+        els.instruction.textContent = info.instruction;
+        document.querySelectorAll("[data-game]").forEach((button) => {
+          button.classList.toggle("is-active", button.dataset.game === state.game);
+        });
+        save();
+      }
+
+      function setFeedback(kind, title, text) {
+        els.feedbackFace.textContent = kind === "yes" ? "🤩" : kind === "no" ? "🙂" : "😊";
+        els.feedbackTitle.textContent = title;
+        els.feedbackText.textContent = text;
+      }
+
+      function celebrate() {
+        els.confetti.hidden = false;
+        els.confetti.innerHTML = "";
+        const colors = ["#f15c45", "#ffd45a", "#2ebc8d", "#4ca3ff", "#ff8ab3"];
+        for (let i = 0; i < 30; i += 1) {
+          const piece = document.createElement("span");
+          piece.style.left = `${Math.random() * 100}%`;
+          piece.style.background = colors[i % colors.length];
+          piece.style.animationDelay = `${Math.random() * 0.25}s`;
+          els.confetti.appendChild(piece);
+        }
+        setTimeout(() => {
+          els.confetti.hidden = true;
+        }, 1300);
+      }
+
+      function award(points, title, text) {
+        state.score += points;
+        state.coins += points;
+        state.streak += 1;
+        state.round += 1;
+        updateHeader();
+        celebrate();
+        setFeedback("yes", title, text);
+      }
+
+      function miss(title, text) {
+        state.streak = 0;
+        updateHeader();
+        setFeedback("no", title, text);
+      }
+
+      function newRound(game = state.game) {
+        window.clearTimeout(state.timer);
+        state.timer = null;
+        state.game = game;
+        state.target = null;
+        state.choices = [];
+        state.memoryItems = [];
+        state.memoryHidden = false;
+        state.deliveryItems = [];
+        state.answers = [];
+        state.quantityTarget = 0;
+        state.quantityCount = 0;
+        updateHeader();
+        if (game === "english") makeEnglishGame();
+        if (game === "memory") makeMemoryGame();
+        if (game === "delivery") makeDeliveryGame();
+        if (game === "quantity") makeQuantityGame();
+      }
+
+      function makeEnglishGame() {
+        state.target = randomItem(products);
+        state.choices = sample(products.filter((item) => item.id !== state.target.id), 5);
+        state.choices.push(state.target);
+        state.choices = sample(state.choices, state.choices.length);
+        els.taskList.innerHTML = `
+          <li><span>Từ cần tìm</span><span>${state.target.english}</span></li>
+          <li><span>Nghe lại</span><span>${state.target.name}</span></li>
+        `;
+        els.gamePanel.innerHTML = `
+          <div class="big-question">Chọn: ${state.target.english}</div>
+          <div class="choices">${state.choices.map((item) => productButton(item)).join("")}</div>
+        `;
+        playAudio(state.target.audio, state.target.english);
+        bindProductChoices((item) => {
+          if (item.id === state.target.id) {
+            award(3, "Đúng rồi!", `${item.english} là ${item.name}.`);
+            playAudio(item.audio, item.english);
+            setTimeout(() => newRound("english"), 1000);
+          } else {
+            miss("Chưa đúng rồi", `Bé cần tìm ${state.target.english}.`);
+            playAudio(state.target.audio, state.target.english);
+          }
+        });
+      }
+
+      function makeMemoryGame() {
+        state.memoryItems = sample(products, 5);
+        state.target = randomItem(state.memoryItems);
+        els.taskList.innerHTML = `
+          <li><span>Ghi nhớ</span><span>5 món</span></li>
+          <li><span>Sau đó chọn</span><span>${state.target.name}</span></li>
+        `;
+        renderMemoryShelf(false);
+        state.timer = setTimeout(() => {
+          state.memoryHidden = true;
+          renderMemoryShelf(true);
+        }, 3200);
+      }
+
+      function renderMemoryShelf(hidden) {
+        els.gamePanel.innerHTML = `
+          <div class="big-question">${hidden ? `Món nào vừa có trên kệ? ${state.target.english}` : "Nhìn kỹ kệ hàng nhé!"}</div>
+          <div class="memory-shelf">
+            ${state.memoryItems.map((item) => `
+              <div class="memory-card ${hidden ? "hidden-card" : ""}">
+                ${hidden ? "?" : `<span>${item.emoji}</span><span class="english">${item.english}</span>`}
+              </div>
+            `).join("")}
+          </div>
+          <div class="choices" style="margin-top: 12px;">
+            ${memoryChoices().map((item) => productButton(item)).join("")}
+          </div>
+        `;
+        if (hidden) playAudio(state.target.audio, state.target.english);
+        bindProductChoices((item) => {
+          if (!state.memoryHidden) return;
+          if (item.id === state.target.id) {
+            award(4, "Nhớ giỏi quá!", `${item.english} đúng là món trên kệ.`);
+            setTimeout(() => newRound("memory"), 1000);
+          } else {
+            miss("Gần đúng rồi", `Món cần nhớ là ${state.target.english}.`);
+          }
+        });
+      }
+
+      function makeDeliveryGame() {
+        state.deliveryItems = sample(products, 3).map((item) => ({
+          ...item,
+          qty: 1 + Math.floor(Math.random() * 3),
+        }));
+        const total = state.deliveryItems.reduce((sum, item) => sum + item.price * item.qty, 0);
+        const wrongs = [total + 4, total + 7, Math.max(1, total - 5), total + 11].filter((value, index, arr) => arr.indexOf(value) === index);
+        state.answers = sample([total, ...sample(wrongs, 3)], 4);
+        els.taskList.innerHTML = state.deliveryItems.map((item) => `
+          <li><span>${item.emoji} ${item.qty} x ${item.name}</span><span>${item.qty} x ${money(item.price)}</span></li>
+        `).join("");
+        els.gamePanel.innerHTML = `
+          <div class="big-question">${state.deliveryItems.map((item) => `${item.qty} x ${item.price}`).join(" + ")} = ?</div>
+          <div class="answers">
+            ${state.answers.map((answer) => `
+              <button class="answer-button" type="button" data-answer="${answer}">${money(answer)}</button>
+            `).join("")}
+          </div>
+        `;
+        els.gamePanel.querySelectorAll("[data-answer]").forEach((button) => {
+          button.addEventListener("click", () => {
+            const answer = Number(button.dataset.answer);
+            button.classList.add("is-picked");
+            if (answer === total) {
+              button.classList.add("is-good");
+              award(5, "Tính tiền đúng!", `Đơn giao hàng là ${money(total)}.`);
+              setTimeout(() => newRound("delivery"), 1000);
+            } else {
+              miss("Chưa đúng tổng", `Bé thử nhân số lượng với giá từng món nhé.`);
+            }
+          });
+        });
+      }
+
+      function makeQuantityGame() {
+        state.target = randomItem(products);
+        state.quantityTarget = 1 + Math.floor(Math.random() * 5);
+        state.quantityCount = 0;
+        els.taskList.innerHTML = `
+          <li><span>Món cần bấm</span><span>${state.target.name} / ${state.target.english}</span></li>
+          <li><span>Số lượng</span><span>${state.quantityTarget}</span></li>
+        `;
+        renderQuantityGame();
+        playAudio(sentenceAudio(state.target, state.quantityTarget), `You chose ${numberWord(state.quantityTarget)} ${pluralPhrase(state.target, state.quantityTarget)}`);
+      }
+
+      function renderQuantityGame() {
+        els.gamePanel.innerHTML = `
+          <div class="big-question">Bấm ${state.quantityTarget} lần: ${state.target.english}</div>
+          <button class="tap-target" type="button" id="tap-target">${state.target.emoji}</button>
+          <div class="tap-counter">${state.quantityCount} / ${state.quantityTarget}</div>
+        `;
+        document.getElementById("tap-target").addEventListener("click", () => {
+          state.quantityCount += 1;
+          playAudio(sentenceAudio(state.target, Math.min(state.quantityCount, 5)), `You chose ${numberWord(Math.min(state.quantityCount, 5))} ${pluralPhrase(state.target, Math.min(state.quantityCount, 5))}`);
+          if (state.quantityCount === state.quantityTarget) {
+            award(4, "Đủ số lượng rồi!", `Bé đã bấm đúng ${state.quantityTarget} ${state.target.name}.`);
+            setTimeout(() => newRound("quantity"), 1000);
+            return;
+          }
+          if (state.quantityCount > state.quantityTarget) {
+            miss("Bấm hơi nhiều rồi", `Mình làm lại để đủ đúng ${state.quantityTarget} lần nhé.`);
+            setTimeout(() => newRound("quantity"), 900);
+            return;
+          }
+          renderQuantityGame();
+        });
+      }
+
+      function bindProductChoices(handler) {
+        els.gamePanel.querySelectorAll("[data-id]").forEach((button) => {
+          button.addEventListener("click", () => {
+            const item = products.find((product) => product.id === button.dataset.id);
+            if (!item) return;
+            playAudio(item.audio, item.english);
+            handler(item, button);
+          });
+        });
+      }
+
+      function memoryChoices() {
+        const others = products.filter((item) => item.id !== state.target.id);
+        return sample([state.target, ...sample(others, 5)], 6);
+      }
+
+      function showHint() {
+        if (state.game === "english" && state.target) {
+          setFeedback("idle", "Gợi ý", `${state.target.english} là ${state.target.name}.`);
+          playAudio(state.target.audio, state.target.english);
+          return;
+        }
+        if (state.game === "memory" && state.target) {
+          setFeedback("idle", "Gợi ý", `Hãy nhớ món ${state.target.english}.`);
+          playAudio(state.target.audio, state.target.english);
+          return;
+        }
+        if (state.game === "delivery") {
+          setFeedback("idle", "Gợi ý", "Nhân số lượng với giá từng món, rồi cộng các kết quả.");
+          return;
+        }
+        if (state.game === "quantity" && state.target) {
+          setFeedback("idle", "Gợi ý", `Bấm đúng ${state.quantityTarget} lần vào ${state.target.name}.`);
+        }
+      }
+
+      document.querySelectorAll("[data-game]").forEach((button) => {
+        button.addEventListener("click", () => newRound(button.dataset.game));
+      });
+
+      els.newRound.addEventListener("click", () => newRound(state.game));
+      els.hintButton.addEventListener("click", showHint);
+      els.soundButton.addEventListener("click", () => {
+        const info = gameInfo[state.game];
+        speakVietnamese(`${info.title}. ${info.instruction}`);
+      });
+
+      updateHeader();
+      newRound("english");
+    </script>
+  </body>
+</html>
