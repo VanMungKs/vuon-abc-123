@@ -316,6 +316,88 @@
         line-height: 1.35;
       }
 
+      .story-stage {
+        display: grid;
+        grid-template-columns: minmax(0, 1.1fr) minmax(220px, 0.9fr);
+        gap: 10px;
+        align-items: stretch;
+      }
+
+      .customer-card,
+      .chapter-meter {
+        border-radius: 18px;
+        background: #f6fbff;
+        border: 2px solid rgba(36, 50, 74, 0.08);
+      }
+
+      .customer-card {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        gap: 12px;
+        align-items: center;
+        padding: 12px;
+      }
+
+      .customer-avatar {
+        display: grid;
+        width: 74px;
+        height: 74px;
+        place-items: center;
+        border-radius: 24px;
+        background: #ffffff;
+        box-shadow: inset 0 -8px 0 rgba(36, 50, 74, 0.06);
+        font-size: 2.4rem;
+      }
+
+      .customer-card strong {
+        display: block;
+        margin-bottom: 4px;
+        font-size: 1.1rem;
+      }
+
+      .customer-card p {
+        color: #3e4b5f;
+      }
+
+      .chapter-meter {
+        display: grid;
+        align-content: center;
+        gap: 8px;
+        padding: 12px;
+      }
+
+      .meter-label {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        color: #3e4b5f;
+        font-weight: 1000;
+      }
+
+      .meter-track {
+        height: 14px;
+        overflow: hidden;
+        border-radius: 999px;
+        background: #ffffff;
+        box-shadow: inset 0 0 0 2px rgba(36, 50, 74, 0.08);
+      }
+
+      .meter-fill {
+        display: block;
+        width: 0%;
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, #2ebc8d, #ffd45a, #f15c45);
+        transition: width 0.35s ease;
+      }
+
+      .scene-note {
+        display: block;
+        color: #536071;
+        font-weight: 850;
+        line-height: 1.35;
+      }
+
       .game-tabs {
         margin-bottom: 14px;
       }
@@ -402,6 +484,24 @@
         background: #fff2cb;
         font-size: clamp(1.4rem, 5vw, 3rem);
         font-weight: 1000;
+      }
+
+      .scene-banner {
+        display: grid;
+        gap: 6px;
+        margin-bottom: 12px;
+        padding: 12px;
+        border-radius: 18px;
+        color: #3e4b5f;
+        background: #ecfbff;
+        border: 2px solid rgba(36, 50, 74, 0.08);
+        font-weight: 900;
+        line-height: 1.4;
+      }
+
+      .scene-banner strong {
+        color: #24324a;
+        font-size: 1.06rem;
       }
 
       .choices,
@@ -569,6 +669,7 @@
       @media (max-width: 900px) {
         .hero,
         .story-quest,
+        .story-stage,
         .workspace {
           grid-template-columns: 1fr;
         }
@@ -590,6 +691,15 @@
 
         .feedback-card {
           grid-template-columns: 1fr;
+        }
+
+        .customer-card {
+          grid-template-columns: 1fr;
+          text-align: center;
+        }
+
+        .customer-avatar {
+          margin: 0 auto;
         }
 
         .choice-button,
@@ -633,6 +743,23 @@
           <span class="quest-badge" id="chapter-badge">🏫 Ca trực 1</span>
           <h2 id="chapter-title">Học viện Siêu Chủ Tiệm</h2>
           <p id="chapter-opening">Xoài mở lớp huấn luyện chủ tiệm nhí. Bé cần vượt qua từng chặng để giúp tiệm tạp hoá phục vụ khách thật vui.</p>
+          <div class="story-stage">
+            <div class="customer-card">
+              <div class="customer-avatar" id="scene-avatar">👩‍🏫</div>
+              <div>
+                <strong id="scene-speaker">Cô chủ Xoài</strong>
+                <p id="scene-dialogue">Bé hãy chuẩn bị tinh thần, khách đầu tiên sắp tới rồi.</p>
+              </div>
+            </div>
+            <div class="chapter-meter">
+              <div class="meter-label">
+                <span>Tiến trình ca trực</span>
+                <span id="chapter-progress-text">0 / 4</span>
+              </div>
+              <div class="meter-track"><span class="meter-fill" id="chapter-progress-bar"></span></div>
+              <small class="scene-note" id="scene-note">Mỗi chặng đúng sẽ mở thêm một phần câu chuyện.</small>
+            </div>
+          </div>
           <div class="story-path" id="chapter-path"></div>
         </div>
         <aside class="story-log">
@@ -723,8 +850,47 @@
         {
           badge: "🏫 Ca trực 1",
           title: "Học viện Siêu Chủ Tiệm",
-          opening: "Cô chủ Xoài mở lớp huấn luyện đầu tiên. Bé là trợ lý nhí, cần học tên hàng, nhớ kệ, tính tiền và đóng gói để tiệm đón khách thật chỉn chu.",
-          goal: "Mục tiêu: nhận đủ 4 huy hiệu để hoàn thành ca trực đầu tiên.",
+          opening: "Sáng nay Xoài treo bảng tuyển trợ lý nhí. Muốn được đứng quầy thật, bé phải vượt qua buổi kiểm tra đầu tiên trước khi khách bước vào tiệm.",
+          goal: "Mục tiêu: lấy đủ 4 huy hiệu tập sự để mở quầy bán hàng đầu tiên.",
+          sceneNote: "Cô chủ Xoài sẽ giao từng việc nhỏ, bé làm đúng thì câu chuyện tiếp tục.",
+          scenes: {
+            english: {
+              avatar: "👩‍🏫",
+              speaker: "Cô chủ Xoài",
+              title: "Bài kiểm tra mở quầy",
+              dialogue: "Trên kệ có rất nhiều món. Nếu khách nói bằng tiếng Anh, trợ lý nhí phải nhận ra thật nhanh.",
+              task: "Đọc hoặc nghe từ tiếng Anh rồi lấy đúng món hàng.",
+              success: "Xoài mỉm cười: Bé đã nghe đúng tên món, quầy có thể mở cửa rồi.",
+              miss: "Xoài nhắc nhỏ: Mình nghe lại từ tiếng Anh, rồi nhìn kỹ hình món hàng nhé.",
+            },
+            memory: {
+              avatar: "🧑‍🍳",
+              speaker: "Bác đầu bếp",
+              title: "Kệ hàng trước giờ ra chơi",
+              dialogue: "Bác vừa xếp vài món lên kệ nhưng phải quay vào bếp ngay. Bé giúp nhớ món nào vừa xuất hiện nhé.",
+              task: "Quan sát kệ trong vài giây, sau đó chọn đúng món được hỏi.",
+              success: "Bác đầu bếp gật gù: Trí nhớ tốt quá, kệ hàng không bị nhầm rồi.",
+              miss: "Bác đầu bếp cười hiền: Không sao, mình tập nhìn chậm hơn một chút nhé.",
+            },
+            delivery: {
+              avatar: "🛵",
+              speaker: "Anh giao hàng",
+              title: "Hóa đơn đầu tiên",
+              dialogue: "Anh giao hàng cần biết tổng tiền trước khi xuất phát. Bé tính giúp để đơn hàng không bị sai.",
+              task: "Nhân số lượng với giá từng món, rồi cộng thành tổng tiền.",
+              success: "Anh giao hàng giơ ngón tay cái: Hóa đơn rõ ràng, đơn đầu tiên sẵn sàng xuất phát.",
+              miss: "Anh giao hàng chờ bé: Mình cộng lại từng dòng hóa đơn nhé.",
+            },
+            quantity: {
+              avatar: "🎁",
+              speaker: "Quầy đóng gói",
+              title: "Túi hàng của khách",
+              dialogue: "Khách cần đúng số lượng. Nếu bỏ thiếu hoặc thừa, túi hàng phải đóng lại từ đầu.",
+              task: "Bấm đúng số lần vào món hàng để đóng gói.",
+              success: "Túi hàng đã đủ. Xoài đóng dấu: Trợ lý nhí hoàn thành ca tập sự!",
+              miss: "Quầy đóng gói báo nhẹ: Bấm hơi quá rồi, mình làm lại cho thật chuẩn nhé.",
+            },
+          },
           missionText: {
             english: "Chặng 1: mở khóa tên tiếng Anh của món hàng để biết khách đang hỏi gì.",
             memory: "Chặng 2: kiểm tra kệ hàng. Chủ tiệm giỏi phải nhớ món vừa được xếp lên kệ.",
@@ -742,8 +908,47 @@
         {
           badge: "🚚 Ca trực 2",
           title: "Đơn hàng buổi sáng",
-          opening: "Một lớp học đặt đồ ăn nhẹ cho giờ ra chơi. Bé cần giúp Xoài chuẩn bị nhanh, đúng và vẫn nhớ được từ tiếng Anh của từng món.",
-          goal: "Mục tiêu: chuẩn bị đơn lớp học không thiếu món nào.",
+          opening: "Chuông điện thoại reo vang. Lớp 3A đặt một đơn hàng cho giờ ra chơi, nhưng thời gian chỉ còn vài phút trước khi bác bảo vệ đóng cổng.",
+          goal: "Mục tiêu: hoàn thành đơn lớp học đúng món, đúng tiền, đúng số lượng.",
+          sceneNote: "Mỗi câu đúng giúp xe giao hàng tiến gần hơn tới lớp 3A.",
+          scenes: {
+            english: {
+              avatar: "👧",
+              speaker: "Bạn lớp trưởng",
+              title: "Danh sách bằng tiếng Anh",
+              dialogue: "Bạn lớp trưởng gửi danh sách có vài từ tiếng Anh. Bé nhận diện đúng thì Xoài mới lấy hàng nhanh được.",
+              task: "Chọn đúng món theo từ tiếng Anh trong danh sách lớp.",
+              success: "Bạn lớp trưởng reo lên: Đúng món rồi, cả lớp sẽ có giờ ra chơi vui hơn.",
+              miss: "Bạn lớp trưởng nhắc lại: Bé nghe lại từ tiếng Anh rồi chọn lần nữa nhé.",
+            },
+            memory: {
+              avatar: "📦",
+              speaker: "Thùng hàng lớp 3A",
+              title: "Món vừa xếp vào thùng",
+              dialogue: "Xoài vừa bỏ vài món vào thùng, nhưng tem dán bị che mất. Bé nhớ món nào vừa nằm trong thùng không?",
+              task: "Nhớ những món đã hiện ra, sau đó tìm món được hỏi.",
+              success: "Thùng hàng sáng đèn: Món cần tìm đã được xác nhận.",
+              miss: "Thùng hàng rung nhẹ: Mình xem lại trí nhớ ở vòng sau nhé.",
+            },
+            delivery: {
+              avatar: "🧾",
+              speaker: "Máy tính tiền",
+              title: "Phiếu thu của lớp",
+              dialogue: "Máy tính tiền cần bé chọn đúng tổng để in phiếu thu cho cô giáo.",
+              task: "Tính tổng tiền của 3 món trong đơn lớp học.",
+              success: "Máy in kêu tách tách: Phiếu thu đã in chính xác.",
+              miss: "Máy tính tiền chớp đèn: Bé kiểm tra lại phép nhân và phép cộng nhé.",
+            },
+            quantity: {
+              avatar: "🏫",
+              speaker: "Cổng trường",
+              title: "Gói quà giờ ra chơi",
+              dialogue: "Đơn đã tới cổng trường. Bé bấm đúng số lượng để chia phần cho các bạn.",
+              task: "Bấm đúng số món theo yêu cầu của đơn.",
+              success: "Cổng trường mở ra. Đơn lớp 3A được giao kịp giờ ra chơi!",
+              miss: "Cổng trường đợi thêm: Chia phần phải thật đúng số lượng nhé.",
+            },
+          },
           missionText: {
             english: "Chặng 1: nghe tên món bằng tiếng Anh để lấy đúng đồ cho lớp học.",
             memory: "Chặng 2: nhớ kệ hàng vừa kiểm tra để tìm món nhanh hơn.",
@@ -761,8 +966,47 @@
         {
           badge: "🎉 Ca trực 3",
           title: "Ngày hội tạp hoá vui",
-          opening: "Tiệm của Xoài tổ chức ngày hội nhỏ. Khách ghé liên tục, nên bé cần quan sát tinh, nhớ nhanh và tính thật chắc.",
-          goal: "Mục tiêu: giúp ngày hội diễn ra gọn gàng, vui vẻ và không nhầm đơn.",
+          opening: "Cuối tuần, Xoài tổ chức ngày hội tạp hoá. Khách ghé đông hơn mọi ngày, quầy hàng cần một đội trưởng nhí thật bình tĩnh.",
+          goal: "Mục tiêu: phục vụ ngày hội trọn vẹn và nhận danh hiệu Siêu Chủ Tiệm.",
+          sceneNote: "Càng hoàn thành nhiều chặng, sân khấu ngày hội càng rực rỡ.",
+          scenes: {
+            english: {
+              avatar: "🎤",
+              speaker: "Người dẫn chương trình",
+              title: "Màn chào khách quốc tế",
+              dialogue: "Sân khấu đọc tên món bằng tiếng Anh. Bé chọn đúng để bảng đèn ngày hội bật sáng.",
+              task: "Ghép đúng từ tiếng Anh với món hàng trên quầy.",
+              success: "Bảng đèn bật sáng: Bé chào khách quốc tế rất tự tin.",
+              miss: "Người dẫn chương trình nói chậm lại để bé nghe rõ hơn.",
+            },
+            memory: {
+              avatar: "🛒",
+              speaker: "Xe mua sắm bí mật",
+              title: "Thử thách quan sát",
+              dialogue: "Xe mua sắm chạy ngang qua thật nhanh. Bé nhớ được món vừa nhìn thấy thì sẽ giữ nhịp ngày hội.",
+              task: "Quan sát nhanh các món trên kệ rồi chọn món được hỏi.",
+              success: "Xe mua sắm dừng lại đúng quầy. Bé quan sát rất tinh.",
+              miss: "Xe mua sắm vòng lại: Mình thử nhớ theo hình và màu nhé.",
+            },
+            delivery: {
+              avatar: "💳",
+              speaker: "Quầy thanh toán nhanh",
+              title: "Combo ngày hội",
+              dialogue: "Khách mua combo nhiều món. Bé tính đúng tổng để hàng người chờ không bị dài.",
+              task: "Chọn đúng tổng tiền của combo ngày hội.",
+              success: "Quầy thanh toán phát nhạc: Combo đã được tính chuẩn.",
+              miss: "Quầy thanh toán tạm dừng: Bé cộng từng dòng một sẽ dễ hơn.",
+            },
+            quantity: {
+              avatar: "🏆",
+              speaker: "Sân khấu trao giải",
+              title: "Túi quà cuối ngày",
+              dialogue: "Trước khi trao giải, bé chuẩn bị đúng số món cho túi quà cuối ngày.",
+              task: "Bấm đủ số lượng để hoàn thiện túi quà.",
+              success: "Sân khấu sáng lên. Bé nhận danh hiệu Siêu Chủ Tiệm của Xoài!",
+              miss: "Sân khấu chờ bé: Túi quà cần đúng số món mới trao được nhé.",
+            },
+          },
           missionText: {
             english: "Chặng 1: nhận diện từ tiếng Anh để chào khách thật tự tin.",
             memory: "Chặng 2: nhớ các món nổi bật trên kệ ngày hội.",
@@ -815,6 +1059,12 @@
         chapterGoal: document.getElementById("chapter-goal"),
         chapterPath: document.getElementById("chapter-path"),
         chapterLog: document.getElementById("chapter-log"),
+        sceneAvatar: document.getElementById("scene-avatar"),
+        sceneSpeaker: document.getElementById("scene-speaker"),
+        sceneDialogue: document.getElementById("scene-dialogue"),
+        sceneNote: document.getElementById("scene-note"),
+        chapterProgressText: document.getElementById("chapter-progress-text"),
+        chapterProgressBar: document.getElementById("chapter-progress-bar"),
         sideTitle: document.getElementById("side-title"),
         instruction: document.getElementById("instruction"),
         taskList: document.getElementById("task-list"),
@@ -915,8 +1165,31 @@
         `;
       }
 
+      function sceneBanner(extraText = "") {
+        const scene = currentScene();
+        return `
+          <div class="scene-banner">
+            <strong>${scene.avatar} ${scene.title}</strong>
+            <span>${extraText || scene.dialogue}</span>
+          </div>
+        `;
+      }
+
       function currentChapter() {
         return storyChapters[state.chapterIndex % storyChapters.length];
+      }
+
+      function currentScene(game = state.game) {
+        const chapter = currentChapter();
+        return chapter.scenes?.[game] || {
+          avatar: gameInfo[game].icon,
+          speaker: "Xoài",
+          title: gameInfo[game].title,
+          dialogue: gameInfo[game].instruction,
+          task: gameInfo[game].instruction,
+          success: "Bé làm đúng rồi.",
+          miss: "Mình thử lại nhé.",
+        };
       }
 
       function stepIndex(game = state.game) {
@@ -929,17 +1202,26 @@
       }
 
       function storyMissionText() {
-        const chapter = currentChapter();
-        return chapter.missionText[state.game] || gameInfo[state.game].instruction;
+        const scene = currentScene();
+        return scene.task || gameInfo[state.game].instruction;
       }
 
       function renderStoryQuest() {
         const chapter = currentChapter();
+        const scene = currentScene();
         const activeIndex = stepIndex();
+        const doneCount = state.completedSteps.length;
+        const progress = Math.round((doneCount / storyOrder.length) * 100);
         els.chapterBadge.textContent = chapter.badge;
         els.chapterTitle.textContent = chapter.title;
         els.chapterOpening.textContent = chapter.opening;
         els.chapterGoal.textContent = chapter.goal;
+        els.sceneAvatar.textContent = scene.avatar;
+        els.sceneSpeaker.textContent = scene.speaker;
+        els.sceneDialogue.textContent = scene.dialogue;
+        els.sceneNote.textContent = chapter.sceneNote;
+        els.chapterProgressText.textContent = `${doneCount} / ${storyOrder.length}`;
+        els.chapterProgressBar.style.width = `${progress}%`;
         els.chapterPath.innerHTML = storyOrder.map((game, index) => {
           const info = gameInfo[game];
           const done = state.completedSteps.includes(game);
@@ -971,10 +1253,13 @@
 
       function finishStoryStep() {
         const chapter = currentChapter();
-        if (!state.completedSteps.includes(state.game)) {
+        const alreadyDone = state.completedSteps.includes(state.game);
+        if (!alreadyDone) {
           state.completedSteps.push(state.game);
+          addStoryLog(`${gameInfo[state.game].icon} ${chapter.rewards[state.game]}`);
+        } else {
+          addStoryLog(`${gameInfo[state.game].icon} Bé luyện lại chặng ${gameInfo[state.game].title} rất chắc.`);
         }
-        addStoryLog(`${gameInfo[state.game].icon} ${chapter.rewards[state.game]}`);
         if (state.completedSteps.length >= storyOrder.length) {
           addStoryLog(`🏅 ${chapter.ending}`);
           state.chapterIndex = (state.chapterIndex + 1) % storyChapters.length;
@@ -1061,37 +1346,43 @@
       }
 
       function makeEnglishGame() {
+        const scene = currentScene("english");
         state.target = randomItem(products);
         state.choices = sample(products.filter((item) => item.id !== state.target.id), 5);
         state.choices.push(state.target);
         state.choices = sample(state.choices, state.choices.length);
         els.taskList.innerHTML = `
-          <li><span>Từ cần tìm</span><span>${state.target.english}</span></li>
-          <li><span>Nghe lại</span><span>${state.target.name}</span></li>
+          <li><span>Người cần giúp</span><span>${scene.speaker}</span></li>
+          <li><span>Từ khách nói</span><span>${state.target.english}</span></li>
+          <li><span>Nhiệm vụ</span><span>Lấy đúng món</span></li>
         `;
         els.gamePanel.innerHTML = `
+          ${sceneBanner(`${scene.speaker}: "${state.target.english}, please!" Bé chọn đúng món để Xoài đặt lên quầy.`)}
           <div class="big-question">Chọn: ${state.target.english}</div>
           <div class="choices">${state.choices.map((item) => productButton(item)).join("")}</div>
         `;
+        setFeedback("idle", scene.title, scene.dialogue);
         playAudio(state.target.audio, state.target.english);
         bindProductChoices((item) => {
           if (item.id === state.target.id) {
-            award(3, "Đúng rồi!", `${item.english} là ${item.name}.`);
+            award(3, "Đúng rồi!", `${scene.success} ${item.english} là ${item.name}.`);
             playAudio(item.audio, item.english);
             setTimeout(() => newRound(nextStoryGame()), nextRoundDelay);
           } else {
-            miss("Chưa đúng rồi", `Bé cần tìm ${state.target.english}.`);
+            miss("Chưa đúng rồi", `${scene.miss} Bé cần tìm ${state.target.english}.`);
             playAudio(state.target.audio, state.target.english);
           }
         });
       }
 
       function makeMemoryGame() {
+        const scene = currentScene("memory");
         state.memoryItems = sample(products, 5);
         state.target = randomItem(state.memoryItems);
         els.taskList.innerHTML = `
+          <li><span>Người cần giúp</span><span>${scene.speaker}</span></li>
           <li><span>Ghi nhớ</span><span>5 món</span></li>
-          <li><span>Sau đó chọn</span><span>${state.target.name}</span></li>
+          <li><span>Sau đó tìm</span><span>${state.target.name}</span></li>
         `;
         renderMemoryShelf(false);
         state.timer = setTimeout(() => {
@@ -1101,7 +1392,9 @@
       }
 
       function renderMemoryShelf(hidden) {
+        const scene = currentScene("memory");
         els.gamePanel.innerHTML = `
+          ${sceneBanner(hidden ? `${scene.speaker}: "Món nào vừa ở trên kệ?" Bé chọn đúng để giữ kệ hàng ngăn nắp.` : "Cảnh quan sát bắt đầu. Bé nhìn kỹ hình món hàng trước khi tấm che xuất hiện.")}
           <div class="big-question">${hidden ? `Món nào vừa có trên kệ? ${state.target.english}` : "Nhìn kỹ kệ hàng nhé!"}</div>
           <div class="memory-shelf">
             ${state.memoryItems.map((item) => `
@@ -1114,19 +1407,21 @@
             ${memoryChoices().map((item) => productButton(item)).join("")}
           </div>
         `;
+        setFeedback("idle", scene.title, hidden ? "Tấm che đã hạ xuống. Bé dùng trí nhớ để chọn đúng món." : scene.dialogue);
         if (hidden) playAudio(state.target.audio, state.target.english);
         bindProductChoices((item) => {
           if (!state.memoryHidden) return;
           if (item.id === state.target.id) {
-            award(4, "Nhớ giỏi quá!", `${item.english} đúng là món trên kệ.`);
+            award(4, "Nhớ giỏi quá!", `${scene.success} ${item.english} đúng là món trên kệ.`);
             setTimeout(() => newRound(nextStoryGame()), nextRoundDelay);
           } else {
-            miss("Gần đúng rồi", `Món cần nhớ là ${state.target.english}.`);
+            miss("Gần đúng rồi", `${scene.miss} Món cần nhớ là ${state.target.english}.`);
           }
         });
       }
 
       function makeDeliveryGame() {
+        const scene = currentScene("delivery");
         state.deliveryItems = sample(products, 3).map((item) => ({
           ...item,
           qty: 1 + Math.floor(Math.random() * 3),
@@ -1134,10 +1429,14 @@
         const total = state.deliveryItems.reduce((sum, item) => sum + item.price * item.qty, 0);
         const wrongs = [total + 4, total + 7, Math.max(1, total - 5), total + 11].filter((value, index, arr) => arr.indexOf(value) === index);
         state.answers = sample([total, ...sample(wrongs, 3)], 4);
-        els.taskList.innerHTML = state.deliveryItems.map((item) => `
+        els.taskList.innerHTML = `
+          <li><span>Người cần giúp</span><span>${scene.speaker}</span></li>
+          ${state.deliveryItems.map((item) => `
           <li><span>${item.emoji} ${item.qty} x ${item.name}</span><span>${item.qty} x ${money(item.price)}</span></li>
-        `).join("");
+          `).join("")}
+        `;
         els.gamePanel.innerHTML = `
+          ${sceneBanner(`${scene.speaker}: "Bé kiểm tra tổng tiền giúp tôi nhé." Chọn đúng tổng để hóa đơn được in.`)}
           <div class="big-question">${state.deliveryItems.map((item) => `${item.qty} x ${item.price}`).join(" + ")} = ?</div>
           <div class="answers">
             ${state.answers.map((answer) => `
@@ -1145,35 +1444,41 @@
             `).join("")}
           </div>
         `;
+        setFeedback("idle", scene.title, scene.dialogue);
         els.gamePanel.querySelectorAll("[data-answer]").forEach((button) => {
           button.addEventListener("click", () => {
             const answer = Number(button.dataset.answer);
             button.classList.add("is-picked");
             if (answer === total) {
               button.classList.add("is-good");
-              award(5, "Tính tiền đúng!", `Đơn giao hàng là ${money(total)}.`);
+              award(5, "Tính tiền đúng!", `${scene.success} Đơn hàng là ${money(total)}.`);
               setTimeout(() => newRound(nextStoryGame()), nextRoundDelay);
             } else {
-              miss("Chưa đúng tổng", `Bé thử nhân số lượng với giá từng món nhé.`);
+              miss("Chưa đúng tổng", `${scene.miss}`);
             }
           });
         });
       }
 
       function makeQuantityGame() {
+        const scene = currentScene("quantity");
         state.target = randomItem(products);
         state.quantityTarget = 1 + Math.floor(Math.random() * 5);
         state.quantityCount = 0;
         els.taskList.innerHTML = `
+          <li><span>Người cần giúp</span><span>${scene.speaker}</span></li>
           <li><span>Món cần bấm</span><span>${state.target.name} / ${state.target.english}</span></li>
           <li><span>Số lượng</span><span>${state.quantityTarget}</span></li>
         `;
         renderQuantityGame();
+        setFeedback("idle", scene.title, scene.dialogue);
         playAudio(sentenceAudio(state.target, state.quantityTarget), `You chose ${numberWord(state.quantityTarget)} ${pluralPhrase(state.target, state.quantityTarget)}`);
       }
 
       function renderQuantityGame() {
+        const scene = currentScene("quantity");
         els.gamePanel.innerHTML = `
+          ${sceneBanner(`${scene.speaker}: "Tôi cần ${state.quantityTarget} ${state.target.name}." Bé bấm đúng số lượng để đóng gói.`)}
           <div class="big-question">Bấm ${state.quantityTarget} lần: ${state.target.english}</div>
           <button class="tap-target" type="button" id="tap-target">${state.target.emoji}</button>
           <div class="tap-counter">${state.quantityCount} / ${state.quantityTarget}</div>
@@ -1182,12 +1487,12 @@
           state.quantityCount += 1;
           playAudio(sentenceAudio(state.target, Math.min(state.quantityCount, 5)), `You chose ${numberWord(Math.min(state.quantityCount, 5))} ${pluralPhrase(state.target, Math.min(state.quantityCount, 5))}`);
           if (state.quantityCount === state.quantityTarget) {
-            award(4, "Đủ số lượng rồi!", `Bé đã bấm đúng ${state.quantityTarget} ${state.target.name}.`);
+            award(4, "Đủ số lượng rồi!", `${scene.success} Bé đã bấm đúng ${state.quantityTarget} ${state.target.name}.`);
             setTimeout(() => newRound(nextStoryGame()), nextRoundDelay);
             return;
           }
           if (state.quantityCount > state.quantityTarget) {
-            miss("Bấm hơi nhiều rồi", `Mình làm lại để đủ đúng ${state.quantityTarget} lần nhé.`);
+            miss("Bấm hơi nhiều rồi", `${scene.miss}`);
             setTimeout(() => newRound("quantity"), 900);
             return;
           }
@@ -1238,8 +1543,8 @@
       els.newRound.addEventListener("click", () => newRound(nextStoryGame()));
       els.hintButton.addEventListener("click", showHint);
       els.soundButton.addEventListener("click", () => {
-        const info = gameInfo[state.game];
-        speakVietnamese(`${info.title}. ${info.instruction}`);
+        const scene = currentScene();
+        speakVietnamese(`${scene.title}. ${scene.dialogue}. ${scene.task}`);
       });
 
       updateHeader();
